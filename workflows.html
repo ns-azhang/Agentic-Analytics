@@ -400,6 +400,9 @@ const DASHBOARD_ITEMS = [
   { folder: "Forecast", items: [
     { dashboardId: "forecast",         title: "Incident forecast",        desc: "Projected next 7 days · drivers" },
   ]},
+  { folder: "SOC", items: [
+    { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring",  desc: "Policy violations, top policies, apps and DLP rules" },
+  ]},
 ];
 
 /* Pre-built Wisdom Agents available from the top control bar. Each agent is
@@ -739,6 +742,59 @@ const DASHBOARDS = {
       M("Compare forecast vs. last week's projection", "compare-week"),
       M("Schedule a weekly forecast email",            "schedule-confirmed"),
       M("Drill into forecasted Critical incidents",    "critical-only"),
+    ],
+  },
+
+  "soc-dlp-monitoring": {
+    title: "SOC Weekly Monitoring",
+    description: "Policy violations, top policies, apps and DLP rules for the current week.",
+    summary: "This week your environment generated 12,847 security events — an 8% increase week-over-week, driven primarily by a Wednesday–Friday surge in DLP activity and shadow-IT app usage. Critical incidents climbed 15%, with three of them traceable to unsanctioned Generative AI usage (ChatGPT accounted for the most alerts of any single app at 387). DLP remains your top risk category at 31% of incidents, though absolute DLP volume is actually down 5% versus last week. Your highest-risk user, sarah.chen@company.com (Engineering), generated 14 incidents across multiple unsanctioned cloud-storage and GenAI apps and warrants a closer look.",
+    examplePrompts: [
+      M("What caused the Wednesday–Friday spike in critical incidents?", "soc-weekly-rca-wedfri"),
+      M("Show me all DLP violations involving ChatGPT this week",         "soc-weekly-chatgpt-dlp"),
+      M("Who are the top users behind the unsanctioned cloud storage alerts?", "soc-weekly-storage-users"),
+    ],
+    widgets: [
+      { type: "kpi", size: "full", kpis: [
+        { label: "Total security events",   value: "12,847", delta: "+8%",  deltaDir: "up", neutral: true },
+        { label: "Critical incidents",      value: "23",     delta: "+15%", deltaDir: "up",   invertColor: true },
+        { label: "DLP violations",          value: "1,452",  delta: "−5%",  deltaDir: "down", invertColor: true },
+        { label: "Mean time to detect",     value: "4.2 min",delta: "−12%", deltaDir: "down", invertColor: true },
+      ]},
+      { type: "line", size: "full", title: "Daily incidents by severity — week of May 5–11",
+        series: [
+          { name: "Critical", color: SEV.Critical, values: [2,  3,  5,  4,  6,  2,  1]   },
+          { name: "High",     color: SEV.High,     values: [142,160,221,189,243, 87, 75]  },
+          { name: "Medium",   color: SEV.Medium,   values: [987,1101,1337,1220,1393,590,528] },
+          { name: "Low",      color: SEV.Low,      values: [618,685,820,750,862,405,411] },
+        ],
+        xLabels: ["Mon May 5","Tue May 6","Wed May 7","Thu May 8","Fri May 9","Sat May 10","Sun May 11"],
+        anomalies: [
+          { index: 4, value: 2504, label: "Fri peak (2,504)", drill: { text: "What caused the Wed–Fri spike in critical incidents?", id: "soc-weekly-rca-wedfri" } },
+        ] },
+      { type: "hbar", size: "half", title: "Top policies — this week",
+        bars: [
+          { label: "Unsanctioned cloud storage", value: 387 },
+          { label: "Customer PII",               value: 312 },
+          { label: "Source Code",                value: 289 },
+          { label: "GenAI — Sensitive Data",     value: 241 },
+          { label: "PCI Financial",              value: 118 },
+        ] },
+      { type: "hbar", size: "half", title: "Top apps generating alerts",
+        bars: [
+          { label: "ChatGPT",       value: 387, color: RISK.unsanc },
+          { label: "Google Drive",  value: 289 },
+          { label: "WeTransfer",    value: 241, color: RISK.unsanc },
+          { label: "Box",           value: 198 },
+          { label: "Slack",         value: 142 },
+        ] },
+    ],
+    followUps: [
+      M("What caused the Wednesday–Friday spike in critical incidents?", "soc-weekly-rca-wedfri"),
+      M("Show me all DLP violations involving ChatGPT this week",         "soc-weekly-chatgpt-dlp"),
+      M("Who are the top users behind the unsanctioned cloud storage alerts?", "soc-weekly-storage-users"),
+      M("Break down incidents by category",                                "soc-weekly-categories"),
+      M("Show top apps generating alerts",                                 "soc-weekly-top-apps"),
     ],
   },
 };
@@ -4249,6 +4305,16 @@ function App() {
     toast(`Switched to ${PERSONAS[id].role}`, { kind: "info" });
   };
   const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const defaultItem = { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring", desc: "Policy violations, top policies, apps and DLP rules" };
+    const dash = DASHBOARDS[defaultItem.dashboardId];
+    setActiveDashboard(defaultItem);
+    if (dash) setMessages([
+      { role: "user", text: `Open the "${defaultItem.title}" dashboard` },
+      { role: "ai", text: dash.summary || dash.description, examples: dash.examplePrompts || [] },
+    ]);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
