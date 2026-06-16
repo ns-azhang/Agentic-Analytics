@@ -4301,7 +4301,18 @@ function App() {
   const onChangePersona = (id) => {
     setPersonaId(id);
     setMessages([]);
-    setActiveDashboard(null);
+    const DEFAULT_DASHBOARD_BY_PERSONA = {
+      luke: { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
+    };
+    const defaultItem = DEFAULT_DASHBOARD_BY_PERSONA[id] || null;
+    setActiveDashboard(defaultItem);
+    if (defaultItem) {
+      const dash = DASHBOARDS[defaultItem.dashboardId];
+      if (dash) setMessages([
+        { role: "user", text: `Open the "${defaultItem.title}" dashboard` },
+        { role: "ai", text: dash.summary || dash.description, examples: dash.examplePrompts || [] },
+      ]);
+    }
     toast(`Switched to ${PERSONAS[id].role}`, { kind: "info" });
   };
   const scrollRef = useRef(null);
