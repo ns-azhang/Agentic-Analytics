@@ -4200,11 +4200,13 @@ function Dashboard({ dashboard, dashboardId, extras, replacements, onDrill, onRe
    continues on the right. Both toolbars are removed; a small floating
    Close button in the top-right corner of the canvas exits dashboard mode.
    Empty chat state shows a hint so the user knows they can ask follow-ups. */
-function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, onPickPrompt, scrollRef, dashboardExtras, dashboardReplacements, onAddToDashboard, activeDashboardId, activeDashboardTitle, onRemoveWidget, onSaveWidget, onStartReplace, replaceTarget, onPerformReplace, onCancelReplace, dashboardTitleOverride, widgetTitleOverrides, widgetSizeOverrides, widgetOrder, onRenameDashboard, onRenameWidget, onResizeWidget, onReorderWidget, libraryItems }) {
+function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, onPickPrompt, scrollRef, dashboardExtras, dashboardReplacements, onAddToDashboard, activeDashboardId, activeDashboardTitle, onRemoveWidget, onSaveWidget, onStartReplace, replaceTarget, onPerformReplace, onCancelReplace, dashboardTitleOverride, widgetTitleOverrides, widgetSizeOverrides, widgetOrder, onRenameDashboard, onRenameWidget, onResizeWidget, onReorderWidget, libraryItems, personaId }) {
   const dashboard = DASHBOARDS[activeDashboard.dashboardId];
   const containerRef = useRef(null);
   const [chatWidth, setChatWidth] = useState(420);
   const [dragging, setDragging] = useState(false);
+  const isSecurityLeader = personaId === "luke";
+  const [chatOpen, setChatOpen] = useState(false);
   if (!dashboard) return null;
   const isEmpty = messages.length === 0 && !loading;
 
@@ -4232,6 +4234,24 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
     document.body.style.userSelect = "none";
   };
 
+  const conversationPanel = (
+    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      {isEmpty ? (
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+          <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 grid place-items-center mb-3">{I.spark}</div>
+          <p className="text-[13px] text-slate-700 font-medium">Ask anything about this dashboard</p>
+          <p className="text-[12px] text-slate-400 mt-1">Drill into a widget, change a filter, or pick one of the suggested follow-ups.</p>
+        </div>
+      ) : (
+        <Conversation messages={messages} loading={loading} onPickFollowup={onPickFollowup}
+                      scrollRef={scrollRef} onAddToDashboard={onAddToDashboard}
+                      activeDashboardId={activeDashboardId} activeDashboardTitle={activeDashboardTitle}
+                      onStartReplace={onStartReplace} onSaveWidget={onSaveWidget} />
+      )}
+      <PromptInput onSend={onSend} busy={loading} onPickPrompt={onPickPrompt} libraryItems={libraryItems} />
+    </div>
+  );
+
   return (
     <div ref={containerRef} className="flex-1 flex overflow-hidden min-h-0">
       {/* Main canvas */}
@@ -4244,29 +4264,70 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
         </div>
       </div>
 
-      {/* Resize handle */}
-      <div
-        onMouseDown={startDrag}
-        title="Drag to resize the chat panel"
-        className={`flex-shrink-0 w-1 cursor-col-resize transition-colors ${dragging ? "bg-blue-500" : "bg-slate-200 hover:bg-blue-400"}`}
-      />
+      {isSecurityLeader ? (
+        /* Security Leader: collapsible tab on the right edge */
+        <div className="flex-shrink-0 flex" style={{ position: "relative" }}>
+          {/* Collapsed tab — always visible */}
+          <button
+            onClick={() => setChatOpen(o => !o)}
+            title={chatOpen ? "Collapse AI Assistant" : "Expand AI Assistant"}
+            className="flex-shrink-0 flex flex-col items-center justify-center gap-2 bg-white border-l border-slate-200 hover:bg-blue-50 transition-colors"
+            style={{ width: 32 }}
+          >
+            <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 grid place-items-center flex-shrink-0">
+              {I.spark}
+            </div>
+            <span
+              className="text-[10px] font-semibold tracking-wide text-slate-500 uppercase select-none"
+              style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "rotate(180deg)" }}
+            >
+              AI Assistant
+            </span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-slate-400 flex-shrink-0" style={{ transform: chatOpen ? "rotate(0deg)" : "rotate(180deg)", transition: "transform 0.2s" }}>
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
 
-      {/* Conversation panel */}
-      <div style={{ width: chatWidth }} className="flex-shrink-0 flex flex-col bg-white">
-        {isEmpty ? (
-          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-            <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 grid place-items-center mb-3">{I.spark}</div>
-            <p className="text-[13px] text-slate-700 font-medium">Ask anything about this dashboard</p>
-            <p className="text-[12px] text-slate-400 mt-1">Drill into a widget, change a filter, or pick one of the suggested follow-ups.</p>
+          {/* Expanded panel — slides in */}
+          {chatOpen && (
+            <>
+              {/* Resize handle */}
+              <div
+                onMouseDown={startDrag}
+                title="Drag to resize the chat panel"
+                className={`flex-shrink-0 w-1 cursor-col-resize transition-colors ${dragging ? "bg-blue-500" : "bg-slate-200 hover:bg-blue-400"}`}
+              />
+              <div style={{ width: chatWidth }} className="flex-shrink-0 flex flex-col bg-white border-l border-slate-100">
+                {/* Panel header with collapse button */}
+                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 flex-shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 grid place-items-center">{I.spark}</div>
+                    <span className="text-[12px] font-semibold text-slate-700">AI Assistant</span>
+                  </div>
+                  <button onClick={() => setChatOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                {conversationPanel}
+              </div>
+            </>
+          )}
+        </div>
+      ) : (
+        /* All other personas: always-visible side panel */
+        <>
+          <div
+            onMouseDown={startDrag}
+            title="Drag to resize the chat panel"
+            className={`flex-shrink-0 w-1 cursor-col-resize transition-colors ${dragging ? "bg-blue-500" : "bg-slate-200 hover:bg-blue-400"}`}
+          />
+          <div style={{ width: chatWidth }} className="flex-shrink-0 flex flex-col bg-white">
+            {conversationPanel}
           </div>
-        ) : (
-          <Conversation messages={messages} loading={loading} onPickFollowup={onPickFollowup}
-                        scrollRef={scrollRef} onAddToDashboard={onAddToDashboard}
-                        activeDashboardId={activeDashboardId} activeDashboardTitle={activeDashboardTitle}
-                        onStartReplace={onStartReplace} onSaveWidget={onSaveWidget} />
-        )}
-        <PromptInput onSend={onSend} busy={loading} onPickPrompt={onPickPrompt} libraryItems={libraryItems} />
-      </div>
+        </>
+      )}
     </div>
   );
 }
@@ -4607,7 +4668,7 @@ function App() {
         {activeDashboard ? (
           <DualPane activeDashboard={activeDashboard} messages={messages} loading={loading}
                     onSend={send} onPickFollowup={onFollowup} onExit={exitDashboard}
-                    onPickPrompt={onPickPrompt} scrollRef={scrollRef}
+                    onPickPrompt={onPickPrompt} scrollRef={scrollRef} personaId={personaId}
                     dashboardExtras={dashboardExtras[activeDashboard.dashboardId]}
                     dashboardReplacements={dashboardReplacements[activeDashboard.dashboardId]}
                     onAddToDashboard={addToDashboard}
