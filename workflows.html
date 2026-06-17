@@ -3785,7 +3785,7 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [] }) {
 }
 
 /* ----------------------------- Welcome Page ------------------------------- */
-function WelcomePage({ onSend, busy, libraryItems }) {
+function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 px-6">
       <div className="w-full max-w-2xl flex flex-col items-center gap-6">
@@ -3801,6 +3801,7 @@ function WelcomePage({ onSend, busy, libraryItems }) {
         <div className="w-full">
           <PromptInput onSend={onSend} busy={busy} libraryItems={libraryItems} />
         </div>
+        <PersonaSwitcher persona={persona} onChange={onChangePersona} />
       </div>
     </div>
   );
@@ -4646,7 +4647,7 @@ function App() {
       </div>
       <div className="content-region">
         {showWelcome ? (
-          <WelcomePage onSend={send} busy={loading} libraryItems={getLibraryFor(personaId)} />
+          <WelcomePage onSend={send} busy={loading} libraryItems={getLibraryFor(personaId)} persona={persona} onChangePersona={onChangePersona} />
         ) : (
           <>
             <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
