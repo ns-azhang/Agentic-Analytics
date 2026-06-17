@@ -1175,12 +1175,12 @@ function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboa
    RBAC token; in this prototype, a switcher in the controls bar lets reviewers
    demo each role's Quick Actions and greeting. */
 const PERSONAS = {
-  luke:   { id: "luke",   name: "Luke Hayward",  firstName: "Luke",   role: "Security Leader",         initials: "LH", bg: "#dbeafe", fg: "#1e40af",
-            greeting: "Good afternoon, Luke.",   subtitle: "Review compliance posture, executive-level summaries, and risk trends.",                          scope: "Executive scope" },
-  tim:    { id: "tim",    name: "Tim Reyes",     firstName: "Tim",    role: "Threat Engineer",         initials: "TR", bg: "#fef3c7", fg: "#b45309",
-            greeting: "Good afternoon, Tim.",    subtitle: "Investigate UEBA anomalies, multi-stage threats, and DLP-signal correlations.",                  scope: "Threats scope" },
-  david:  { id: "david",  name: "David Chen",    firstName: "David",  role: "Data Security Engineer",  initials: "DC", bg: "#e0e7ff", fg: "#3730a3",
-            greeting: "Good afternoon, David.",  subtitle: "Track sensitive-data discovery, shadow data, and data-class coverage.",                            scope: "Data security scope" },
+  luke:   { id: "luke",   name: "Luke Hayward",  firstName: "Luke",   role: "Cloud Risk Assessment",    initials: "LH", bg: "#dbeafe", fg: "#1e40af",
+            greeting: "Good afternoon, Luke.",   subtitle: "Review cloud exposure, sanctioned vs. unsanctioned usage, and risk posture trends.",              scope: "Cloud risk scope" },
+  tim:    { id: "tim",    name: "Tim Reyes",     firstName: "Tim",    role: "Sensitive Data Movement",  initials: "TR", bg: "#fef3c7", fg: "#b45309",
+            greeting: "Good afternoon, Tim.",    subtitle: "Track where confidential data is moving, which destinations are risky, and what to block.",       scope: "Data movement scope" },
+  david:  { id: "david",  name: "David Chen",    firstName: "David",  role: "Risky User Behaviors",     initials: "DC", bg: "#e0e7ff", fg: "#3730a3",
+            greeting: "Good afternoon, David.",  subtitle: "Identify users generating the most incidents, analyze patterns, and prioritize coaching.",         scope: "User risk scope" },
 };
 
 /* Quick Actions per role. Each role gets 4–6 cards aligned with that role's
