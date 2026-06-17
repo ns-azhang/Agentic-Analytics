@@ -357,10 +357,6 @@ const HISTORY_ITEMS = [
 /* Prompt library content swaps with the active persona — each role gets its
    own starter pack, personal prompts, and team-shared collection. */
 const LIBRARY_ITEMS_BY_ROLE = {
-  olivia: [
-    { folder: "Shared · DLP starter pack", items: ["DLP incident overview", "Top users by incident count", "Sensitive file movement to cloud apps", "Severity mix"] },
-    { folder: "Team · SOC analysts",       items: ["Triage backlog age", "False positive rate by policy"] },
-  ],
   tim: [
     { folder: "Shared · Threat starter pack", items: ["UEBA anomaly clusters", "Multi-stage threat chains", "Top suspicious users", "Source code exfiltration signals"] },
     { folder: "Team · Threat intel",          items: ["Recent IOC matches", "Threat actor cohort review"] },
@@ -373,16 +369,8 @@ const LIBRARY_ITEMS_BY_ROLE = {
     { folder: "Shared · Data discovery starter pack", items: ["Sensitive file movement", "File types to risky destinations", "Sanctioned vs. unsanctioned trend", "Customer PII drilldown"] },
     { folder: "Team · Data security",                 items: ["PII exposure trends", "Sensitive-data destinations"] },
   ],
-  angela: [
-    { folder: "Shared · Architecture starter pack", items: ["Policies firing most often", "Block recommendations", "Policies generating Critical", "30-day policy trend"] },
-    { folder: "Team · Architecture",                items: ["Cross-product policy conflicts", "Coverage gaps by data class"] },
-  ],
-  akira: [
-    { folder: "Shared · Access starter pack", items: ["Failed login attempts — 24h", "ZTNA session activity", "MFA bypass attempts", "Top access apps by volume"] },
-    { folder: "Team · Access engineering",    items: ["Top private apps by access volume", "Session anomalies by region"] },
-  ],
 };
-const getLibraryFor = (id) => LIBRARY_ITEMS_BY_ROLE[id] || LIBRARY_ITEMS_BY_ROLE.olivia;
+const getLibraryFor = (id) => LIBRARY_ITEMS_BY_ROLE[id] || LIBRARY_ITEMS_BY_ROLE.luke;
 
 /* Predefined dashboards the user can open as a starting view. Each maps to
    one of the canned RESPONSES — picking a dashboard replaces the current
@@ -1183,27 +1171,14 @@ const PERSONAS = {
             greeting: "Good afternoon, Luke.",   subtitle: "Review compliance posture, executive-level summaries, and risk trends.",                          scope: "Executive scope" },
   tim:    { id: "tim",    name: "Tim Reyes",     firstName: "Tim",    role: "Threat Engineer",         initials: "TR", bg: "#fef3c7", fg: "#b45309",
             greeting: "Good afternoon, Tim.",    subtitle: "Investigate UEBA anomalies, multi-stage threats, and DLP-signal correlations.",                  scope: "Threats scope" },
-  olivia: { id: "olivia", name: "Olivia Park",   firstName: "Olivia", role: "SecOps Analyst",          initials: "OL", bg: "#dcfce7", fg: "#15803d",
-            greeting: "Good afternoon, Olivia.", subtitle: "Ask anything about your DLP incidents, policies, or users — or start with a quick action below.", scope: "DLP scope" },
   david:  { id: "david",  name: "David Chen",    firstName: "David",  role: "Data Security Engineer",  initials: "DC", bg: "#e0e7ff", fg: "#3730a3",
             greeting: "Good afternoon, David.",  subtitle: "Track sensitive-data discovery, shadow data, and data-class coverage.",                            scope: "Data security scope" },
-  angela: { id: "angela", name: "Angela Ortiz",  firstName: "Angela", role: "Security Architect",      initials: "AO", bg: "#fae8ff", fg: "#86198f",
-            greeting: "Good afternoon, Angela.", subtitle: "Review policy effectiveness, exceptions, and architecture-level posture.",                         scope: "Architecture scope" },
-  akira:  { id: "akira",  name: "Akira Sato",    firstName: "Akira",  role: "Access Engineer",         initials: "AS", bg: "#cffafe", fg: "#155e75",
-            greeting: "Good afternoon, Akira.",  subtitle: "Monitor ZTNA sessions, login anomalies, and access patterns.",                                     scope: "Access scope" },
 };
 
 /* Quick Actions per role. Each role gets 4–6 cards aligned with that role's
    first-30-second questions. Production would source these from a tenant-
    level config; this prototype hard-codes them by role. */
 const QUICK_ACTIONS_BY_ROLE = {
-  olivia: [
-    { id: "qa1", icon: I.doc,   title: "Top DLP policies by violations",   desc: "Which policies are firing the most and the data classes involved", responseId: "top-policies" },
-    { id: "qa2", icon: I.users, title: "Top users with violations",        desc: "Users generating the most incidents in the last 30 days",          responseId: "top-users" },
-    { id: "qa3", icon: I.cloud, title: "Sensitive file movement",          desc: "Where confidential data is going — sanctioned vs. unsanctioned",   responseId: "destinations" },
-    { id: "qa4", icon: I.pie,   title: "Incidents by severity",            desc: "Breakdown across Critical, High, Medium, Low for the last 7 days", responseId: "severity" },
-    { id: "qa5", icon: I.trend, title: "30-day incident trend",            desc: "Daily DLP incident counts with anomalies highlighted",             responseId: "trend-30d" },
-  ],
   tim: [
     { id: "qa1", icon: I.spark, title: "UEBA anomaly clusters — 24h",      desc: "Suspicious behavior patterns detected since yesterday",            responseId: "role-ueba-anomalies" },
     { id: "qa2", icon: I.alert, title: "Multi-stage threat chains",        desc: "Cross-product correlations involving DLP, web, and access signals", responseId: "rca-saturday" },
@@ -1225,20 +1200,6 @@ const QUICK_ACTIONS_BY_ROLE = {
     { id: "qa3", icon: I.trend, title: "Sanctioned vs. unsanctioned",      desc: "How the share of data going to corporate apps is shifting",        responseId: "sanctioned-trend" },
     { id: "qa4", icon: I.alert, title: "Customer PII drilldown",           desc: "30-day trend of Customer PII violations and top destinations",     responseId: "policy-detail-pii" },
     { id: "qa5", icon: I.users, title: "Users moving sensitive data",      desc: "Who is transferring the most confidential data",                   responseId: "top-users" },
-  ],
-  angela: [
-    { id: "qa1", icon: I.doc,   title: "Policies firing most often",       desc: "Top-firing DLP policies and their false-positive rates",           responseId: "top-policies" },
-    { id: "qa2", icon: I.shield,title: "Block recommendations",            desc: "AI-generated policy adjustments based on patterns",                responseId: "block-recommendation" },
-    { id: "qa3", icon: I.alert, title: "Policies generating Critical",     desc: "Which policies drive Critical-severity incidents",                 responseId: "policies-critical" },
-    { id: "qa4", icon: I.trend, title: "30-day policy trend",              desc: "How the top policies are trending over the last month",            responseId: "policy-trend-30d" },
-    { id: "qa5", icon: I.history,title:"Quarter-over-quarter compare",     desc: "Policy effectiveness vs. last quarter",                            responseId: "policy-compare-quarter" },
-  ],
-  akira: [
-    { id: "qa1", icon: I.alert, title: "Failed login attempts — 24h",      desc: "Authentication failures across all corporate apps",                responseId: "role-failed-logins" },
-    { id: "qa2", icon: I.users, title: "Users with unusual access",        desc: "Cohort showing anomalous access patterns",                         responseId: "top-users" },
-    { id: "qa3", icon: I.globe, title: "ZTNA session activity",            desc: "Sessions to private apps and any anomalies",                       responseId: "destinations" },
-    { id: "qa4", icon: I.history,title:"Recent suspicious activity",       desc: "Detail on the top users showing anomalies",                        responseId: "user-detail-jmorales" },
-    { id: "qa5", icon: I.shield,title: "Top access apps by volume",        desc: "Most-accessed corporate apps via ZTNA gateway",                    responseId: "destinations" },
   ],
 };
 
@@ -1264,7 +1225,7 @@ function QuickActionCard({ action, onPick }) {
 
 /* ------------------------------- Landing UI ------------------------------- */
 function Landing({ onPick, persona }) {
-  const actions = QUICK_ACTIONS_BY_ROLE[persona.id] || QUICK_ACTIONS_BY_ROLE.olivia;
+  const actions = QUICK_ACTIONS_BY_ROLE[persona.id] || QUICK_ACTIONS_BY_ROLE.luke;
   return (
     <div className="grid-bg flex-1 overflow-y-auto">
       <div className="max-w-5xl mx-auto px-6 pt-24 pb-10">
