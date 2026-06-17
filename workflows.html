@@ -574,7 +574,7 @@ const DASHBOARDS = {
         { label: "Unsanctioned moves",    value: "1,847" },
         { label: "Top destination",       value: "GDrive (personal)" },
         { label: "Top file type",         value: ".xlsx" },
-      ]},
+      ], insight: "Sanctioned share has dropped 18 percentage points over 30 days — now at 40%, down from 58%. With 1,847 unsanctioned file moves this week alone, the trend is accelerating. Blocking personal Google Drive uploads would address the single largest leakage vector." },
       { type: "hbar", size: "full", title: "Top destination apps — 7 days",
         bars: [
           { label: "Google Drive (personal)",    value: 284, color: RISK.unsanc },
@@ -584,7 +584,8 @@ const DASHBOARDS = {
           { label: "OneDrive (corporate)",       value:  94, color: RISK.sanctioned },
           { label: "WeTransfer",                 value:  61, color: RISK.unsanc },
           { label: "GitHub (public)",            value:  48, color: RISK.caution },
-        ] },
+        ],
+        insight: "Personal cloud storage (GDrive + Dropbox personal) accounts for 451 moves — 24% of all sensitive file movement this week. All three unsanctioned apps in the top 5 are personal storage or transfer tools, suggesting employees are routing data around corporate DLP controls." },
       { type: "donut", size: "half", title: "File types → personal Google Drive",
         slices: [
           { label: ".xlsx",  value: 124, color: "#0ea5e9" },
@@ -592,13 +593,15 @@ const DASHBOARDS = {
           { label: ".docx",  value:  42 },
           { label: ".csv",   value:  29 },
           { label: ".pptx",  value:  11 },
-        ] },
+        ],
+        insight: ".xlsx and .pdf together make up 71% of files sent to personal Google Drive. Spreadsheets typically contain structured data exports (customer lists, financials) and are the highest-risk file type — a targeted block on .xlsx uploads to personal storage would have the highest impact-to-disruption ratio." },
       { type: "line", size: "half", title: "Sanctioned vs. unsanctioned (30d)",
         series: [
           { name: "Sanctioned",   color: RISK.sanctioned, values: [62,60,61,59,58,60,57,55,56,54,52,53,51,50,48,49,46,45,47,44,42,41,43,40,39,38,37,40,38,40] },
           { name: "Unsanctioned", color: RISK.unsanc,     values: [38,40,39,41,42,40,43,45,44,46,48,47,49,50,52,51,54,55,53,56,58,59,57,60,61,62,63,60,62,60] },
         ],
-        xLabels: DAYS30, anomalies: [] },
+        xLabels: DAYS30, anomalies: [],
+        insight: "Unsanctioned share crossed 50% for the first time 16 days ago and has continued climbing. The lines crossed roughly on Apr 26 — a clear inflection point. At the current trajectory, unsanctioned destinations will represent ~65% of all file movement within two weeks without policy intervention." },
     ],
     followUps: [
       M("Block recommendation for top destinations", "block-recommendation"),
@@ -622,7 +625,7 @@ const DASHBOARDS = {
         { label: "Repeat offenders",      value: "7" },
         { label: "Team baseline",         value: "12 / mo" },
         { label: "Highest growth",        value: "j.morales" },
-      ]},
+      ], insight: "j.morales is generating 7.25× the team baseline (87 vs. 12/mo) and grew 67% month-over-month — the largest single-user spike this period. With 7 repeat offenders above baseline, this is a systemic pattern, not an isolated incident." },
       { type: "hbar", size: "full", title: "Top users — last 30 days",
         bars: [
           { label: "j.morales@abc.com",     value: 87, color: RISK.unsanc, drill: { text: "Show j.morales's incidents in detail", id: "user-detail-jmorales" } },
@@ -633,7 +636,8 @@ const DASHBOARDS = {
           { label: "p.diallo@abc.com",      value: 29 },
           { label: "h.becker@abc.com",      value: 22 },
           { label: "Others (124 users)",     value: 311, color: RISK.neutral },
-        ] },
+        ],
+        insight: "The top 2 users (j.morales + k.tanaka) account for 24% of all incidents despite representing less than 2% of the user base. Both are in Customer Success — a department-level workflow review is likely more effective than individual coaching alone. Click either bar to drill into their specific incidents." },
       { type: "hbar", size: "full", title: "This month vs. last month — top users",
         bars: [
           { label: "j.morales (this mo.)",     value: 87, color: RISK.unsanc },
@@ -644,7 +648,8 @@ const DASHBOARDS = {
           { label: "r.singh (last mo.)",       value: 38, color: "#cbd5e1" },
           { label: "Team baseline (this mo.)", value: 12, color: RISK.neutral },
           { label: "Team baseline (last mo.)", value: 11, color: "#cbd5e1" },
-        ] },
+        ],
+        insight: "j.morales is the only top user trending sharply upward (+67%). k.tanaka is down 10% month-over-month, suggesting prior coaching may be taking effect. r.singh grew 37% and is approaching the high-risk threshold — worth monitoring before escalating to formal review." },
     ],
     followUps: [
       M("Show j.morales's incidents in detail", "user-detail-jmorales"),
