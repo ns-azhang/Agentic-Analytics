@@ -3806,14 +3806,13 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
             const active = p.id === persona.id;
             return (
               <button key={p.id} onClick={() => onChangePersona(p.id)}
-                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl border transition-all focus-ring ${active ? "border-blue-400 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"}`}>
+                className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring">
                 <div className="w-8 h-8 rounded-full grid place-items-center text-[11px] font-semibold flex-shrink-0"
                      style={{ background: p.bg, color: p.fg }}>{p.initials}</div>
                 <div className="text-left">
-                  <div className={`text-[13px] font-medium leading-snug ${active ? "text-blue-800" : "text-slate-800"}`}>{p.role}</div>
+                  <div className="text-[13px] font-medium leading-snug text-slate-800">{p.role}</div>
                   <div className="text-[11px] text-slate-400 leading-snug">{p.name}</div>
                 </div>
-                {active && <span className="text-blue-500 ml-1">{I.check}</span>}
               </button>
             );
           })}
