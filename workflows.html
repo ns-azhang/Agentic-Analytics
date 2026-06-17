@@ -630,11 +630,11 @@ const DASHBOARDS = {
         bars: [
           { label: "j.morales@abc.com",     value: 87, color: RISK.unsanc, drill: { text: "Show j.morales's incidents in detail", id: "user-detail-jmorales" } },
           { label: "k.tanaka@abc.com",      value: 64, color: RISK.unsanc, drill: { text: "Which policies is k.tanaka triggering?", id: "user-policies-ktanaka" } },
-          { label: "r.singh@abc.com",       value: 52 },
-          { label: "m.oconnell@abc.com",    value: 41 },
-          { label: "s.aldridge@abc.com",    value: 38 },
-          { label: "p.diallo@abc.com",      value: 29 },
-          { label: "h.becker@abc.com",      value: 22 },
+          { label: "r.singh@abc.com",       value: 52, drill: { text: "Show r.singh's activity breakdown",    id: "user-detail-rsingh" } },
+          { label: "m.oconnell@abc.com",    value: 41, drill: { text: "Show m.oconnell's activity breakdown", id: "user-detail-moconnell" } },
+          { label: "s.aldridge@abc.com",    value: 38, drill: { text: "Show s.aldridge's activity breakdown", id: "user-detail-saldridge" } },
+          { label: "p.diallo@abc.com",      value: 29, drill: { text: "Show p.diallo's activity breakdown",   id: "user-detail-pdiallo" } },
+          { label: "h.becker@abc.com",      value: 22, drill: { text: "Show h.becker's activity breakdown",   id: "user-detail-hbecker" } },
           { label: "Others (124 users)",     value: 311, color: RISK.neutral },
         ],
         insight: "The top 2 users (j.morales + k.tanaka) account for 24% of all incidents despite representing less than 2% of the user base. Both are in Customer Success — a department-level workflow review is likely more effective than individual coaching alone. Click either bar to drill into their specific incidents." },
@@ -2819,18 +2819,22 @@ const RESPONSES = {
 
   /* ---------- user detail ---------- */
   "user-detail-jmorales": {
-    title: "j.morales@abc.com · last 30 days",
-    chartType: "hbar",
-    bars: [
-      { label: "Customer PII",        value: 41, color: DATA_CLASS.pii },
-      { label: "PCI Financial",       value: 28, color: DATA_CLASS.pci },
-      { label: "HR Documents",        value: 11 },
-      { label: "Internal docs",       value:  7 },
-    ],
-    summary: "j.morales has 87 incidents in the last 30 days, concentrated in Customer PII (41) and PCI Financial (28). Most violations occur Friday afternoons, attaching customer reports to outbound email. The user is in the Customer Success org and reports to v.anand. No previous escalations on this account in the last 90 days.",
+    title: "j.morales@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File upload",      "Google Drive (personal)", "Confidential — Customer PII", "34"],
+        ["Email attachment", "Outbound email — Gmail",  "PCI Financial Data",          "28"],
+        ["File upload",      "Dropbox (personal)",      "Confidential — Customer PII", "12"],
+        ["File share",       "Slack DM (external)",     "Confidential — Customer PII",  "7"],
+        ["File upload",      "OneDrive (corporate)",    "HR — Employee Records",         "6"],
+      ],
+    },
+    summary: "j.morales's 87 incidents in the last 30 days are concentrated in file uploads to personal Google Drive (34) and PCI Financial email attachments (28). All five activity types involve moving data out of corporate controls — Google Drive personal is the dominant exfiltration vector. Most violations happen Friday afternoons. No previous escalations in the last 90 days.",
     followUps: [
       M("Show the destinations j.morales used",                    "destinations"),
-      M("View incident timeline (table)",                          "incident-table-jmorales"),
+      M("View full incident timeline",                             "incident-table-jmorales"),
       M("Open a ticket for the user's manager",                    "schedule-confirmed"),
       M("Compare j.morales vs. team baseline",                     "users-compare-month"),
     ],
@@ -2861,20 +2865,128 @@ const RESPONSES = {
   },
 
   "user-policies-ktanaka": {
-    title: "k.tanaka@abc.com — policy breakdown (30d)",
-    chartType: "donut",
-    slices: [
-      { label: "Customer PII",     value: 31, color: DATA_CLASS.pii },
-      { label: "Source Code",      value: 18, color: "#2563eb" },
-      { label: "PCI Financial",    value: 10, color: DATA_CLASS.pci },
-      { label: "Internal docs",    value:  5, color: "#94a3b8" },
-    ],
-    summary: "k.tanaka's 64 incidents are dominated by Customer PII (48%) and Source Code (28%). The Source Code triggers are unusual for a Customer Success role — most are file attachments labeled 'logs' or 'sample app config' shared with prospects via Slack. Worth confirming with the engineering org whether sharing these files externally is sanctioned.",
+    title: "k.tanaka@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File share",       "Slack (external workspace)", "Confidential — Customer PII", "21"],
+        ["File attachment",  "Outbound email — Outlook",   "Confidential — Customer PII", "13"],
+        ["File upload",      "Google Drive (personal)",    "Source Code",                 "18"],
+        ["Repository push",  "GitHub (public)",            "Source Code",                  "7"],
+        ["File upload",      "WeTransfer",                 "PCI Financial Data",            "5"],
+      ],
+    },
+    summary: "k.tanaka's 64 incidents span 5 distinct activity types. The Source Code violations (25 total) are unusual for a Customer Success role — file uploads to personal Google Drive and public GitHub pushes suggest local repository copies being synced externally. The Slack and email violations are likely accidental overshares with prospects. Source Code activity warrants engineering team review.",
     followUps: [
       M("Show the Source Code incidents in detail",                "apps-source-code"),
       M("Compare k.tanaka vs. j.morales",                          "user-detail-jmorales"),
       M("Send a coaching message via Slack",                       "slack-sent"),
       M("Schedule a weekly digest for this user",                  "schedule-confirmed"),
+    ],
+  },
+
+  "user-detail-rsingh": {
+    title: "r.singh@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File upload",      "Google Drive (personal)",    "Confidential — Customer PII", "19"],
+        ["File upload",      "Dropbox (personal)",         "Source Code",                 "14"],
+        ["File share",       "Slack (external workspace)", "Confidential — Customer PII", "11"],
+        ["Email attachment", "Outbound email — Gmail",     "PCI Financial Data",           "5"],
+        ["Repository push",  "GitHub (public)",            "Source Code",                  "3"],
+      ],
+    },
+    summary: "r.singh's 52 incidents are spread across personal cloud storage and external sharing. Personal Google Drive uploads are the top vector (19 incidents, Customer PII), with Dropbox personal and public GitHub indicating source code is also at risk. The Slack external shares suggest prospect-facing communications may be triggering policy inadvertently.",
+    followUps: [
+      M("Compare r.singh vs. team baseline",               "users-compare-month"),
+      M("Show top destinations for r.singh",               "destinations"),
+      M("Send a coaching message via Slack",               "slack-sent"),
+      M("Back to User risk",                               "dlp-users"),
+    ],
+  },
+
+  "user-detail-moconnell": {
+    title: "m.oconnell@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File upload",      "WeTransfer",                 "Confidential — Customer PII", "17"],
+        ["File share",       "Slack (external workspace)", "GenAI — Sensitive Data",      "12"],
+        ["File upload",      "Google Drive (personal)",    "Confidential — Customer PII",  "8"],
+        ["Email attachment", "Outbound email — Outlook",   "PCI Financial Data",            "4"],
+      ],
+    },
+    summary: "m.oconnell's 41 incidents are led by WeTransfer uploads (17), which has no sanctioned use case — these are the highest-priority violations. GenAI sensitive data shares via Slack external workspaces (12) suggest AI-generated content containing PII is being forwarded to external parties. Recommend blocking WeTransfer and adding a Slack DLP rule for this user's workspace activity.",
+    followUps: [
+      M("Block WeTransfer company-wide",                   "block-recommendation"),
+      M("Compare m.oconnell vs. team baseline",            "users-compare-month"),
+      M("Send a coaching message via Slack",               "slack-sent"),
+      M("Back to User risk",                               "dlp-users"),
+    ],
+  },
+
+  "user-detail-saldridge": {
+    title: "s.aldridge@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File upload",      "Dropbox (personal)",         "Source Code",                 "16"],
+        ["File upload",      "Google Drive (personal)",    "HR — Employee Records",       "12"],
+        ["Repository push",  "GitHub (public)",            "Source Code",                  "7"],
+        ["File share",       "Box (corporate)",            "Confidential — Customer PII",  "3"],
+      ],
+    },
+    summary: "s.aldridge's 38 incidents are concentrated in Source Code exfiltration — 23 incidents across Dropbox personal and public GitHub indicate active syncing of proprietary code to personal accounts. The HR records uploads to personal Google Drive (12) are a secondary concern and may involve employee data. Department: Engineering.",
+    followUps: [
+      M("Block pushes to public GitHub repos",             "block-recommendation"),
+      M("Compare s.aldridge vs. team baseline",            "users-compare-month"),
+      M("Send a coaching message via Slack",               "slack-sent"),
+      M("Back to User risk",                               "dlp-users"),
+    ],
+  },
+
+  "user-detail-pdiallo": {
+    title: "p.diallo@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File share",       "Slack (external workspace)", "Confidential — Customer PII", "13"],
+        ["Email attachment", "Outbound email — Gmail",     "PCI Financial Data",          "10"],
+        ["File upload",      "Google Drive (personal)",    "HR — Employee Records",        "6"],
+      ],
+    },
+    summary: "p.diallo's 29 incidents are driven by Slack external sharing and outbound email attachments — both consistent with a Sales role sharing materials with prospects. Customer PII (13) and PCI Financial (10) are the dominant policies. These may be partially accidental; a targeted coaching intervention and stricter Slack external-share controls would likely reduce volume significantly.",
+    followUps: [
+      M("Recommend a Slack DLP policy",                    "block-recommendation"),
+      M("Compare p.diallo vs. team baseline",              "users-compare-month"),
+      M("Send a coaching message via Slack",               "slack-sent"),
+      M("Back to User risk",                               "dlp-users"),
+    ],
+  },
+
+  "user-detail-hbecker": {
+    title: "h.becker@abc.com · activity breakdown — last 30 days",
+    chartType: "table",
+    table: {
+      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      rows: [
+        ["File upload",      "Google Drive (personal)",    "Source Code",                 "11"],
+        ["File share",       "Slack (external workspace)", "Confidential — Customer PII",  "7"],
+        ["Email attachment", "Outbound email — Outlook",   "PCI Financial Data",            "4"],
+      ],
+    },
+    summary: "h.becker's 22 incidents are below the flagging threshold but notable for their Source Code component — 11 uploads to personal Google Drive suggest local repository files being backed up externally. The Slack and email violations are consistent with customer-facing roles. Recommend a low-friction coaching nudge before escalating.",
+    followUps: [
+      M("Compare h.becker vs. team baseline",              "users-compare-month"),
+      M("Show top destinations for h.becker",              "destinations"),
+      M("Send a coaching message via Slack",               "slack-sent"),
+      M("Back to User risk",                               "dlp-users"),
     ],
   },
 
