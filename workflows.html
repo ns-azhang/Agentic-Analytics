@@ -3812,7 +3812,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
         <div className="w-full">
           <PromptInput onSend={onSend} busy={busy} libraryItems={libraryItems} />
         </div>
-        <div className="flex items-center gap-3 max-w-2xl">
+        <div className="flex items-center justify-center gap-3 max-w-2xl">
           {Object.values(PERSONAS).map(p => {
             const PERSONA_ICONS = {
               luke: (
