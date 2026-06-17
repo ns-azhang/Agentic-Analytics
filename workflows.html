@@ -1107,13 +1107,7 @@ function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboa
       )} />
       <PromptLibraryMenu persona={persona} onPickPrompt={onPickPrompt} />
       <LabeledMenuButton icon={I.chart} label="Dashboards" items={({ close }) => {
-        const PERSONA_DASHBOARD_FILTER = {
-          tim:   "dlp-destinations",
-          david: "dlp-users",
-        };
-        const visibleItems = PERSONA_DASHBOARD_FILTER[persona.id]
-          ? [{ folder: "DLP", items: DASHBOARD_ITEMS.flatMap(g => g.items).filter(d => d.dashboardId === PERSONA_DASHBOARD_FILTER[persona.id]) }]
-          : DASHBOARD_ITEMS;
+        const visibleItems = DASHBOARD_ITEMS;
         return (
           <>{visibleItems.map(group => (
             <div key={group.folder} className="py-1">
