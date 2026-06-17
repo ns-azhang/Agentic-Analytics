@@ -4478,7 +4478,7 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
   const [chatWidth, setChatWidth] = useState(420);
   const [dragging, setDragging] = useState(false);
   const isSecurityLeader = personaId === "luke" || personaId === "tim" || personaId === "david";
-  const [chatOpen, setChatOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(true);
   if (!dashboard) return null;
   const isEmpty = messages.length === 0 && !loading;
 
