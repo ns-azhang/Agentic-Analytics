@@ -1318,7 +1318,15 @@ function LineChart({ series, height = 220, xLabels = [], anomalies = [], forecas
             <path d={`${path(s.values)} L ${x(n-1)} ${H-P.b} L ${x(0)} ${H-P.b} Z`} fill={s.color} fillOpacity={series.length === 1 ? 0.08 : 0} />
             <path d={path(s.values)} fill="none" stroke={s.color} strokeWidth="2"
                   strokeDasharray={s.dashed ? "5 4" : null} />
-            {s.values.map((v,i) => <circle key={i} cx={x(i)} cy={y(v)} r="2.4" fill={s.color} />)}
+            {s.values.map((v,i) => (
+              <g key={i}
+                 style={onDrill ? { cursor: "pointer" } : undefined}
+                 onClick={onDrill ? () => onDrill(`Show top 10 users triggering ${s.name} incidents on ${xLabels[i] || `Day ${i+1}`}`, "top-users-daily") : undefined}>
+                {onDrill && <circle cx={x(i)} cy={y(v)} r="12" fill="transparent" />}
+                <circle cx={x(i)} cy={y(v)} r={onDrill ? 4 : 2.4} fill={s.color} stroke={onDrill ? "white" : "none"} strokeWidth={onDrill ? 1.5 : 0} />
+                {onDrill && <title>{`${s.name} on ${xLabels[i] || `Day ${i+1}`}: ${fmt(v)} incidents — click to see top 10 users`}</title>}
+              </g>
+            ))}
           </g>
         ))}
         {anomalies.map((a, i) => {
@@ -2335,6 +2343,30 @@ const RESPONSES = {
       M("Which policies is k.tanaka triggering?",                  "user-policies-ktanaka"),
       M("Compare to the same users last month",                   "users-compare-month"),
       M("Are these users sharing data with the same destinations?","users-destinations"),
+    ],
+  },
+
+  "top-users-daily": {
+    title: "Top 10 Users by Incident Count — Selected Day",
+    chartType: "hbar",
+    bars: [
+      { label: "s.chen@company.com",      value: 47, color: "#ef4444", drill: { text: "Show all incidents for s.chen today", id: "user-detail-jmorales" } },
+      { label: "j.morales@company.com",   value: 38, color: "#ef4444" },
+      { label: "r.patel@company.com",     value: 31, color: "#f59e0b" },
+      { label: "k.tanaka@company.com",    value: 28, color: "#f59e0b" },
+      { label: "m.oconnell@company.com",  value: 22 },
+      { label: "d.kim@company.com",       value: 19 },
+      { label: "a.silva@company.com",     value: 17 },
+      { label: "p.diallo@company.com",    value: 14 },
+      { label: "h.becker@company.com",    value: 11 },
+      { label: "l.nguyen@company.com",    value: 9 },
+    ],
+    summary: "s.chen and j.morales together account for 30% of this day's incidents — both in Engineering, with violations concentrated in unsanctioned cloud storage uploads and GenAI data submissions. r.patel and k.tanaka show a spike versus their weekly baseline, suggesting coordinated or workflow-driven activity worth reviewing.",
+    followUps: [
+      M("Show all incidents for s.chen today",                        "user-detail-jmorales"),
+      M("Which policies are these users triggering most?",            "top-users"),
+      M("Compare these users to their prior-week baseline",           "users-compare-month"),
+      M("Show the destinations these users are sending data to",      "users-destinations"),
     ],
   },
 
