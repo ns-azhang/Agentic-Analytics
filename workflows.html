@@ -1110,20 +1110,25 @@ function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboa
         ))}</>
       )} />
       <PromptLibraryMenu persona={persona} onPickPrompt={onPickPrompt} />
-      <LabeledMenuButton icon={I.chart} label="Dashboards" items={({ close }) => (
-        <>{DASHBOARD_ITEMS.map(group => (
-          <div key={group.folder} className="py-1">
-            <div className="px-3 py-1 text-[10.5px] uppercase tracking-wide text-slate-400 font-semibold">{group.folder}</div>
-            {group.items.map(d => (
-              <button key={d.title} onClick={() => { close(); onPickDashboard(d); }}
-                className="w-full text-left px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 focus-ring whitespace-normal break-words">
-                <div className="text-[13px] text-slate-800 leading-snug">{d.title}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">{d.desc}</div>
-              </button>
-            ))}
-          </div>
-        ))}</>
-      )} />
+      <LabeledMenuButton icon={I.chart} label="Dashboards" items={({ close }) => {
+        const visibleItems = persona.id === "tim"
+          ? [{ folder: "DLP", items: DASHBOARD_ITEMS.flatMap(g => g.items).filter(d => d.dashboardId === "dlp-destinations") }]
+          : DASHBOARD_ITEMS;
+        return (
+          <>{visibleItems.map(group => (
+            <div key={group.folder} className="py-1">
+              <div className="px-3 py-1 text-[10.5px] uppercase tracking-wide text-slate-400 font-semibold">{group.folder}</div>
+              {group.items.map(d => (
+                <button key={d.title} onClick={() => { close(); onPickDashboard(d); }}
+                  className="w-full text-left px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 focus-ring whitespace-normal break-words">
+                  <div className="text-[13px] text-slate-800 leading-snug">{d.title}</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">{d.desc}</div>
+                </button>
+              ))}
+            </div>
+          ))}</>
+        );
+      }} />
       <WidgetsLibrary savedWidgets={savedWidgets} onAddWidgetToDashboard={onAddWidgetToDashboard} onRemoveSavedWidget={onRemoveSavedWidget} onRenameSavedWidget={onRenameSavedWidget} />
       <LabeledMenuButton icon={I.bot} label="Agents" items={({ close }) => {
         const allAgents = [...AGENTS, ...(userAgents || [])];
@@ -4364,6 +4369,7 @@ function App() {
     setMessages([]);
     const DEFAULT_DASHBOARD_BY_PERSONA = {
       luke: { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
+      tim:  { dashboardId: "dlp-destinations",   title: "Sensitive file movement", desc: "Destinations, file types, sanctioned trend" },
     };
     const defaultItem = DEFAULT_DASHBOARD_BY_PERSONA[id] || null;
     setActiveDashboard(defaultItem);
