@@ -1111,8 +1111,12 @@ function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboa
       )} />
       <PromptLibraryMenu persona={persona} onPickPrompt={onPickPrompt} />
       <LabeledMenuButton icon={I.chart} label="Dashboards" items={({ close }) => {
-        const visibleItems = persona.id === "tim"
-          ? [{ folder: "DLP", items: DASHBOARD_ITEMS.flatMap(g => g.items).filter(d => d.dashboardId === "dlp-destinations") }]
+        const PERSONA_DASHBOARD_FILTER = {
+          tim:   "dlp-destinations",
+          david: "dlp-users",
+        };
+        const visibleItems = PERSONA_DASHBOARD_FILTER[persona.id]
+          ? [{ folder: "DLP", items: DASHBOARD_ITEMS.flatMap(g => g.items).filter(d => d.dashboardId === PERSONA_DASHBOARD_FILTER[persona.id]) }]
           : DASHBOARD_ITEMS;
         return (
           <>{visibleItems.map(group => (
@@ -4210,7 +4214,7 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
   const containerRef = useRef(null);
   const [chatWidth, setChatWidth] = useState(420);
   const [dragging, setDragging] = useState(false);
-  const isSecurityLeader = personaId === "luke" || personaId === "tim";
+  const isSecurityLeader = personaId === "luke" || personaId === "tim" || personaId === "david";
   const [chatOpen, setChatOpen] = useState(false);
   if (!dashboard) return null;
   const isEmpty = messages.length === 0 && !loading;
@@ -4369,7 +4373,8 @@ function App() {
     setMessages([]);
     const DEFAULT_DASHBOARD_BY_PERSONA = {
       luke: { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
-      tim:  { dashboardId: "dlp-destinations",   title: "Sensitive file movement", desc: "Destinations, file types, sanctioned trend" },
+      tim:   { dashboardId: "dlp-destinations", title: "Sensitive file movement", desc: "Destinations, file types, sanctioned trend" },
+      david: { dashboardId: "dlp-users",        title: "User risk",               desc: "Top users, baseline, month comparison" },
     };
     const defaultItem = DEFAULT_DASHBOARD_BY_PERSONA[id] || null;
     setActiveDashboard(defaultItem);
