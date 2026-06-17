@@ -613,11 +613,11 @@ const DASHBOARDS = {
 
   "dlp-users": {
     title: "User risk",
-    description: "Top contributors of DLP incidents and how they compare to the team baseline and the prior month.",
-    summary: "Top contributors this month and how they compare to baseline. j.morales (87) and k.tanaka (64) together account for 24% of total incidents — both well above the team baseline of ~12/mo. j.morales is up 67% month-over-month, the largest mover. The top-2 users are both Customer Success — pattern suggests a mis-configured workflow rather than active exfiltration, but worth review.",
+    description: "Top contributors of UEBA alerts and how they compare to the team baseline and the prior month.",
+    summary: "Top contributors this month and how they compare to baseline. j.morales (87) and k.tanaka (64) together account for 24% of total UEBA alerts — both well above the team baseline of ~12/mo. j.morales is up 67% month-over-month, the largest mover. The top-2 users are both Customer Success — pattern suggests a mis-configured workflow rather than active exfiltration, but worth review.",
     examplePrompts: [
-      M("Show j.morales's incidents in detail",   "user-detail-jmorales"),
-      M("Recommend coaching",                     "block-recommendation"),
+      M("Show j.morales's UEBA alerts in detail",  "user-detail-jmorales"),
+      M("Recommend coaching",                      "block-recommendation"),
     ],
     widgets: [
       { type: "kpi", size: "full", kpis: [
@@ -625,19 +625,19 @@ const DASHBOARDS = {
         { label: "Repeat offenders",      value: "7" },
         { label: "Team baseline",         value: "12 / mo" },
         { label: "Highest growth",        value: "j.morales" },
-      ], insight: "j.morales is generating 7.25× the team baseline (87 vs. 12/mo) and grew 67% month-over-month — the largest single-user spike this period. With 7 repeat offenders above baseline, this is a systemic pattern, not an isolated incident." },
+      ], insight: "j.morales is generating 7.25× the team baseline (87 vs. 12/mo) and grew 67% month-over-month — the largest single-user spike this period. With 7 repeat offenders above baseline, this is a systemic pattern, not an isolated case." },
       { type: "hbar", size: "full", title: "Top users — last 30 days",
         bars: [
-          { label: "j.morales@abc.com",     value: 87, color: RISK.unsanc, drill: { text: "Show j.morales's incidents in detail", id: "user-detail-jmorales" } },
-          { label: "k.tanaka@abc.com",      value: 64, color: RISK.unsanc, drill: { text: "Which policies is k.tanaka triggering?", id: "user-policies-ktanaka" } },
-          { label: "r.singh@abc.com",       value: 52, drill: { text: "Show r.singh's activity breakdown",    id: "user-detail-rsingh" } },
-          { label: "m.oconnell@abc.com",    value: 41, drill: { text: "Show m.oconnell's activity breakdown", id: "user-detail-moconnell" } },
-          { label: "s.aldridge@abc.com",    value: 38, drill: { text: "Show s.aldridge's activity breakdown", id: "user-detail-saldridge" } },
-          { label: "p.diallo@abc.com",      value: 29, drill: { text: "Show p.diallo's activity breakdown",   id: "user-detail-pdiallo" } },
-          { label: "h.becker@abc.com",      value: 22, drill: { text: "Show h.becker's activity breakdown",   id: "user-detail-hbecker" } },
+          { label: "j.morales@abc.com",     value: 87, color: RISK.unsanc, drill: { text: "Show j.morales's UEBA alerts in detail",  id: "user-detail-jmorales" } },
+          { label: "k.tanaka@abc.com",      value: 64, color: RISK.unsanc, drill: { text: "Show k.tanaka's UEBA alert breakdown",    id: "user-policies-ktanaka" } },
+          { label: "r.singh@abc.com",       value: 52, drill: { text: "Show r.singh's UEBA alert breakdown",    id: "user-detail-rsingh" } },
+          { label: "m.oconnell@abc.com",    value: 41, drill: { text: "Show m.oconnell's UEBA alert breakdown", id: "user-detail-moconnell" } },
+          { label: "s.aldridge@abc.com",    value: 38, drill: { text: "Show s.aldridge's UEBA alert breakdown", id: "user-detail-saldridge" } },
+          { label: "p.diallo@abc.com",      value: 29, drill: { text: "Show p.diallo's UEBA alert breakdown",   id: "user-detail-pdiallo" } },
+          { label: "h.becker@abc.com",      value: 22, drill: { text: "Show h.becker's UEBA alert breakdown",   id: "user-detail-hbecker" } },
           { label: "Others (124 users)",     value: 311, color: RISK.neutral },
         ],
-        insight: "The top 2 users (j.morales + k.tanaka) account for 24% of all incidents despite representing less than 2% of the user base. Both are in Customer Success — a department-level workflow review is likely more effective than individual coaching alone. Click either bar to drill into their specific incidents." },
+        insight: "The top 2 users (j.morales + k.tanaka) account for 24% of all UEBA alerts despite representing less than 2% of the user base. Both are in Customer Success — a department-level workflow review is likely more effective than individual coaching alone. Click any bar to drill into their alert breakdown." },
       { type: "hbar", size: "full", title: "This month vs. last month — top users",
         bars: [
           { label: "j.morales (this mo.)",     value: 87, color: RISK.unsanc },
@@ -652,10 +652,10 @@ const DASHBOARDS = {
         insight: "j.morales is the only top user trending sharply upward (+67%). k.tanaka is down 10% month-over-month, suggesting prior coaching may be taking effect. r.singh grew 37% and is approaching the high-risk threshold — worth monitoring before escalating to formal review." },
     ],
     followUps: [
-      M("Show j.morales's incidents in detail", "user-detail-jmorales"),
-      M("Which policies is k.tanaka triggering?","user-policies-ktanaka"),
-      M("Recommend coaching",                   "block-recommendation"),
-      M("Send a manager digest",                "slack-sent"),
+      M("Show j.morales's UEBA alerts in detail",  "user-detail-jmorales"),
+      M("Show k.tanaka's UEBA alert breakdown",    "user-policies-ktanaka"),
+      M("Recommend coaching",                      "block-recommendation"),
+      M("Send a manager digest",                   "slack-sent"),
     ],
   },
 
@@ -2819,19 +2819,19 @@ const RESPONSES = {
 
   /* ---------- user detail ---------- */
   "user-detail-jmorales": {
-    title: "j.morales@abc.com · activity breakdown — last 30 days",
+    title: "j.morales@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File upload",      "Google Drive (personal)", "Confidential — Customer PII", "34"],
-        ["Email attachment", "Outbound email — Gmail",  "PCI Financial Data",          "28"],
-        ["File upload",      "Dropbox (personal)",      "Confidential — Customer PII", "12"],
-        ["File share",       "Slack DM (external)",     "Confidential — Customer PII",  "7"],
-        ["File upload",      "OneDrive (corporate)",    "HR — Employee Records",         "6"],
+        ["File upload",      "Google Drive (personal)", "Bulk upload",             "34"],
+        ["Email attachment", "Outbound email — Gmail",  "Unusual access pattern",  "28"],
+        ["File upload",      "Dropbox (personal)",      "Bulk upload",             "12"],
+        ["File share",       "Slack DM (external)",     "Data exfiltration",        "7"],
+        ["File upload",      "OneDrive (corporate)",    "Privilege escalation",      "6"],
       ],
     },
-    summary: "j.morales's 87 incidents in the last 30 days are concentrated in file uploads to personal Google Drive (34) and PCI Financial email attachments (28). All five activity types involve moving data out of corporate controls — Google Drive personal is the dominant exfiltration vector. Most violations happen Friday afternoons. No previous escalations in the last 90 days.",
+    summary: "j.morales's 87 UEBA alerts in the last 30 days are concentrated in bulk uploads to personal Google Drive (34) and unusual access pattern alerts from outbound email (28). All five activity types involve moving data out of corporate controls — Google Drive personal is the dominant exfiltration vector. Most alerts fire Friday afternoons. No previous escalations in the last 90 days.",
     followUps: [
       M("Show the destinations j.morales used",                    "destinations"),
       M("View full incident timeline",                             "incident-table-jmorales"),
@@ -2841,21 +2841,21 @@ const RESPONSES = {
   },
 
   "incident-table-jmorales": {
-    title: "j.morales — recent incidents",
+    title: "j.morales — recent UEBA alerts",
     chartType: "table",
     table: {
-      columns: ["When", "Policy", "Destination", "Severity", "Action"],
+      columns: ["When", "UEBA Alert", "App", "Severity", "Action"],
       rows: [
-        ["Apr 27 4:12pm", "Customer PII",   "Google Drive (personal)", "High",    "Allowed"],
-        ["Apr 27 3:48pm", "PCI Financial",  "Outbound email — gmail",  "High",    "Blocked"],
-        ["Apr 26 5:02pm", "Customer PII",   "Google Drive (personal)", "High",    "Allowed"],
-        ["Apr 26 2:31pm", "Customer PII",   "Slack DM (external)",     "Medium",  "Coached"],
-        ["Apr 25 4:55pm", "PCI Financial",  "Outbound email — gmail",  "Critical","Blocked"],
-        ["Apr 24 1:14pm", "HR Documents",   "OneDrive (corp)",          "Low",     "Allowed"],
-        ["Apr 23 5:20pm", "Customer PII",   "Google Drive (personal)", "High",    "Allowed"],
+        ["Apr 27 4:12pm", "Bulk upload",            "Google Drive (personal)", "High",    "Allowed"],
+        ["Apr 27 3:48pm", "Unusual access pattern", "Outbound email — Gmail",  "High",    "Blocked"],
+        ["Apr 26 5:02pm", "Bulk upload",            "Google Drive (personal)", "High",    "Allowed"],
+        ["Apr 26 2:31pm", "Data exfiltration",      "Slack DM (external)",     "Medium",  "Coached"],
+        ["Apr 25 4:55pm", "Unusual access pattern", "Outbound email — Gmail",  "Critical","Blocked"],
+        ["Apr 24 1:14pm", "Privilege escalation",   "OneDrive (corp)",         "Low",     "Allowed"],
+        ["Apr 23 5:20pm", "Bulk upload",            "Google Drive (personal)", "High",    "Allowed"],
       ],
     },
-    summary: "Across recent incidents, the consistent pattern is end-of-day uploads of customer reports to a personal Google Drive on Fridays. 5 of 7 were Allowed by current policy with a coaching banner. Two were Blocked. No incidents have been formally escalated.",
+    summary: "Across recent UEBA alerts, the consistent pattern is end-of-day bulk uploads to personal Google Drive on Fridays. 5 of 7 were Allowed by current policy with a coaching banner. Two were Blocked. No alerts have been formally escalated.",
     followUps: [
       M("Escalate Apr 25 Critical incident",                       "schedule-confirmed"),
       M("Show all of j.morales's blocked uploads",                 "user-detail-jmorales"),
@@ -2865,19 +2865,19 @@ const RESPONSES = {
   },
 
   "user-policies-ktanaka": {
-    title: "k.tanaka@abc.com · activity breakdown — last 30 days",
+    title: "k.tanaka@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File share",       "Slack (external workspace)", "Confidential — Customer PII", "21"],
-        ["File attachment",  "Outbound email — Outlook",   "Confidential — Customer PII", "13"],
-        ["File upload",      "Google Drive (personal)",    "Source Code",                 "18"],
-        ["Repository push",  "GitHub (public)",            "Source Code",                  "7"],
-        ["File upload",      "WeTransfer",                 "PCI Financial Data",            "5"],
+        ["File share",       "Slack (external workspace)", "Data exfiltration",       "21"],
+        ["File attachment",  "Outbound email — Outlook",   "Bulk upload",             "13"],
+        ["File upload",      "Google Drive (personal)",    "Bulk download",           "18"],
+        ["Repository push",  "GitHub (public)",            "Data exfiltration",        "7"],
+        ["File upload",      "WeTransfer",                 "Unusual access pattern",   "5"],
       ],
     },
-    summary: "k.tanaka's 64 incidents span 5 distinct activity types. The Source Code violations (25 total) are unusual for a Customer Success role — file uploads to personal Google Drive and public GitHub pushes suggest local repository copies being synced externally. The Slack and email violations are likely accidental overshares with prospects. Source Code activity warrants engineering team review.",
+    summary: "k.tanaka's 64 UEBA alerts span 5 distinct activity types. Data exfiltration alerts (28 total) are the highest-priority signal — external Slack shares and public GitHub pushes indicate data leaving corporate controls. Bulk download alerts on personal Google Drive suggest local repository copies being synced externally. Unusual access pattern on WeTransfer warrants engineering team review.",
     followUps: [
       M("Show the Source Code incidents in detail",                "apps-source-code"),
       M("Compare k.tanaka vs. j.morales",                          "user-detail-jmorales"),
@@ -2887,19 +2887,19 @@ const RESPONSES = {
   },
 
   "user-detail-rsingh": {
-    title: "r.singh@abc.com · activity breakdown — last 30 days",
+    title: "r.singh@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File upload",      "Google Drive (personal)",    "Confidential — Customer PII", "19"],
-        ["File upload",      "Dropbox (personal)",         "Source Code",                 "14"],
-        ["File share",       "Slack (external workspace)", "Confidential — Customer PII", "11"],
-        ["Email attachment", "Outbound email — Gmail",     "PCI Financial Data",           "5"],
-        ["Repository push",  "GitHub (public)",            "Source Code",                  "3"],
+        ["File upload",      "Google Drive (personal)",    "Bulk upload",             "19"],
+        ["File upload",      "Dropbox (personal)",         "Bulk download",           "14"],
+        ["File share",       "Slack (external workspace)", "Data exfiltration",       "11"],
+        ["Email attachment", "Outbound email — Gmail",     "Unusual access pattern",   "5"],
+        ["Repository push",  "GitHub (public)",            "Data exfiltration",         "3"],
       ],
     },
-    summary: "r.singh's 52 incidents are spread across personal cloud storage and external sharing. Personal Google Drive uploads are the top vector (19 incidents, Customer PII), with Dropbox personal and public GitHub indicating source code is also at risk. The Slack external shares suggest prospect-facing communications may be triggering policy inadvertently.",
+    summary: "r.singh's 52 UEBA alerts are spread across personal cloud storage and external sharing. Bulk upload alerts on personal Google Drive are the top signal (19), with bulk download alerts on Dropbox and data exfiltration on public GitHub indicating a broader pattern of data moving outside corporate controls. External Slack shares may be prospect-facing communications triggering alerts inadvertently.",
     followUps: [
       M("Compare r.singh vs. team baseline",               "users-compare-month"),
       M("Show top destinations for r.singh",               "destinations"),
@@ -2909,18 +2909,18 @@ const RESPONSES = {
   },
 
   "user-detail-moconnell": {
-    title: "m.oconnell@abc.com · activity breakdown — last 30 days",
+    title: "m.oconnell@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File upload",      "WeTransfer",                 "Confidential — Customer PII", "17"],
-        ["File share",       "Slack (external workspace)", "GenAI — Sensitive Data",      "12"],
-        ["File upload",      "Google Drive (personal)",    "Confidential — Customer PII",  "8"],
-        ["Email attachment", "Outbound email — Outlook",   "PCI Financial Data",            "4"],
+        ["File upload",      "WeTransfer",                 "Bulk upload",             "17"],
+        ["File share",       "Slack (external workspace)", "Shared credentials",      "12"],
+        ["File upload",      "Google Drive (personal)",    "Bulk upload",              "8"],
+        ["Email attachment", "Outbound email — Outlook",   "Unusual access pattern",   "4"],
       ],
     },
-    summary: "m.oconnell's 41 incidents are led by WeTransfer uploads (17), which has no sanctioned use case — these are the highest-priority violations. GenAI sensitive data shares via Slack external workspaces (12) suggest AI-generated content containing PII is being forwarded to external parties. Recommend blocking WeTransfer and adding a Slack DLP rule for this user's workspace activity.",
+    summary: "m.oconnell's 41 UEBA alerts are led by bulk upload alerts on WeTransfer (17), which has no sanctioned use case — these are the highest-priority signals. Shared credentials alerts via Slack external workspaces (12) suggest account access is being shared with external parties. Recommend blocking WeTransfer and reviewing Slack external workspace membership for this user.",
     followUps: [
       M("Block WeTransfer company-wide",                   "block-recommendation"),
       M("Compare m.oconnell vs. team baseline",            "users-compare-month"),
@@ -2930,18 +2930,18 @@ const RESPONSES = {
   },
 
   "user-detail-saldridge": {
-    title: "s.aldridge@abc.com · activity breakdown — last 30 days",
+    title: "s.aldridge@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File upload",      "Dropbox (personal)",         "Source Code",                 "16"],
-        ["File upload",      "Google Drive (personal)",    "HR — Employee Records",       "12"],
-        ["Repository push",  "GitHub (public)",            "Source Code",                  "7"],
-        ["File share",       "Box (corporate)",            "Confidential — Customer PII",  "3"],
+        ["File upload",      "Dropbox (personal)",         "Bulk download",           "16"],
+        ["File upload",      "Google Drive (personal)",    "Privilege escalation",    "12"],
+        ["Repository push",  "GitHub (public)",            "Data exfiltration",        "7"],
+        ["File share",       "Box (corporate)",            "Bulk upload",              "3"],
       ],
     },
-    summary: "s.aldridge's 38 incidents are concentrated in Source Code exfiltration — 23 incidents across Dropbox personal and public GitHub indicate active syncing of proprietary code to personal accounts. The HR records uploads to personal Google Drive (12) are a secondary concern and may involve employee data. Department: Engineering.",
+    summary: "s.aldridge's 38 UEBA alerts are concentrated in bulk download and data exfiltration signals — 23 alerts across Dropbox personal and public GitHub indicate active syncing of proprietary code outside corporate controls. Privilege escalation alerts on personal Google Drive (12) suggest access to HR or admin data beyond the user's normal role scope. Department: Engineering.",
     followUps: [
       M("Block pushes to public GitHub repos",             "block-recommendation"),
       M("Compare s.aldridge vs. team baseline",            "users-compare-month"),
@@ -2951,17 +2951,17 @@ const RESPONSES = {
   },
 
   "user-detail-pdiallo": {
-    title: "p.diallo@abc.com · activity breakdown — last 30 days",
+    title: "p.diallo@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File share",       "Slack (external workspace)", "Confidential — Customer PII", "13"],
-        ["Email attachment", "Outbound email — Gmail",     "PCI Financial Data",          "10"],
-        ["File upload",      "Google Drive (personal)",    "HR — Employee Records",        "6"],
+        ["File share",       "Slack (external workspace)", "Data exfiltration",       "13"],
+        ["Email attachment", "Outbound email — Gmail",     "Unusual access pattern",  "10"],
+        ["File upload",      "Google Drive (personal)",    "Privilege escalation",     "6"],
       ],
     },
-    summary: "p.diallo's 29 incidents are driven by Slack external sharing and outbound email attachments — both consistent with a Sales role sharing materials with prospects. Customer PII (13) and PCI Financial (10) are the dominant policies. These may be partially accidental; a targeted coaching intervention and stricter Slack external-share controls would likely reduce volume significantly.",
+    summary: "p.diallo's 29 UEBA alerts are driven by data exfiltration signals on external Slack (13) and unusual access pattern alerts on outbound email (10) — both consistent with a Sales role sharing materials with prospects. These may be partially accidental; a targeted coaching intervention and stricter Slack external-share controls would likely reduce alert volume significantly.",
     followUps: [
       M("Recommend a Slack DLP policy",                    "block-recommendation"),
       M("Compare p.diallo vs. team baseline",              "users-compare-month"),
@@ -2971,17 +2971,17 @@ const RESPONSES = {
   },
 
   "user-detail-hbecker": {
-    title: "h.becker@abc.com · activity breakdown — last 30 days",
+    title: "h.becker@abc.com · UEBA alert breakdown — last 30 days",
     chartType: "table",
     table: {
-      columns: ["Activity", "App", "DLP Policy", "Incidents"],
+      columns: ["Activity", "App", "UEBA Alert", "Alerts"],
       rows: [
-        ["File upload",      "Google Drive (personal)",    "Source Code",                 "11"],
-        ["File share",       "Slack (external workspace)", "Confidential — Customer PII",  "7"],
-        ["Email attachment", "Outbound email — Outlook",   "PCI Financial Data",            "4"],
+        ["File upload",      "Google Drive (personal)",    "Bulk download",           "11"],
+        ["File share",       "Slack (external workspace)", "Data exfiltration",        "7"],
+        ["Email attachment", "Outbound email — Outlook",   "Unusual access pattern",   "4"],
       ],
     },
-    summary: "h.becker's 22 incidents are below the flagging threshold but notable for their Source Code component — 11 uploads to personal Google Drive suggest local repository files being backed up externally. The Slack and email violations are consistent with customer-facing roles. Recommend a low-friction coaching nudge before escalating.",
+    summary: "h.becker's 22 UEBA alerts are below the escalation threshold but notable for bulk download signals on personal Google Drive — 11 alerts suggest local repository files being synced externally. Data exfiltration and unusual access pattern alerts on Slack and email are consistent with customer-facing activity. Recommend a low-friction coaching nudge before escalating.",
     followUps: [
       M("Compare h.becker vs. team baseline",              "users-compare-month"),
       M("Show top destinations for h.becker",              "destinations"),
@@ -3003,7 +3003,7 @@ const RESPONSES = {
       { label: "Team baseline (this mo.)", value: 12, color: "#94a3b8" },
       { label: "Team baseline (last mo.)", value: 11, color: "#cbd5e1" },
     ],
-    summary: "Among the top 3 repeat offenders, j.morales is up 67% month-over-month and r.singh up 37% — both moving in the wrong direction. k.tanaka is slightly down (−10%). The team baseline is essentially unchanged, indicating the increase is driven by a small number of users rather than systemic.",
+    summary: "Among the top 3 repeat offenders, j.morales is up 67% month-over-month and r.singh up 37% — both moving in the wrong direction. k.tanaka is slightly down (−10%). The team baseline is essentially unchanged, indicating the increase in UEBA alerts is driven by a small number of users rather than a systemic shift.",
     followUps: [
       M("Drill into j.morales",                                    "user-detail-jmorales"),
       M("Show how their destinations have changed",                "users-destinations"),
@@ -3023,7 +3023,7 @@ const RESPONSES = {
       { label: "r.singh → Dropbox (personal)",         value: 16 },
       { label: "j.morales + k.tanaka → same Slack ws.",value:  9, color: "#dc2626" },
     ],
-    summary: "The top users do not share most destinations — their patterns are largely role-driven. However, both j.morales and k.tanaka share files into the same external Slack workspace (9 incidents). That's a thread worth pulling: it could be a sanctioned customer collaboration channel or an unsanctioned shared workspace.",
+    summary: "The top users do not share most destinations — their patterns are largely role-driven. However, both j.morales and k.tanaka share files into the same external Slack workspace (9 UEBA alerts). That's a thread worth pulling: it could be a sanctioned customer collaboration channel or an unsanctioned shared workspace.",
     followUps: [
       M("Show the shared Slack workspace details",                 "destinations"),
       M("Trend the shared destination over time",                  "sanctioned-trend"),
