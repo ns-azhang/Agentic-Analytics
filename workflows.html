@@ -4210,7 +4210,7 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
   const containerRef = useRef(null);
   const [chatWidth, setChatWidth] = useState(420);
   const [dragging, setDragging] = useState(false);
-  const isSecurityLeader = personaId === "luke";
+  const isSecurityLeader = personaId === "luke" || personaId === "tim";
   const [chatOpen, setChatOpen] = useState(false);
   if (!dashboard) return null;
   const isEmpty = messages.length === 0 && !loading;
