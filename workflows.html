@@ -1095,7 +1095,7 @@ function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboa
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
       {!hidePersonaSwitcher && <PersonaSwitcher persona={persona} onChange={onChangePersona} />}
-      <div className="flex items-center gap-1">
+      <div className={`flex items-center gap-1${hidePersonaSwitcher ? " ml-auto" : ""}`}>
       <LabeledMenuButton icon={I.history} label="Session history" items={({ close }) => (
         <>{HISTORY_ITEMS.map(h => (
           <button key={h.title} onClick={() => { close(); onPickHistory(h); }}
