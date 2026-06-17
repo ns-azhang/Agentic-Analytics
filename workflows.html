@@ -3784,6 +3784,28 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [] }) {
   );
 }
 
+/* ----------------------------- Welcome Page ------------------------------- */
+function WelcomePage({ onSend, busy, libraryItems }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 px-6">
+      <div className="w-full max-w-2xl flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white grid place-items-center mb-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+              <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>
+            </svg>
+          </div>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Hello Aaron!</h1>
+          <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a dashboard to get started.</p>
+        </div>
+        <div className="w-full">
+          <PromptInput onSend={onSend} busy={busy} libraryItems={libraryItems} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------------- App ----------------------------------- */
 function classifyPrompt(text) {
   const t = text.toLowerCase();
@@ -4327,11 +4349,13 @@ function App() {
   const [replaceTarget, setReplaceTarget] = useState(null);
   const [savedWidgets, setSavedWidgets] = useState([]);
   const [userAgents, setUserAgents] = useState([]);
+  const [showWelcome, setShowWelcome] = useState(true);
   const [personaId, setPersonaId] = useState("luke");
   const persona = PERSONAS[personaId] || PERSONAS.luke;
   const onChangePersona = (id) => {
     setPersonaId(id);
     setMessages([]);
+    setShowWelcome(false);
     const DEFAULT_DASHBOARD_BY_PERSONA = {
       luke: { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
       tim:   { dashboardId: "dlp-destinations", title: "Sensitive file movement", desc: "Destinations, file types, sanctioned trend" },
@@ -4351,20 +4375,11 @@ function App() {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    const defaultItem = { dashboardId: "soc-dlp-monitoring", title: "SOC Weekly Monitoring", desc: "Policy violations, top policies, apps and DLP rules" };
-    const dash = DASHBOARDS[defaultItem.dashboardId];
-    setActiveDashboard(defaultItem);
-    if (dash) setMessages([
-      { role: "user", text: `Open the "${defaultItem.title}" dashboard` },
-      { role: "ai", text: dash.summary || dash.description, examples: dash.examplePrompts || [] },
-    ]);
-  }, []);
-
-  useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, loading]);
 
   const send = (text, knownResponseId) => {
+    setShowWelcome(false);
     setMessages(m => [...m, { role: "user", text }]);
     setLoading(true);
     setTimeout(() => {
@@ -4378,7 +4393,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
@@ -4396,6 +4411,7 @@ function App() {
      main canvas, and the chat is seeded with a plain-language summary plus
      a couple of example prompts so the user has an immediate starting point. */
   const onPickDashboard = (item) => {
+    setShowWelcome(false);
     setActiveDashboard(item);
     const dash = DASHBOARDS[item.dashboardId];
     if (!dash) { setMessages([]); return; }
@@ -4629,45 +4645,51 @@ function App() {
         <div className="app-chrome-sidebar-bottom" />
       </div>
       <div className="content-region">
-        <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
-                         onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
-                         onPickAgent={onPickAgent} userAgents={userAgents}
-                         persona={persona} onChangePersona={onChangePersona}
-                         savedWidgets={savedWidgets}
-                         onAddWidgetToDashboard={addWidgetToDashboard}
-                         onRemoveSavedWidget={removeSavedWidget}
-                         onRenameSavedWidget={renameSavedWidget} />
-        {activeDashboard ? (
-          <DualPane activeDashboard={activeDashboard} messages={messages} loading={loading}
-                    onSend={send} onPickFollowup={onFollowup} onExit={exitDashboard}
-                    onPickPrompt={onPickPrompt} scrollRef={scrollRef} personaId={personaId}
-                    dashboardExtras={dashboardExtras[activeDashboard.dashboardId]}
-                    dashboardReplacements={dashboardReplacements[activeDashboard.dashboardId]}
-                    onAddToDashboard={addToDashboard}
-                    activeDashboardId={activeDashboard.dashboardId}
-                    activeDashboardTitle={activeDashboard.title}
-                    onRemoveWidget={(idx) => removeWidget(activeDashboard.dashboardId, idx)}
-                    onSaveWidget={saveWidget}
-                    onStartReplace={startReplaceMode}
-                    replaceTarget={replaceTarget}
-                    onPerformReplace={performReplace}
-                    onCancelReplace={cancelReplaceMode}
-                    dashboardTitleOverride={dashboardTitleOverrides[activeDashboard.dashboardId]}
-                    widgetTitleOverrides={widgetTitleOverrides[activeDashboard.dashboardId]}
-                    widgetSizeOverrides={widgetSizeOverrides[activeDashboard.dashboardId]}
-                    widgetOrder={widgetOrderOverrides[activeDashboard.dashboardId]}
-                    onRenameDashboard={renameDashboard}
-                    onRenameWidget={renameWidget}
-                    onResizeWidget={resizeWidget}
-                    onReorderWidget={reorderWidget}
-                    libraryItems={getLibraryFor(personaId)} />
+        {showWelcome ? (
+          <WelcomePage onSend={send} busy={loading} libraryItems={getLibraryFor(personaId)} />
         ) : (
           <>
-            {isEmpty ? <Landing onPick={onQuickAction} persona={persona} /> :
-              <Conversation messages={messages} loading={loading} onPickFollowup={onFollowup}
-                            scrollRef={scrollRef} onAddToDashboard={addToDashboard}
-                            onSaveWidget={saveWidget} onCreateAgent={createAgent} />}
-            <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
+            <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
+                             onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
+                             onPickAgent={onPickAgent} userAgents={userAgents}
+                             persona={persona} onChangePersona={onChangePersona}
+                             savedWidgets={savedWidgets}
+                             onAddWidgetToDashboard={addWidgetToDashboard}
+                             onRemoveSavedWidget={removeSavedWidget}
+                             onRenameSavedWidget={renameSavedWidget} />
+            {activeDashboard ? (
+              <DualPane activeDashboard={activeDashboard} messages={messages} loading={loading}
+                        onSend={send} onPickFollowup={onFollowup} onExit={exitDashboard}
+                        onPickPrompt={onPickPrompt} scrollRef={scrollRef} personaId={personaId}
+                        dashboardExtras={dashboardExtras[activeDashboard.dashboardId]}
+                        dashboardReplacements={dashboardReplacements[activeDashboard.dashboardId]}
+                        onAddToDashboard={addToDashboard}
+                        activeDashboardId={activeDashboard.dashboardId}
+                        activeDashboardTitle={activeDashboard.title}
+                        onRemoveWidget={(idx) => removeWidget(activeDashboard.dashboardId, idx)}
+                        onSaveWidget={saveWidget}
+                        onStartReplace={startReplaceMode}
+                        replaceTarget={replaceTarget}
+                        onPerformReplace={performReplace}
+                        onCancelReplace={cancelReplaceMode}
+                        dashboardTitleOverride={dashboardTitleOverrides[activeDashboard.dashboardId]}
+                        widgetTitleOverrides={widgetTitleOverrides[activeDashboard.dashboardId]}
+                        widgetSizeOverrides={widgetSizeOverrides[activeDashboard.dashboardId]}
+                        widgetOrder={widgetOrderOverrides[activeDashboard.dashboardId]}
+                        onRenameDashboard={renameDashboard}
+                        onRenameWidget={renameWidget}
+                        onResizeWidget={resizeWidget}
+                        onReorderWidget={reorderWidget}
+                        libraryItems={getLibraryFor(personaId)} />
+            ) : (
+              <>
+                {isEmpty ? <Landing onPick={onQuickAction} persona={persona} /> :
+                  <Conversation messages={messages} loading={loading} onPickFollowup={onFollowup}
+                                scrollRef={scrollRef} onAddToDashboard={addToDashboard}
+                                onSaveWidget={saveWidget} onCreateAgent={createAgent} />}
+                <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
+              </>
+            )}
           </>
         )}
       </div>
