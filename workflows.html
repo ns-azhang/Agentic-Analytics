@@ -394,6 +394,9 @@ const DASHBOARD_ITEMS = [
   { folder: "CISO", items: [
     { dashboardId: "ciso-overview", title: "CISO", desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025" },
   ]},
+  { folder: "Security Analyst", items: [
+    { dashboardId: "security-analyst", title: "Security Analyst", desc: "Cloud app discovery, DLP, threats, UBA · last 90 days" },
+  ]},
 ];
 
 /* Pre-built Wisdom Agents available from the top control bar. Each agent is
@@ -953,6 +956,236 @@ const DASHBOARDS = {
       M("Show top policy violations this period",        "ciso-policy-detail"),
       M("Show top unsanctioned apps by risk",            "destinations"),
       M("Who are the top users behind these alerts?",    "top-users"),
+    ],
+  },
+
+  "security-analyst": {
+    title: "Security Analyst",
+    description: "Cloud app discovery, DLP policy violations, cloud threats, and user behavior analytics for the last 90 days.",
+    summary: "Last 90 days: 170 cloud apps discovered (67% risky), 1,664 files with DLP violations across 243 users, 31 malware detections, 11 malicious sites blocked, and 885 UBA alerts across 181 users. Generative AI is the top category for both uploads (7,416 MB) and DLP violations. The [Web] Block DoH policy and AI-Gateway scans generate the highest alert volumes.",
+    examplePrompts: [
+      M("Which cloud apps have the poorest CCL rating?",        "destinations"),
+      M("Show DLP policy violations breakdown",                 "top-users-daily"),
+      M("Who are the top users with UBA alerts?",               "top-users"),
+    ],
+    widgets: [
+
+      /* ── Non Enterprise-Ready Applications ─────────────────── */
+      { type: "kpi", size: "full", kpis: [
+        { label: "Total Cloud Apps Discovered", value: "170" },
+        { label: "Risky Apps",                  value: "67.06%", delta: "", deltaDir: "up", invertColor: true },
+        { label: "Unmanaged Apps",              value: "139" },
+        { label: "Managed Apps",                value: "31" },
+      ], insight: "170 cloud apps were discovered in the last 90 days — 67% are classified as risky (low or poor CCL). Only 31 are managed/sanctioned, meaning 82% of accessed apps are outside IT visibility. Generative AI and Streaming are the top upload categories among non-enterprise-ready apps." },
+
+      { type: "donut", size: "half", title: "Cloud App Count by CCL Rating",
+        slices: [
+          { label: "Poor",      value: 57, color: "#ef4444" },
+          { label: "High",      value: 47, color: "#10b981" },
+          { label: "Medium",    value: 44, color: "#f59e0b" },
+          { label: "Low",       value: 13, color: "#fb923c" },
+          { label: "Excellent", value:  6, color: "#0ea5e9" },
+          { label: "Unknown",   value:  3, color: "#94a3b8" },
+        ],
+        insight: "Poor CCL apps are the largest single segment at 33.5% (57 apps) — more than all excellent+high apps combined in terms of risk exposure. Medium CCL (44 apps, 25.9%) adds a second tier of moderate risk. Only 31.2% of apps rate high or excellent, indicating the majority of cloud usage falls outside enterprise-ready standards." },
+
+      { type: "hbar", size: "half", title: "Managed vs. Unmanaged Applications",
+        bars: [
+          { label: "Unmanaged (No)",  value: 139, color: "#ef4444" },
+          { label: "Managed (Yes)",   value:  31, color: "#10b981" },
+        ],
+        insight: "82% of accessed cloud apps are unmanaged — no sanctioned policy, DLP rule, or lifecycle management applied. Only 18% (31 apps) are under IT control. This 139-app unmanaged tail is the primary shadow-IT risk surface and the source of most DLP and UBA alert volume." },
+
+      { type: "table", size: "half", title: "Risky Apps — Monthly App Count",
+        columns: ["Month", "# Apps Accessed", "% Change"],
+        rows: [
+          ["2026-03", "44", "—"],
+          ["2026-04", "79", "+80%"],
+          ["2026-05", "44", "−44%"],
+          ["2026-06", "38", "−14%"],
+        ],
+        insight: "Risky app usage spiked 80% in April (44→79), then declined in May and June. The April surge likely reflects new GenAI tool exploration. The downward trend in May–June may indicate early policy enforcement reducing access, or seasonal usage patterns — monitor July to confirm direction." },
+
+      { type: "line", size: "full", title: "Trend of Uploads to Non-Enterprise Apps by CCL — last 90 days",
+        series: [
+          { name: "Poor CCL",   color: "#ef4444", values: [3,10,45,23,11,15,0,29,10,424,88,149,68] },
+          { name: "Low CCL",    color: "#fb923c", values: [10,16,12,20,5,8,0,21,6,28,11,16,2] },
+          { name: "Medium CCL", color: "#f59e0b", values: [59,20,10,20,15,21,1,9,11,29,101,21,16] },
+        ],
+        xLabels: ["Mar 23","Mar 30","Apr 6","Apr 13","Apr 20","Apr 27","May 4","May 11","May 18","May 25","Jun 1","Jun 8","Jun 15"],
+        anomalies: [{ index: 9, value: 424, label: "May 25 spike (424 MB)" }],
+        insight: "Poor CCL app uploads spiked to 424 MB the week of May 25 — 10× the prior week and the largest single-week data movement to risky apps in the 90-day period. Medium CCL uploads peaked at 101 MB in the Jun 1 week. Both spikes warrant investigation into which specific apps and users drove the volume." },
+
+      { type: "hbar", size: "full", title: "Top Non-Enterprise Cloud Categories by Upload Volume",
+        bars: [
+          { label: "Generative AI",                    value: 7416, color: "#ef4444" },
+          { label: "Streaming & Downloadable Video",   value: 4438, color: "#f59e0b" },
+          { label: "Collaboration",                    value: 1423, color: "#fb923c" },
+          { label: "Technology",                       value:  867, color: "#6366f1" },
+          { label: "Chat, IM & Communication",         value:  648, color: "#0ea5e9" },
+          { label: "Cloud Storage",                    value:  490, color: "#ef4444" },
+          { label: "News & Media",                     value:  349, color: "#94a3b8" },
+          { label: "Customer Relationship Mgmt",       value:  155, color: "#94a3b8" },
+          { label: "Professional Networking",          value:  150, color: "#f59e0b" },
+        ],
+        insight: "Generative AI dominates non-enterprise uploads at 7,416 MB — 67% more than Streaming (4,438 MB) and 5× the next category. This volume indicates employees are actively submitting files and data into AI tools. Combined with poor CCL ratings for most GenAI apps, this represents the highest-priority DLP risk vector." },
+
+      /* ── High-Risk User Activities ───────────────────────────── */
+      { type: "hbar", size: "full", title: "Top Unmanaged/Unsanctioned Apps — High-Risk Activities",
+        bars: [
+          { label: "Amazon Systems Manager — Upload",  value: 312, color: "#ef4444" },
+          { label: "Google Gmail — Upload",            value: 289, color: "#f59e0b" },
+          { label: "Google Drive — Upload",            value: 241, color: "#f59e0b" },
+          { label: "Google Gemini — Upload",           value: 198, color: "#ef4444" },
+          { label: "Brave — Upload",                   value: 167, color: "#fb923c" },
+          { label: "Slack — Upload",                   value: 142, color: "#f59e0b" },
+          { label: "Google Calendar — Download",       value:  98, color: "#0ea5e9" },
+          { label: "ChatGPT — Upload",                 value:  87, color: "#ef4444" },
+        ],
+        insight: "Upload is the dominant high-risk activity across all unmanaged apps. Amazon Systems Manager and Google Gemini are high-CCL-risk upload destinations. ChatGPT uploads (87 events, Allowed) are the highest-severity finding — sensitive data submitting to a public LLM with no data retention controls. Review whether existing policies are blocking or only alerting on GenAI uploads." },
+
+      /* ── Monitor & Control ───────────────────────────────────── */
+      { type: "kpi", size: "full", kpis: [
+        { label: "Files with DLP Violations",    value: "1,664" },
+        { label: "Users with DLP Violations",    value: "243" },
+      ], insight: "1,664 files triggered DLP policies this period across 243 unique users — an average of 6.8 violations per user. The breadth of user impact (243) suggests systemic data handling patterns rather than isolated incidents, pointing to a training or workflow gap rather than targeted exfiltration." },
+
+      { type: "donut", size: "half", title: "DLP Policy Alerts by Severity",
+        slices: [
+          { label: "Low",      value: 75, color: SEV.Low },
+          { label: "Critical", value: 12, color: SEV.Critical },
+          { label: "Medium",   value: 11, color: SEV.Medium },
+          { label: "High",     value:  2, color: SEV.High },
+        ],
+        insight: "Low severity alerts dominate at 75% — largely automated scans and informational findings. However, 12.3% Critical severity is significant: at 1,664 total files that equates to ~204 critical DLP findings that require prioritized review. The 10.8% Medium and 1.8% High also warrant triage before policy tuning." },
+
+      { type: "hbar", size: "half", title: "User Count by DLP Policy Action",
+        bars: [
+          { label: "Block",                   value: 221, color: "#ef4444" },
+          { label: "Useralert (coaching)",    value:  27, color: "#f59e0b" },
+          { label: "Alert",                   value:  19, color: "#fb923c" },
+          { label: "Revoke public sharing",   value:   4, color: "#6366f1" },
+          { label: "Apply sensitivity label", value:   6, color: "#0ea5e9" },
+          { label: "Bypass",                  value:   2, color: "#94a3b8" },
+        ],
+        insight: "Block is the most common policy action (221 users) — indicating aggressive enforcement is already in place for the majority of DLP violations. 27 users received coaching (useralert), which is the recommended intervention for Low/Medium severity. The 2 bypass users warrant investigation to confirm bypass authorization is valid." },
+
+      { type: "line", size: "full", title: "DLP Policy Alerts — Trend Over Time (last 90 days)",
+        series: [
+          { name: "DLP Alerts", color: "#6366f1", values: [562,1473,804,898,939,850,756,1121,648,887,480,624,390] },
+        ],
+        xLabels: ["Mar 23","Mar 30","Apr 6","Apr 13","Apr 20","Apr 27","May 4","May 11","May 18","May 25","Jun 1","Jun 8","Jun 15"],
+        anomalies: [{ index: 1, value: 1473, label: "Mar 30 peak (1,473)" }],
+        insight: "DLP alert volume peaked the week of Mar 30 at 1,473, likely coinciding with a policy expansion. May 11 shows a secondary peak (1,121). The Jun 15 partial week shows 390 alerts — on pace for a lower-volume month if the trend holds, though this could reflect incomplete data rather than genuine improvement." },
+
+      { type: "table", size: "full", title: "DLP Policy Details — Top 15 Alerts",
+        columns: ["Policy", "Application", "Severity", "Action", "# Alerts", "Access Method"],
+        rows: [
+          ["N/A (scan)",                        "AI-Gateway",                   "Low",      "Alert",                  "3,406", "DLP On Demand"],
+          ["Detect Credit Card / GDPR",         "ChatGPT",                      "Low",      "Alert",                  "1,733", "CASB API"],
+          ["N/A (scan)",                        "AI-Gateway",                   "Critical", "Alert",                    "602", "DLP On Demand"],
+          ["Apply PII Sensitivity Label",       "Microsoft OneDrive",           "Low",      "Apply sensitivity label",  "438", "CASB API"],
+          ["Browser Access DLP — Block",        "Finance MyNetskopeDemo",       "Medium",   "Block",                    "407", "Browser Access"],
+          ["Block Sensitive Data → MCP",        "Parallel Search MCP",          "Critical", "Block",                    "381", "Explicit Proxy"],
+          ["[NPA EB] Allow Access to Web Apps", "[Flonkerton]",                 "Low",      "Block",                    "310", "Enterprise Browser"],
+          ["Block Sensitive Data → MCP",        "Parallel Search MCP",          "Low",      "Block",                    "248", "Explicit Proxy"],
+          ["[NPA EB] Allow Access to Web Apps", "[Finance Local EB]",           "Medium",   "Block",                    "238", "Enterprise Browser"],
+          ["Block Sensitive Data → MCP",        "Parallel Search MCP",          "Low",      "Block",                    "237", "Explicit Proxy"],
+          ["Browser Access DLP — Block",        "[Flonkerton]",                 "Low",      "Block",                    "222", "Browser Access"],
+          ["Scan for PII in OneDrive",          "Microsoft OneDrive",           "Low",      "Apply sensitivity label",  "188", "CASB API"],
+          ["Block Sensitive Data → MCP",        "Parallel Search MCP",          "Critical", "Block",                    "186", "Explicit Proxy"],
+          ["[Context DLP] Low Severity",        "Microsoft OneDrive",           "Low",      "Useralert",                "149", "Client"],
+          ["Apply PII Sensitivity Label",       "Microsoft OneDrive",           "Critical", "Apply sensitivity label",  "120", "CASB API"],
+        ],
+        insight: "AI-Gateway on-demand scans account for the highest alert volume (3,406 + 602 = 4,008). Parallel Search MCP is the most concerning — three separate Critical/Low Block rules fired 866 times, indicating sensitive data is actively flowing into MCP servers. ChatGPT CASB API scans (1,733) confirm significant data submission to the public LLM." },
+
+      /* ── Cloud Threats ───────────────────────────────────────── */
+      { type: "kpi", size: "full", kpis: [
+        { label: "Malware Detected",        value: "31", delta: "", deltaDir: "up", invertColor: true },
+        { label: "Malicious Sites Blocked", value: "11", delta: "", deltaDir: "up", invertColor: true },
+      ], insight: "31 malware detections and 11 malicious sites blocked over 90 days. Trojan and Virus variants dominate malware type, primarily detected via Enterprise Browser on managed app instances. The 11 blocked malicious sites include active phishing infrastructure — perplexity-ai[.]online (52 blocks, 1 user) is the most targeted." },
+
+      { type: "table", size: "full", title: "Malware Detections — Details",
+        columns: ["Application", "User", "Object / File", "Malware Name", "Type"],
+        rows: [
+          ["netskopesecuritych…", "vmonarque+web@…",     "21",                    "Trojan.Script.EAB",         "Exploit, Trojan"],
+          ["netskopesecuritych…", "vmonarque+web@…",     "17",                    "Trojan.GenericKD.4…",       "Virus"],
+          ["netskopesecuritych…", "ccole+web@netsko…",   "17",                    "Trojan.GenericKD.4…",       "Virus"],
+          ["X (Twitter)",         "jatkins@netskope.c…", "script.txt",            "Trojan.Generic.398…",       "Virus"],
+          ["mynetskopedemo",      "dtavernier+web@n…",   "ns_freshmalware_6…",    "Gen.Malware.Dete…",         "Trojan"],
+          ["mynetskopedemo",      "stevenw+web@net…",    "ns_freshmalware_1…",    "Gen.Malware.Dete…",         "Trojan"],
+          ["mynetskopedemo",      "stevenw+web@net…",    "ns_freshmalware_8…",    "Gen.Malware.Dete…",         "Trojan"],
+          ["mynetskopedemo",      "gbaileymcewan+we…",   "get-unknown-pdf",       "Gen.Malware.Dete…",         "Trojan"],
+          ["mynetskopedemo",      "mainsworth+web@…",    "get-unknown-pdf",       "Gen.Malware.Dete…",         "Trojan"],
+          ["netskopesecuritych…", "vmonarque+web@…",     "19",                    "Gen.Malware.Dete…",         "Ransomware, Virus"],
+        ],
+        insight: "vmonarque+web@ accounts for 3 separate malware detections including a Ransomware+Virus combination — the highest-risk user in the threat table. stevenw+web@ has two Trojan detections on fresh malware signatures. The 'get-unknown-pdf' object appears in 2 detections across different users, suggesting a shared malicious file in circulation within the org." },
+
+      { type: "table", size: "full", title: "Blocked Malicious Sites — Details",
+        columns: ["URL", "Category", "# Blocks", "# Users"],
+        rows: [
+          ["perplexity-ai[.]online/search",                    "Malicious Site",                       "52", "1"],
+          ["www[.]wicar[.]org/test-malware[.]html",            "Malicious Site",                        "8", "3"],
+          ["lilianaorganic[.]com/document/au[.]php",           "Malicious Site, Phish Site",             "4", "1"],
+          ["chagpt[.]com/",                                    "Malicious Site",                         "4", "1"],
+          ["incarnatepicturesque[.]com/72ea2…",                "Malicious Site",                         "3", "1"],
+          ["ns-catid-580-sn[.]netskopetools[.]com/stop-icon…", "Malicious Site",                         "3", "2"],
+          ["ns-catid-589-sn[.]netskopetools[.]com/stop-icon…", "Cryptocurrency Mining",                  "3", "2"],
+          ["a60d31c2[.]outlookliveprotection…",                "Malicious Site, Phish Site",             "2", "1"],
+          ["ns-catid-586-sn[.]netskopetools[.]com/",           "Malware Distribution Point",             "2", "1"],
+          ["chagpt[.]com/favicon[.]ico",                       "Malicious Site",                         "2", "1"],
+        ],
+        insight: "perplexity-ai[.]online is a typosquat of the legitimate Perplexity AI — 52 blocks from a single user suggests repeated attempts to access a lookalike GenAI site, possibly from a bookmark or link. chagpt[.]com (typosquat of ChatGPT) also appears with 4 blocks. Both indicate users seeking GenAI tools via unsanctioned channels and encountering phishing infrastructure." },
+
+      { type: "line", size: "full", title: "Trend of Malware & Malicious Sites — last 90 days",
+        series: [
+          { name: "Malware Detected",  color: "#ef4444", values: [0,0,2,1,3,2,0,4,1,5,3,4,6] },
+          { name: "Malsites Blocked",  color: "#7c3aed", values: [0,0,1,0,1,0,0,1,0,2,1,2,3] },
+        ],
+        xLabels: ["Mar 23","Mar 30","Apr 6","Apr 13","Apr 20","Apr 27","May 4","May 11","May 18","May 25","Jun 1","Jun 8","Jun 15"],
+        anomalies: [],
+        insight: "Both malware and malsite signals are trending upward through June — each hitting their 90-day high in the Jun 15 week. While absolute numbers remain low, a consistent week-over-week increase in both categories warrants attention. If the trend continues at this rate, July could see 10+ malware events per week." },
+
+      /* ── User Behavior Analytics ─────────────────────────────── */
+      { type: "kpi", size: "full", kpis: [
+        { label: "Users with UBA Alerts",        value: "181" },
+        { label: "Apps with UBA Alerts",         value: "30" },
+        { label: "Total UBA Alerts",             value: "885" },
+      ], insight: "885 UBA alerts across 181 users and 30 applications — an average of 4.9 alerts per user. UCI threshold breaches and Bulk Failed Logins are the top alert types, indicating credential-related anomalies are the dominant behavioral signal. Microsoft 365 (SharePoint, OneDrive, Teams) and Parallel Search MCP generate the most UBA activity." },
+
+      { type: "hbar", size: "full", title: "Top UBA Alert Types by Volume",
+        bars: [
+          { label: "UCI threshold alert",                                    value: 187, color: "#ef4444" },
+          { label: "Bulk Failed Logins",                                     value: 143, color: "#ef4444" },
+          { label: "Rare Event",                                             value: 112, color: "#f59e0b" },
+          { label: "First access from non-Netskope IP",                      value:  98, color: "#fb923c" },
+          { label: "Spike of 28 encrypted files uploaded (API)",             value:  87, color: "#f59e0b" },
+          { label: "Sensitive data movement → Google Drive (RT)",            value:  74, color: "#ef4444" },
+          { label: "First access AWS ap-southeast-2 (non-Netskope IP)",      value:  62, color: "#fb923c" },
+          { label: "Ransomware-like behaviour in OneDrive (API Connector)",  value:  54, color: "#ef4444" },
+          { label: "Spike of 20 encrypted files uploaded (API)",             value:  48, color: "#f59e0b" },
+          { label: "Spike of 24 malware files uploaded (API)",               value:  20, color: "#ef4444" },
+        ],
+        insight: "UCI threshold alerts (187) and Bulk Failed Logins (143) together account for 37% of UBA volume — both are high-fidelity credential compromise indicators. Ransomware-like behaviour in OneDrive (54 alerts) is the most critical finding: any confirmed ransomware activity in a cloud drive can propagate across synced devices. Prioritize these 54 alerts for immediate investigation." },
+
+      { type: "hbar", size: "full", title: "Top Applications Generating UBA Alerts",
+        bars: [
+          { label: "Microsoft SharePoint Online",              value: 198, color: "#0ea5e9" },
+          { label: "Microsoft OneDrive for Business",          value: 187, color: "#0ea5e9" },
+          { label: "Parallel Search MCP",                      value: 156, color: "#ef4444" },
+          { label: "Microsoft Teams",                          value: 112, color: "#0ea5e9" },
+          { label: "Globalpinng MCP",                          value:  89, color: "#ef4444" },
+          { label: "Google Drive",                             value:  74, color: "#f59e0b" },
+          { label: "Amazon EC2",                               value:  69, color: "#fb923c" },
+        ],
+        insight: "Microsoft 365 apps (SharePoint, OneDrive, Teams) collectively generate 497 UBA alerts — 56% of total volume — reflecting their role as the primary data store and collaboration layer. Parallel Search MCP and Globalpinng MCP together account for 245 alerts, which is disproportionately high for tools that are not core productivity apps. MCP server UBA activity should be reviewed against expected usage patterns." },
+    ],
+    followUps: [
+      M("Which cloud apps have the poorest CCL rating?",        "destinations"),
+      M("Show top users with DLP violations",                   "top-users"),
+      M("Break down DLP alerts by severity",                    "top-users-daily"),
+      M("Show ransomware-like behaviour details",               "top-users-daily"),
+      M("Which users triggered UCI threshold alerts?",          "top-users"),
     ],
   },
 };
