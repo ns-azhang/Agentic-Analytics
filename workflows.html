@@ -999,16 +999,6 @@ const DASHBOARDS = {
         ],
         insight: "82% of accessed cloud apps are unmanaged — no sanctioned policy, DLP rule, or lifecycle management applied. Only 18% (31 apps) are under IT control. This 139-app unmanaged tail is the primary shadow-IT risk surface and the source of most DLP and UBA alert volume." },
 
-      { type: "table", size: "half", title: "Risky Apps — Monthly App Count",
-        columns: ["Month", "# Apps Accessed", "% Change"],
-        rows: [
-          ["2026-03", "44", "—"],
-          ["2026-04", "79", "+80%"],
-          ["2026-05", "44", "−44%"],
-          ["2026-06", "38", "−14%"],
-        ],
-        insight: "Risky app usage spiked 80% in April (44→79), then declined in May and June. The April surge likely reflects new GenAI tool exploration. The downward trend in May–June may indicate early policy enforcement reducing access, or seasonal usage patterns — monitor July to confirm direction." },
-
       { type: "line", size: "full", title: "Trend of Uploads to Non-Enterprise Apps by CCL — last 90 days",
         series: [
           { name: "Poor CCL",   color: "#ef4444", values: [3,10,45,23,11,15,0,29,10,424,88,149,68] },
