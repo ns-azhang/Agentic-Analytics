@@ -4747,8 +4747,10 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
         <div className="w-full">
           <PromptInput onSend={onSend} busy={busy} libraryItems={libraryItems} />
         </div>
-        <div className="flex items-center justify-center gap-3 max-w-2xl">
-          {Object.values(PERSONAS).map(p => {
+        <div className="flex flex-col items-center gap-3 w-full max-w-2xl">
+          {[["luke","tim","david"],["ciso","secleader","genaiadmin"]].map((row, ri) => (
+          <div key={ri} className="flex items-center justify-center gap-3 w-full">
+          {row.map(id => { const p = PERSONAS[id]; if (!p) return null;
             const PERSONA_ICONS = {
               luke: (
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
@@ -4816,6 +4818,8 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
               </button>
             );
           })}
+          </div>
+          ))}
         </div>
       </div>
     </div>
