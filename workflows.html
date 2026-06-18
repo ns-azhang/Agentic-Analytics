@@ -391,6 +391,9 @@ const DASHBOARD_ITEMS = [
   { folder: "SOC", items: [
     { dashboardId: "soc-dlp-monitoring", title: "DLP Incident Monitoring",  desc: "Policy violations, top policies, apps and DLP rules" },
   ]},
+  { folder: "CISO", items: [
+    { dashboardId: "ciso-overview", title: "CISO", desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025" },
+  ]},
 ];
 
 /* Pre-built Wisdom Agents available from the top control bar. Each agent is
@@ -791,6 +794,165 @@ const DASHBOARDS = {
       M("Who are the top users behind the unsanctioned cloud storage alerts?", "soc-weekly-storage-users"),
       M("Break down incidents by category",                                "soc-weekly-categories"),
       M("Show top apps generating alerts",                                 "soc-weekly-top-apps"),
+    ],
+  },
+
+  "ciso-overview": {
+    title: "CISO",
+    description: "Executive security overview — alerts, DLP, threats, policy violations, network traffic, and risky applications for June 2025.",
+    summary: "June 2025 security posture: 56,092 total alerts (+167% vs. May), driven primarily by Security Assessment events (69%). DLP violations reached 1,211 (+226%), with Generative AI as the top category. Policy violations hit 25,761 (+200%), led by web blocking rules. Threat signals remain low — 10 malware alerts and 37 malicious site alerts. Network traffic is healthy with blocked traffic a fraction of allowed. iCloud Drive is the top unsanctioned application by data volume.",
+    examplePrompts: [
+      M("Break down the 56,092 alerts by type",          "ciso-alert-breakdown"),
+      M("Which DLP categories are driving the spike?",   "ciso-dlp-detail"),
+      M("Show top policy violations this period",        "ciso-policy-detail"),
+    ],
+    widgets: [
+      { type: "kpi", size: "full", kpis: [
+        { label: "Total Alerts (Jun)",        value: "56,092",  delta: "+167%", deltaDir: "up", invertColor: true, neutral: true },
+        { label: "Policies Triggered",        value: "98",      delta: "+10%",  deltaDir: "up", invertColor: true },
+        { label: "Users Protected",           value: "81",      delta: "+35%",  deltaDir: "up" },
+        { label: "Applications Accessed",     value: "112",     delta: "+27%",  deltaDir: "up" },
+      ], insight: "Total alerts more than doubled versus May — the 167% jump is dominated by Security Assessment events (69% of volume) rather than DLP or malware, suggesting increased policy scanning coverage rather than a deteriorating threat posture. Users and applications both grew 35%+ reflecting broader adoption." },
+
+      { type: "donut", size: "half", title: "Total Alerts Breakdown by Type — Jun 2025",
+        slices: [
+          { label: "Security Assessment", value: 38772, color: "#0ea5e9" },
+          { label: "Policy",              value: 14270, color: "#6366f1" },
+          { label: "DLP",                 value:  2966, color: "#f59e0b" },
+          { label: "Malware",             value:    50, color: "#ef4444" },
+          { label: "Malsite",             value:     6, color: "#f43f5e" },
+          { label: "Compromised Cred.",   value:     1, color: "#7c3aed" },
+        ],
+        insight: "Security Assessment events (69%) dominate total alert volume — these are largely automated scan findings rather than active threats. Policy alerts (25%) and DLP (5%) are the two actionable categories requiring analyst review. Malware and malsite signals together account for less than 0.1% of volume." },
+
+      { type: "line", size: "half", title: "Trend of Threats & Adoption — past 12 weeks",
+        series: [
+          { name: "Threats",      color: "#ef4444", values: [4200, 3800, 11200, 8400, 5100, 4700, 6300, 7800, 9200, 8600, 12400, 10800] },
+          { name: "Policies",     color: "#6366f1", values: [42, 38, 61, 55, 48, 44, 52, 57, 63, 59, 71, 68] },
+          { name: "Users",        color: "#0ea5e9", values: [52, 54, 58, 61, 59, 62, 65, 68, 71, 74, 78, 81] },
+          { name: "Applications", color: "#10b981", values: [78, 81, 85, 88, 86, 90, 94, 98, 103, 107, 109, 112] },
+        ],
+        xLabels: ["Mar 23","Mar 30","Apr 6","Apr 13","Apr 20","Apr 27","May 4","May 11","May 18","May 25","Jun 1","Jun 8"],
+        anomalies: [],
+        insight: "Threat volume spiked the week of Apr 6 (+195% vs. prior week) then partially recovered, before climbing again through June. Users and Applications show steady organic growth. Policy count grew 79% over 12 weeks, indicating active security rule expansion keeping pace with adoption." },
+
+      { type: "kpi", size: "full", kpis: [
+        { label: "DLP Violations (Jun)", value: "1,211", delta: "+226%", deltaDir: "up", invertColor: true },
+      ], insight: "DLP violations tripled versus May — the sharpest month-over-month increase across all alert categories. Generative AI is the top DLP category, indicating employees are submitting sensitive data to AI tools. Immediate review of GenAI DLP policy scope and enforcement action is recommended." },
+
+      { type: "hbar", size: "half", title: "Top Categories by # of DLP Alerts",
+        bars: [
+          { label: "Generative AI",  value: 612, color: "#f59e0b" },
+          { label: "Cloud Storage",  value: 298, color: "#0ea5e9" },
+          { label: "Technology",     value: 145 },
+          { label: "Webmail",        value:  89 },
+          { label: "Collaboration",  value:  52 },
+          { label: "Security",       value:  15 },
+        ],
+        insight: "Generative AI is the top DLP category at 612 alerts — twice the volume of Cloud Storage (298). This likely reflects employees pasting or uploading sensitive documents into AI tools like ChatGPT or Copilot. A targeted GenAI DLP policy with contextual coaching would address the majority of violations." },
+
+      { type: "line", size: "half", title: "Trend of DLP Alerts — past 90 days",
+        series: [
+          { name: "Browser Access",     color: "#6366f1", values: [18,22,19,25,21,28,24,31,27,34,29,38,33,42,38,48,43,55,48,62,54,71,63,79,68,88,74,95,82,104,91,112,98,128,108,142,121,158,134,172,148,188,162,201,178,214] },
+          { name: "API Connector",      color: "#0ea5e9", values: [8,9,8,11,9,12,10,14,12,16,13,18,15,21,17,24,19,27,22,31,25,34,28,38,31,42,34,47,38,51,42,56,46,62,51,68,56,74,62,81,68,88,74,95,81,104] },
+          { name: "Explicit Proxy",     color: "#10b981", values: [4,5,4,6,5,7,5,8,6,9,7,11,8,12,9,14,10,16,11,18,13,20,14,23,16,25,17,28,19,31,21,34,23,38,25,41,28,45,31,49,34,53,37,58,40,63] },
+          { name: "CASB API",           color: "#f59e0b", values: [2,2,2,3,2,3,2,4,3,4,3,5,3,6,4,7,4,8,5,9,5,10,6,12,6,13,7,14,8,16,8,17,9,19,10,21,11,23,12,25,14,27,15,30,16,32,18,35] },
+        ],
+        xLabels: Array.from({length: 46}, (_, i) => i % 7 === 0 ? ["Mar 23","Mar 30","Apr 6","Apr 13","Apr 20","Apr 27","May 4","May 11","May 18","May 25","Jun 1","Jun 8","Jun 15"][Math.floor(i/7)] : ""),
+        anomalies: [{ index: 13, value: 42, label: "Apr spike" }],
+        insight: "DLP alert volume has climbed steadily since late March, with Browser Access as the dominant access method. The Apr 6–13 spike (+85% week-over-week) aligns with a policy expansion. The Jun 15 week shows the highest weekly DLP volume this quarter across all access methods." },
+
+      { type: "kpi", size: "full", kpis: [
+        { label: "Malware Alerts (Jun)",       value: "10",  delta: "+11%", deltaDir: "up", invertColor: true },
+        { label: "Malicious Site Alerts (Jun)", value: "37", delta: "+68%", deltaDir: "up", invertColor: true },
+      ], insight: "Threat signals remain low in absolute terms — 10 malware and 37 malicious site alerts for the month. The 68% rise in malicious site alerts warrants monitoring but is not yet at incident threshold. Prohibited Websites category dominates malsite alerts, suggesting blocked browsing attempts rather than successful compromises." },
+
+      { type: "hbar", size: "half", title: "Top Categories by # of Malware Alerts",
+        bars: [
+          { label: "Web Design",             value: 4, color: "#6366f1" },
+          { label: "Technology",             value: 3, color: "#0ea5e9" },
+          { label: "Web Hosting / ISP",      value: 2, color: "#10b981" },
+          { label: "Phishing",               value: 1, color: "#ef4444" },
+        ],
+        insight: "Web Design and Technology categories account for 70% of malware alerts — likely drive-by download attempts on legitimate-looking sites. The single Phishing alert should be triaged as a priority; phishing-delivered malware has the highest breach conversion rate." },
+
+      { type: "hbar", size: "half", title: "Top Categories by # of Malicious Site Alerts",
+        bars: [
+          { label: "Prohibited Websites",         value: 38, color: "#ef4444" },
+          { label: "Malware Distribution Point",  value:  8, color: "#f43f5e" },
+          { label: "Phish Site",                  value:  4, color: "#7c3aed" },
+          { label: "Malicious Site",              value:  2, color: "#f59e0b" },
+        ],
+        insight: "Prohibited Websites (38) make up the bulk of malsite alerts — these are policy-blocked navigation attempts, not confirmed infections. Malware Distribution Points (8) and Phish Sites (4) are higher-severity and should be cross-referenced against user session logs to confirm no successful page loads occurred." },
+
+      { type: "kpi", size: "full", kpis: [
+        { label: "Policy Violations (Jun)", value: "25,761", delta: "+200%", deltaDir: "up", invertColor: true },
+      ], insight: "Policy violations tripled versus May — the largest absolute increase of any category this period. [Web] Block DoH accounts for 38% of all policy violations alone, indicating widespread DNS-over-HTTPS usage that is being intercepted. Reviewing whether this policy should remain block vs. alert-only would significantly reduce noise." },
+
+      { type: "hbar", size: "full", title: "Top Policies Triggered — Jun 2025",
+        bars: [
+          { label: "[Web] Block DoH",                  value: 9847, color: "#ef4444" },
+          { label: "[Web] Silent Block",               value: 3201, color: "#f59e0b" },
+          { label: "[Web] Policy coaching",            value: 2108, color: "#6366f1" },
+          { label: "[Enterprise Browser] Restriction", value: 1847, color: "#0ea5e9" },
+          { label: "[Web] Block sites",                value: 1203, color: "#ef4444" },
+          { label: "[Context DLP] High sensitivity",   value:  892, color: "#f59e0b" },
+          { label: "[Enterprise Browser] Block",       value:  741, color: "#ef4444" },
+          { label: "[Context DLP] Low sensitivity",    value:  618, color: "#fbbf24" },
+          { label: "[AccessControl] Restrict",         value:  502, color: "#94a3b8" },
+          { label: "[EmailSecurity] Block",            value:  387, color: "#ef4444" },
+        ],
+        insight: "[Web] Block DoH at 9,847 hits is the single noisiest policy — DNS-over-HTTPS blocking generates high volume with low actionable signal. [Context DLP] High sensitivity (892) and [EmailSecurity] Block (387) are the highest-fidelity signals and should be the focus of analyst triage." },
+
+      { type: "line", size: "half", title: "Trend of Allowed / Blocked Traffic — past 90 days",
+        series: [
+          { name: "Allowed Traffic (GB)",  color: "#10b981", values: [38,42,35,48,41,52,44,56,47,58,49,62,52,65,55,68,58,71,60,74,63,76,65,79,67,82,70,85,72,87,74,89,76,91,78,93,80,95,82,97,84,99,62,45,38,52] },
+          { name: "Blocked Traffic (GB)",  color: "#ef4444", values: [0.04,0.05,0.03,0.06,0.04,0.07,0.05,0.08,0.06,0.08,0.06,0.09,0.07,0.09,0.07,0.10,0.08,0.10,0.08,0.11,0.09,0.11,0.09,0.11,0.09,0.12,0.10,0.12,0.10,0.12,0.10,0.13,0.11,0.13,0.11,0.13,0.11,0.14,0.12,0.14,0.12,0.14,0.09,0.07,0.06,0.08].map(v => Math.round(v * 100)) },
+        ],
+        xLabels: Array.from({length: 46}, (_, i) => i % 7 === 0 ? ["Mar 23","Apr 6","Apr 20","May 4","May 18","Jun 1","Jun 15"][Math.floor(i/7)] : ""),
+        anomalies: [],
+        insight: "Allowed traffic has grown steadily from ~38 GB/week in late March to ~95 GB/week in early June — a 150% increase reflecting user and application growth. Blocked traffic remains below 0.15 GB/week throughout, confirming that security controls are intercepting policy violations without impacting legitimate traffic flow." },
+
+      { type: "hbar", size: "half", title: "Allowed vs. Blocked by Site Category",
+        bars: [
+          { label: "Online Ads",             value: 98,  color: "#ef4444" },
+          { label: "Prohibited Websites",    value: 94,  color: "#ef4444" },
+          { label: "Non-business use",       value: 71,  color: "#f59e0b" },
+          { label: "Cloud Storage",          value: 45,  color: "#10b981" },
+          { label: "Webmail",                value: 38,  color: "#10b981" },
+          { label: "Technology",             value: 34,  color: "#10b981" },
+          { label: "Generative AI",          value: 29,  color: "#f59e0b" },
+          { label: "Weapons",                value: 22,  color: "#ef4444" },
+          { label: "Security",               value: 18,  color: "#10b981" },
+        ],
+        insight: "Online Ads and Prohibited Websites have the highest block rates (~95%+). Cloud Storage, Webmail, and Technology are predominantly allowed — consistent with business use. Generative AI sits at a mixed allow/block ratio, indicating selective policy enforcement rather than a blanket rule." },
+
+      { type: "hbar", size: "half", title: "Top 5 Unsanctioned Applications by Data Volume",
+        bars: [
+          { label: "iCloud Drive",  value: 582, color: "#ef4444" },
+          { label: "YouTube",       value:  48, color: "#f59e0b" },
+          { label: "CNN",           value:  12, color: "#94a3b8" },
+          { label: "BBC",           value:   9, color: "#94a3b8" },
+          { label: "EL UNIVERSAL",  value:   4, color: "#94a3b8" },
+        ],
+        insight: "iCloud Drive dominates unsanctioned app traffic at 5.82 GB total — 12× the next application. This volume is consistent with automated device backup rather than targeted data exfiltration, but warrants review. YouTube, CNN, and BBC are low-risk consumer media sites with minimal data upload." },
+
+      { type: "hbar", size: "half", title: "Top 5 Unsanctioned Categories by Risk Rating",
+        bars: [
+          { label: "Cloud Storage",                     value: 582, color: "#ef4444" },
+          { label: "Streaming & Downloadable Video",    value:  48, color: "#f59e0b" },
+          { label: "News & Media",                      value:  25, color: "#fbbf24" },
+          { label: "Professional Networking",           value:  14, color: "#f59e0b" },
+          { label: "Generative AI",                     value:  11, color: "#ef4444" },
+        ],
+        insight: "Cloud Storage (poor CCL) and Generative AI (poor CCL) are the two highest-risk unsanctioned categories. Together they represent the primary data exfiltration and IP leakage surface. Professional Networking (LinkedIn-class apps) is medium risk — sensitive profile data and recruitment contacts are the typical concern." },
+    ],
+    followUps: [
+      M("Break down the 56,092 alerts by type",          "ciso-alert-breakdown"),
+      M("Which DLP categories are driving the spike?",   "ciso-dlp-detail"),
+      M("Show top policy violations this period",        "ciso-policy-detail"),
+      M("Show top unsanctioned apps by risk",            "destinations"),
+      M("Who are the top users behind these alerts?",    "top-users"),
     ],
   },
 };
