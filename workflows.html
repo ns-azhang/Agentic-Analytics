@@ -1779,6 +1779,12 @@ const PERSONAS = {
             greeting: "Good afternoon, Tim.",    subtitle: "Track where confidential data is moving, which destinations are risky, and what to block.",       scope: "Data movement scope" },
   david:  { id: "david",  name: "David Chen",    firstName: "David",  role: "Risky User Behaviors",     initials: "DC", bg: "#e0e7ff", fg: "#3730a3",
             greeting: "Good afternoon, David.",  subtitle: "Identify users generating the most incidents, analyze patterns, and prioritize coaching.",         scope: "Risky User Behaviors scope" },
+  ciso:         { id: "ciso",         name: "CISO",            firstName: "CISO",           role: "CISO",             initials: "CS", bg: "#dcfce7", fg: "#166534",
+                  greeting: "Good afternoon.",  subtitle: "Executive security overview — alerts, DLP, threats, policy violations, and network traffic.",  scope: "Executive scope" },
+  secleader:    { id: "secleader",    name: "Security Leader", firstName: "Security Leader", role: "Security Analyst", initials: "SL", bg: "#f3e8ff", fg: "#6b21a8",
+                  greeting: "Good afternoon.",  subtitle: "Cloud app discovery, DLP violations, malware, and user behavior analytics.",                   scope: "Security analyst scope" },
+  genaiadmin:   { id: "genaiadmin",   name: "GenAI Admin",     firstName: "GenAI Admin",     role: "GenAI Admin",      initials: "GA", bg: "#cffafe", fg: "#0e7490",
+                  greeting: "Good afternoon.",  subtitle: "AI app usage, policy controls, coaching, and web traffic across the organization.",            scope: "GenAI admin scope" },
 };
 
 /* Quick Actions per role. Each role gets 4–6 cards aligned with that role's
@@ -4773,6 +4779,35 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
                   <path d="M23 23v-1.5a1.5 1.5 0 013 0V23" stroke="#3730a3" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               ),
+              ciso: (
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
+                  <rect width="40" height="40" rx="10" fill="#dcfce7"/>
+                  <path d="M20 10l2.5 7h7.5l-6 4.5 2.5 7L20 24l-6.5 4.5 2.5-7L10 17h7.5z" fill="#166534" opacity="0.15"/>
+                  <path d="M20 10l2.5 7h7.5l-6 4.5 2.5 7L20 24l-6.5 4.5 2.5-7L10 17h7.5z" stroke="#166534" strokeWidth="1.5" strokeLinejoin="round"/>
+                </svg>
+              ),
+              secleader: (
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
+                  <rect width="40" height="40" rx="10" fill="#f3e8ff"/>
+                  <circle cx="20" cy="16" r="5" stroke="#6b21a8" strokeWidth="1.5"/>
+                  <path d="M11 31c0-4.97 4.03-9 9-9s9 4.03 9 9" stroke="#6b21a8" strokeWidth="1.5" strokeLinecap="round"/>
+                  <path d="M24 13l2 2-2 2" stroke="#6b21a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ),
+              genaiadmin: (
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
+                  <rect width="40" height="40" rx="10" fill="#cffafe"/>
+                  <circle cx="20" cy="20" r="5" stroke="#0e7490" strokeWidth="1.5"/>
+                  <circle cx="20" cy="11" r="2" fill="#0e7490"/>
+                  <circle cx="20" cy="29" r="2" fill="#0e7490"/>
+                  <circle cx="11" cy="20" r="2" fill="#0e7490"/>
+                  <circle cx="29" cy="20" r="2" fill="#0e7490"/>
+                  <line x1="20" y1="13" x2="20" y2="15" stroke="#0e7490" strokeWidth="1.5"/>
+                  <line x1="20" y1="25" x2="20" y2="27" stroke="#0e7490" strokeWidth="1.5"/>
+                  <line x1="13" y1="20" x2="15" y2="20" stroke="#0e7490" strokeWidth="1.5"/>
+                  <line x1="25" y1="20" x2="27" y2="20" stroke="#0e7490" strokeWidth="1.5"/>
+                </svg>
+              ),
             };
             return (
               <button key={p.id} onClick={() => onChangePersona(p.id)}
@@ -5187,7 +5222,7 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
   const containerRef = useRef(null);
   const [chatWidth, setChatWidth] = useState(420);
   const [dragging, setDragging] = useState(false);
-  const isSecurityLeader = personaId === "luke" || personaId === "tim" || personaId === "david";
+  const isSecurityLeader = personaId === "luke" || personaId === "tim" || personaId === "david" || personaId === "ciso" || personaId === "secleader" || personaId === "genaiadmin";
   const [chatOpen, setChatOpen] = useState(true);
   if (!dashboard) return null;
   const isEmpty = messages.length === 0 && !loading;
@@ -5347,9 +5382,12 @@ function App() {
     setMessages([]);
     setShowWelcome(false);
     const DEFAULT_DASHBOARD_BY_PERSONA = {
-      luke: { dashboardId: "soc-dlp-monitoring", title: "DLP Incident Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
-      tim:   { dashboardId: "dlp-destinations", title: "Sensitive Data Movement", desc: "Destinations, file types, sanctioned trend" },
-      david: { dashboardId: "dlp-users",        title: "Risky User Behaviors",               desc: "Top users, baseline, month comparison" },
+      luke:       { dashboardId: "soc-dlp-monitoring", title: "DLP Incident Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
+      tim:        { dashboardId: "dlp-destinations",   title: "Sensitive Data Movement",  desc: "Destinations, file types, sanctioned trend" },
+      david:      { dashboardId: "dlp-users",          title: "Risky User Behaviors",     desc: "Top users, baseline, month comparison" },
+      ciso:       { dashboardId: "ciso-overview",      title: "CISO",                     desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025" },
+      secleader:  { dashboardId: "security-analyst",   title: "Security Analyst",         desc: "Cloud app discovery, DLP, threats, UBA · last 90 days" },
+      genaiadmin: { dashboardId: "genai-admin",        title: "GenAI Admin",              desc: "AI app usage, policies, web traffic · last 90 days" },
     };
     const defaultItem = DEFAULT_DASHBOARD_BY_PERSONA[id] || null;
     setActiveDashboard(defaultItem);
