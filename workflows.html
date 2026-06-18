@@ -822,12 +822,12 @@ const DASHBOARDS = {
 
       { type: "donut", size: "half", title: "Total Alerts Breakdown by Type — Jun 2025",
         slices: [
-          { label: "Security Assessment", value: 38772, color: "#0ea5e9" },
-          { label: "Policy",              value: 14270, color: "#6366f1" },
-          { label: "DLP",                 value:  2966, color: "#f59e0b" },
-          { label: "Malware",             value:    50, color: "#ef4444" },
-          { label: "Malsite",             value:     6, color: "#f43f5e" },
-          { label: "Compromised Cred.",   value:     1, color: "#7c3aed" },
+          { label: "Security Assessment", value: 38772, color: "#0ea5e9", drill: { text: "Show top users generating Security Assessment events", id: "ciso-type-secassess" } },
+          { label: "Policy",              value: 14270, color: "#6366f1", drill: { text: "Show top policy violations this period", id: "ciso-policy-detail" } },
+          { label: "DLP",                 value:  2966, color: "#f59e0b", drill: { text: "Which DLP categories are driving the spike?", id: "ciso-dlp-detail" } },
+          { label: "Malware",             value:    50, color: "#ef4444", drill: { text: "Show malware alert details", id: "ciso-malware-detail" } },
+          { label: "Malsite",             value:     6, color: "#f43f5e", drill: { text: "Show malicious site alert details", id: "ciso-malsite-detail" } },
+          { label: "Compromised Cred.",   value:     1, color: "#7c3aed", drill: { text: "Show compromised credential event details", id: "ciso-type-compromised" } },
         ],
         insight: "Security Assessment events (69%) dominate total alert volume — these are largely automated scan findings rather than active threats. Policy alerts (25%) and DLP (5%) are the two actionable categories requiring analyst review. Malware and malsite signals together account for less than 0.1% of volume." },
 
@@ -848,12 +848,12 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "half", title: "Top Categories by # of DLP Alerts",
         bars: [
-          { label: "Generative AI",  value: 612, color: "#f59e0b" },
-          { label: "Cloud Storage",  value: 298, color: "#0ea5e9" },
-          { label: "Technology",     value: 145 },
-          { label: "Webmail",        value:  89 },
-          { label: "Collaboration",  value:  52 },
-          { label: "Security",       value:  15 },
+          { label: "Generative AI",  value: 612, color: "#f59e0b", drill: { text: "Show top GenAI DLP violators", id: "ciso-dlp-genai" } },
+          { label: "Cloud Storage",  value: 298, color: "#0ea5e9", drill: { text: "Show top Cloud Storage DLP violators", id: "ciso-dlp-cloudstorage" } },
+          { label: "Technology",     value: 145, drill: { text: "Show Technology DLP violations", id: "ciso-dlp-tech" } },
+          { label: "Webmail",        value:  89, drill: { text: "Show Webmail DLP violations", id: "ciso-dlp-webmail" } },
+          { label: "Collaboration",  value:  52, drill: { text: "Show Collaboration DLP violations", id: "ciso-dlp-collab" } },
+          { label: "Security",       value:  15, drill: { text: "Show Security tool DLP violations", id: "ciso-dlp-security" } },
         ],
         insight: "Generative AI is the top DLP category at 612 alerts — twice the volume of Cloud Storage (298). This likely reflects employees pasting or uploading sensitive documents into AI tools like ChatGPT or Copilot. A targeted GenAI DLP policy with contextual coaching would address the majority of violations." },
 
@@ -875,19 +875,19 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "half", title: "Top Categories by # of Malware Alerts",
         bars: [
-          { label: "Web Design",             value: 4, color: "#6366f1" },
-          { label: "Technology",             value: 3, color: "#0ea5e9" },
-          { label: "Web Hosting / ISP",      value: 2, color: "#10b981" },
-          { label: "Phishing",               value: 1, color: "#ef4444" },
+          { label: "Web Design",             value: 4, color: "#6366f1", drill: { text: "Show Web Design malware sites", id: "ciso-malware-webdesign" } },
+          { label: "Technology",             value: 3, color: "#0ea5e9", drill: { text: "Show Technology malware sites", id: "ciso-malware-tech" } },
+          { label: "Web Hosting / ISP",      value: 2, color: "#10b981", drill: { text: "Show Web Hosting malware sites", id: "ciso-malware-hosting" } },
+          { label: "Phishing",               value: 1, color: "#ef4444", drill: { text: "Show Phishing malware detail", id: "ciso-malware-phishing" } },
         ],
         insight: "Web Design and Technology categories account for 70% of malware alerts — likely drive-by download attempts on legitimate-looking sites. The single Phishing alert should be triaged as a priority; phishing-delivered malware has the highest breach conversion rate." },
 
       { type: "hbar", size: "half", title: "Top Categories by # of Malicious Site Alerts",
         bars: [
-          { label: "Prohibited Websites",         value: 38, color: "#ef4444" },
-          { label: "Malware Distribution Point",  value:  8, color: "#f43f5e" },
-          { label: "Phish Site",                  value:  4, color: "#7c3aed" },
-          { label: "Malicious Site",              value:  2, color: "#f59e0b" },
+          { label: "Prohibited Websites",         value: 38, color: "#ef4444", drill: { text: "Show Prohibited Websites detail", id: "ciso-malsite-prohibited" } },
+          { label: "Malware Distribution Point",  value:  8, color: "#f43f5e", drill: { text: "Show Malware Distribution Point sites", id: "ciso-malsite-malwaredist" } },
+          { label: "Phish Site",                  value:  4, color: "#7c3aed", drill: { text: "Show Phish Site details", id: "ciso-malsite-phishsite" } },
+          { label: "Malicious Site",              value:  2, color: "#f59e0b", drill: { text: "Show Malicious Site details", id: "ciso-malsite-malicious" } },
         ],
         insight: "Prohibited Websites (38) make up the bulk of malsite alerts — these are policy-blocked navigation attempts, not confirmed infections. Malware Distribution Points (8) and Phish Sites (4) are higher-severity and should be cross-referenced against user session logs to confirm no successful page loads occurred." },
 
@@ -897,16 +897,16 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "full", title: "Top Policies Triggered — Jun 2025",
         bars: [
-          { label: "[Web] Block DoH",                  value: 9847, color: "#ef4444" },
-          { label: "[Web] Silent Block",               value: 3201, color: "#f59e0b" },
-          { label: "[Web] Policy coaching",            value: 2108, color: "#6366f1" },
-          { label: "[Enterprise Browser] Restriction", value: 1847, color: "#0ea5e9" },
-          { label: "[Web] Block sites",                value: 1203, color: "#ef4444" },
-          { label: "[Context DLP] High sensitivity",   value:  892, color: "#f59e0b" },
-          { label: "[Enterprise Browser] Block",       value:  741, color: "#ef4444" },
-          { label: "[Context DLP] Low sensitivity",    value:  618, color: "#fbbf24" },
-          { label: "[AccessControl] Restrict",         value:  502, color: "#94a3b8" },
-          { label: "[EmailSecurity] Block",            value:  387, color: "#ef4444" },
+          { label: "[Web] Block DoH",                  value: 9847, color: "#ef4444", drill: { text: "Show top users triggering Block DoH", id: "ciso-pol-doh" } },
+          { label: "[Web] Silent Block",               value: 3201, color: "#f59e0b", drill: { text: "Show top users triggering Silent Block", id: "ciso-pol-silentblock" } },
+          { label: "[Web] Policy coaching",            value: 2108, color: "#6366f1", drill: { text: "Show users coached by this policy", id: "ciso-pol-coaching" } },
+          { label: "[Enterprise Browser] Restriction", value: 1847, color: "#0ea5e9", drill: { text: "Show Enterprise Browser restriction events", id: "ciso-pol-eb-restriction" } },
+          { label: "[Web] Block sites",                value: 1203, color: "#ef4444", drill: { text: "Show top users blocked by site policy", id: "ciso-pol-blocksites" } },
+          { label: "[Context DLP] High sensitivity",   value:  892, color: "#f59e0b", drill: { text: "Show Context DLP High sensitivity violations", id: "ciso-pol-ctxdlp-high" } },
+          { label: "[Enterprise Browser] Block",       value:  741, color: "#ef4444", drill: { text: "Show Enterprise Browser block events", id: "ciso-pol-eb-block" } },
+          { label: "[Context DLP] Low sensitivity",    value:  618, color: "#fbbf24", drill: { text: "Show Context DLP Low sensitivity violations", id: "ciso-pol-ctxdlp-low" } },
+          { label: "[AccessControl] Restrict",         value:  502, color: "#94a3b8", drill: { text: "Show AccessControl restriction events", id: "ciso-pol-accessctrl" } },
+          { label: "[EmailSecurity] Block",            value:  387, color: "#ef4444", drill: { text: "Show EmailSecurity blocked events", id: "ciso-pol-emailsec" } },
         ],
         insight: "[Web] Block DoH at 9,847 hits is the single noisiest policy — DNS-over-HTTPS blocking generates high volume with low actionable signal. [Context DLP] High sensitivity (892) and [EmailSecurity] Block (387) are the highest-fidelity signals and should be the focus of analyst triage." },
 
@@ -921,35 +921,35 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "half", title: "Allowed vs. Blocked by Site Category",
         bars: [
-          { label: "Online Ads",             value: 98,  color: "#ef4444" },
-          { label: "Prohibited Websites",    value: 94,  color: "#ef4444" },
-          { label: "Non-business use",       value: 71,  color: "#f59e0b" },
-          { label: "Cloud Storage",          value: 45,  color: "#10b981" },
-          { label: "Webmail",                value: 38,  color: "#10b981" },
-          { label: "Technology",             value: 34,  color: "#10b981" },
-          { label: "Generative AI",          value: 29,  color: "#f59e0b" },
-          { label: "Weapons",                value: 22,  color: "#ef4444" },
-          { label: "Security",               value: 18,  color: "#10b981" },
+          { label: "Online Ads",             value: 98,  color: "#ef4444", drill: { text: "Show users blocked for Online Ads", id: "ciso-cat-online-ads" } },
+          { label: "Prohibited Websites",    value: 94,  color: "#ef4444", drill: { text: "Show users blocked for Prohibited Websites", id: "ciso-cat-prohibited" } },
+          { label: "Non-business use",       value: 71,  color: "#f59e0b", drill: { text: "Show Non-business use access events", id: "ciso-cat-nonbiz" } },
+          { label: "Cloud Storage",          value: 45,  color: "#10b981", drill: { text: "Show Cloud Storage traffic detail", id: "ciso-cat-cloudstorage-traffic" } },
+          { label: "Webmail",                value: 38,  color: "#10b981", drill: { text: "Show Webmail traffic detail", id: "ciso-cat-webmail-traffic" } },
+          { label: "Technology",             value: 34,  color: "#10b981", drill: { text: "Show Technology site traffic", id: "ciso-cat-tech-traffic" } },
+          { label: "Generative AI",          value: 29,  color: "#f59e0b", drill: { text: "Show Generative AI site traffic", id: "ciso-cat-genai-traffic" } },
+          { label: "Weapons",                value: 22,  color: "#ef4444", drill: { text: "Show Weapons category blocks", id: "ciso-cat-weapons" } },
+          { label: "Security",               value: 18,  color: "#10b981", drill: { text: "Show Security site traffic", id: "ciso-cat-security-traffic" } },
         ],
         insight: "Online Ads and Prohibited Websites have the highest block rates (~95%+). Cloud Storage, Webmail, and Technology are predominantly allowed — consistent with business use. Generative AI sits at a mixed allow/block ratio, indicating selective policy enforcement rather than a blanket rule." },
 
       { type: "hbar", size: "half", title: "Top 5 Unsanctioned Applications by Data Volume",
         bars: [
-          { label: "iCloud Drive",  value: 582, color: "#ef4444" },
-          { label: "YouTube",       value:  48, color: "#f59e0b" },
-          { label: "CNN",           value:  12, color: "#94a3b8" },
-          { label: "BBC",           value:   9, color: "#94a3b8" },
-          { label: "EL UNIVERSAL",  value:   4, color: "#94a3b8" },
+          { label: "iCloud Drive",  value: 582, color: "#ef4444", drill: { text: "Show iCloud Drive users and upload detail", id: "ciso-app-icloud" } },
+          { label: "YouTube",       value:  48, color: "#f59e0b", drill: { text: "Show YouTube access detail", id: "ciso-app-youtube" } },
+          { label: "CNN",           value:  12, color: "#94a3b8", drill: { text: "Show CNN access detail", id: "ciso-app-cnn" } },
+          { label: "BBC",           value:   9, color: "#94a3b8", drill: { text: "Show BBC access detail", id: "ciso-app-bbc" } },
+          { label: "EL UNIVERSAL",  value:   4, color: "#94a3b8", drill: { text: "Show EL UNIVERSAL access detail", id: "ciso-app-eluniversal" } },
         ],
         insight: "iCloud Drive dominates unsanctioned app traffic at 5.82 GB total — 12× the next application. This volume is consistent with automated device backup rather than targeted data exfiltration, but warrants review. YouTube, CNN, and BBC are low-risk consumer media sites with minimal data upload." },
 
       { type: "hbar", size: "half", title: "Top 5 Unsanctioned Categories by Risk Rating",
         bars: [
-          { label: "Cloud Storage",                     value: 582, color: "#ef4444" },
-          { label: "Streaming & Downloadable Video",    value:  48, color: "#f59e0b" },
-          { label: "News & Media",                      value:  25, color: "#fbbf24" },
-          { label: "Professional Networking",           value:  14, color: "#f59e0b" },
-          { label: "Generative AI",                     value:  11, color: "#ef4444" },
+          { label: "Cloud Storage",                     value: 582, color: "#ef4444", drill: { text: "Show unsanctioned Cloud Storage apps", id: "ciso-ucat-cloudstorage" } },
+          { label: "Streaming & Downloadable Video",    value:  48, color: "#f59e0b", drill: { text: "Show unsanctioned Streaming apps", id: "ciso-ucat-streaming" } },
+          { label: "News & Media",                      value:  25, color: "#fbbf24", drill: { text: "Show unsanctioned News & Media apps", id: "ciso-ucat-news" } },
+          { label: "Professional Networking",           value:  14, color: "#f59e0b", drill: { text: "Show unsanctioned Professional Networking apps", id: "ciso-ucat-profnet" } },
+          { label: "Generative AI",                     value:  11, color: "#ef4444", drill: { text: "Show unsanctioned Generative AI apps", id: "ciso-ucat-genai" } },
         ],
         insight: "Cloud Storage (poor CCL) and Generative AI (poor CCL) are the two highest-risk unsanctioned categories. Together they represent the primary data exfiltration and IP leakage surface. Professional Networking (LinkedIn-class apps) is medium risk — sensitive profile data and recruitment contacts are the typical concern." },
     ],
@@ -983,19 +983,19 @@ const DASHBOARDS = {
 
       { type: "donut", size: "half", title: "Cloud App Count by CCL Rating",
         slices: [
-          { label: "Poor",      value: 57, color: "#ef4444" },
-          { label: "High",      value: 47, color: "#10b981" },
-          { label: "Medium",    value: 44, color: "#f59e0b" },
-          { label: "Low",       value: 13, color: "#fb923c" },
-          { label: "Excellent", value:  6, color: "#0ea5e9" },
-          { label: "Unknown",   value:  3, color: "#94a3b8" },
+          { label: "Poor",      value: 57, color: "#ef4444", drill: { text: "Show all Poor CCL apps", id: "sa-ccl-poor" } },
+          { label: "High",      value: 47, color: "#10b981", drill: { text: "Show all High CCL apps", id: "sa-ccl-high" } },
+          { label: "Medium",    value: 44, color: "#f59e0b", drill: { text: "Show all Medium CCL apps", id: "sa-ccl-medium" } },
+          { label: "Low",       value: 13, color: "#fb923c", drill: { text: "Show all Low CCL apps", id: "sa-ccl-low" } },
+          { label: "Excellent", value:  6, color: "#0ea5e9", drill: { text: "Show all Excellent CCL apps", id: "sa-ccl-excellent" } },
+          { label: "Unknown",   value:  3, color: "#94a3b8", drill: { text: "Show apps with Unknown CCL", id: "sa-ccl-unknown" } },
         ],
         insight: "Poor CCL apps are the largest single segment at 33.5% (57 apps) — more than all excellent+high apps combined in terms of risk exposure. Medium CCL (44 apps, 25.9%) adds a second tier of moderate risk. Only 31.2% of apps rate high or excellent, indicating the majority of cloud usage falls outside enterprise-ready standards." },
 
       { type: "hbar", size: "half", title: "Managed vs. Unmanaged Applications",
         bars: [
-          { label: "Unmanaged (No)",  value: 139, color: "#ef4444" },
-          { label: "Managed (Yes)",   value:  31, color: "#10b981" },
+          { label: "Unmanaged (No)",  value: 139, color: "#ef4444", drill: { text: "Show top unmanaged apps by upload volume", id: "sa-managed-no" } },
+          { label: "Managed (Yes)",   value:  31, color: "#10b981", drill: { text: "Show all managed apps", id: "sa-managed-yes" } },
         ],
         insight: "82% of accessed cloud apps are unmanaged — no sanctioned policy, DLP rule, or lifecycle management applied. Only 18% (31 apps) are under IT control. This 139-app unmanaged tail is the primary shadow-IT risk surface and the source of most DLP and UBA alert volume." },
 
@@ -1011,29 +1011,29 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "full", title: "Top Non-Enterprise Cloud Categories by Upload Volume",
         bars: [
-          { label: "Generative AI",                    value: 7416, color: "#ef4444" },
-          { label: "Streaming & Downloadable Video",   value: 4438, color: "#f59e0b" },
-          { label: "Collaboration",                    value: 1423, color: "#fb923c" },
-          { label: "Technology",                       value:  867, color: "#6366f1" },
-          { label: "Chat, IM & Communication",         value:  648, color: "#0ea5e9" },
-          { label: "Cloud Storage",                    value:  490, color: "#ef4444" },
-          { label: "News & Media",                     value:  349, color: "#94a3b8" },
-          { label: "Customer Relationship Mgmt",       value:  155, color: "#94a3b8" },
-          { label: "Professional Networking",          value:  150, color: "#f59e0b" },
+          { label: "Generative AI",                    value: 7416, color: "#ef4444", drill: { text: "Show top Generative AI uploaders", id: "sa-upload-genai" } },
+          { label: "Streaming & Downloadable Video",   value: 4438, color: "#f59e0b", drill: { text: "Show top Streaming category uploaders", id: "sa-upload-streaming" } },
+          { label: "Collaboration",                    value: 1423, color: "#fb923c", drill: { text: "Show top Collaboration uploaders", id: "sa-upload-collaboration" } },
+          { label: "Technology",                       value:  867, color: "#6366f1", drill: { text: "Show top Technology category uploaders", id: "sa-upload-technology" } },
+          { label: "Chat, IM & Communication",         value:  648, color: "#0ea5e9", drill: { text: "Show top Chat/IM uploaders", id: "sa-upload-chat" } },
+          { label: "Cloud Storage",                    value:  490, color: "#ef4444", drill: { text: "Show top Cloud Storage uploaders", id: "sa-upload-cloudstorage" } },
+          { label: "News & Media",                     value:  349, color: "#94a3b8", drill: { text: "Show News & Media upload detail", id: "sa-upload-news" } },
+          { label: "Customer Relationship Mgmt",       value:  155, color: "#94a3b8", drill: { text: "Show CRM upload detail", id: "sa-upload-crm" } },
+          { label: "Professional Networking",          value:  150, color: "#f59e0b", drill: { text: "Show Professional Networking upload detail", id: "sa-upload-profnet" } },
         ],
         insight: "Generative AI dominates non-enterprise uploads at 7,416 MB — 67% more than Streaming (4,438 MB) and 5× the next category. This volume indicates employees are actively submitting files and data into AI tools. Combined with poor CCL ratings for most GenAI apps, this represents the highest-priority DLP risk vector." },
 
       /* ── High-Risk User Activities ───────────────────────────── */
       { type: "hbar", size: "full", title: "Top Unmanaged/Unsanctioned Apps — High-Risk Activities",
         bars: [
-          { label: "Amazon Systems Manager — Upload",  value: 312, color: "#ef4444" },
-          { label: "Google Gmail — Upload",            value: 289, color: "#f59e0b" },
-          { label: "Google Drive — Upload",            value: 241, color: "#f59e0b" },
-          { label: "Google Gemini — Upload",           value: 198, color: "#ef4444" },
-          { label: "Brave — Upload",                   value: 167, color: "#fb923c" },
-          { label: "Slack — Upload",                   value: 142, color: "#f59e0b" },
-          { label: "Google Calendar — Download",       value:  98, color: "#0ea5e9" },
-          { label: "ChatGPT — Upload",                 value:  87, color: "#ef4444" },
+          { label: "Amazon Systems Manager — Upload",  value: 312, color: "#ef4444", drill: { text: "Show Amazon Systems Manager upload users", id: "sa-act-amazon" } },
+          { label: "Google Gmail — Upload",            value: 289, color: "#f59e0b", drill: { text: "Show Gmail upload users", id: "sa-act-gmail" } },
+          { label: "Google Drive — Upload",            value: 241, color: "#f59e0b", drill: { text: "Show Google Drive upload users", id: "sa-act-gdrive" } },
+          { label: "Google Gemini — Upload",           value: 198, color: "#ef4444", drill: { text: "Show Google Gemini upload users", id: "sa-act-gemini" } },
+          { label: "Brave — Upload",                   value: 167, color: "#fb923c", drill: { text: "Show Brave browser upload users", id: "sa-act-brave" } },
+          { label: "Slack — Upload",                   value: 142, color: "#f59e0b", drill: { text: "Show Slack upload users", id: "sa-act-slack" } },
+          { label: "Google Calendar — Download",       value:  98, color: "#0ea5e9", drill: { text: "Show Google Calendar download users", id: "sa-act-gcalendar" } },
+          { label: "ChatGPT — Upload",                 value:  87, color: "#ef4444", drill: { text: "Show ChatGPT upload users", id: "sa-act-chatgpt" } },
         ],
         insight: "Upload is the dominant high-risk activity across all unmanaged apps. Amazon Systems Manager and Google Gemini are high-CCL-risk upload destinations. ChatGPT uploads (87 events, Allowed) are the highest-severity finding — sensitive data submitting to a public LLM with no data retention controls. Review whether existing policies are blocking or only alerting on GenAI uploads." },
 
@@ -1045,21 +1045,21 @@ const DASHBOARDS = {
 
       { type: "donut", size: "half", title: "DLP Policy Alerts by Severity",
         slices: [
-          { label: "Low",      value: 75, color: SEV.Low },
-          { label: "Critical", value: 12, color: SEV.Critical },
-          { label: "Medium",   value: 11, color: SEV.Medium },
-          { label: "High",     value:  2, color: SEV.High },
+          { label: "Low",      value: 75, color: SEV.Low,      drill: { text: "Show Low severity DLP violations", id: "sa-dsev-low" } },
+          { label: "Critical", value: 12, color: SEV.Critical, drill: { text: "Show Critical severity DLP violations", id: "sa-dsev-critical" } },
+          { label: "Medium",   value: 11, color: SEV.Medium,   drill: { text: "Show Medium severity DLP violations", id: "sa-dsev-medium" } },
+          { label: "High",     value:  2, color: SEV.High,     drill: { text: "Show High severity DLP violations", id: "sa-dsev-high" } },
         ],
         insight: "Low severity alerts dominate at 75% — largely automated scans and informational findings. However, 12.3% Critical severity is significant: at 1,664 total files that equates to ~204 critical DLP findings that require prioritized review. The 10.8% Medium and 1.8% High also warrant triage before policy tuning." },
 
       { type: "hbar", size: "half", title: "User Count by DLP Policy Action",
         bars: [
-          { label: "Block",                   value: 221, color: "#ef4444" },
-          { label: "Useralert (coaching)",    value:  27, color: "#f59e0b" },
-          { label: "Alert",                   value:  19, color: "#fb923c" },
-          { label: "Revoke public sharing",   value:   4, color: "#6366f1" },
-          { label: "Apply sensitivity label", value:   6, color: "#0ea5e9" },
-          { label: "Bypass",                  value:   2, color: "#94a3b8" },
+          { label: "Block",                   value: 221, color: "#ef4444", drill: { text: "Show users with Block action", id: "sa-dact-block" } },
+          { label: "Useralert (coaching)",    value:  27, color: "#f59e0b", drill: { text: "Show users receiving coaching", id: "sa-dact-useralert" } },
+          { label: "Alert",                   value:  19, color: "#fb923c", drill: { text: "Show users with Alert action", id: "sa-dact-alert" } },
+          { label: "Revoke public sharing",   value:   4, color: "#6366f1", drill: { text: "Show users with public sharing revoked", id: "sa-dact-revoke" } },
+          { label: "Apply sensitivity label", value:   6, color: "#0ea5e9", drill: { text: "Show users with sensitivity labels applied", id: "sa-dact-label" } },
+          { label: "Bypass",                  value:   2, color: "#94a3b8", drill: { text: "Show users who bypassed policy", id: "sa-dact-bypass" } },
         ],
         insight: "Block is the most common policy action (221 users) — indicating aggressive enforcement is already in place for the majority of DLP violations. 27 users received coaching (useralert), which is the recommended intervention for Low/Medium severity. The 2 bypass users warrant investigation to confirm bypass authorization is valid." },
 
@@ -1148,28 +1148,28 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "full", title: "Top UBA Alert Types by Volume",
         bars: [
-          { label: "UCI threshold alert",                                    value: 187, color: "#ef4444" },
-          { label: "Bulk Failed Logins",                                     value: 143, color: "#ef4444" },
-          { label: "Rare Event",                                             value: 112, color: "#f59e0b" },
-          { label: "First access from non-Netskope IP",                      value:  98, color: "#fb923c" },
-          { label: "Spike of 28 encrypted files uploaded (API)",             value:  87, color: "#f59e0b" },
-          { label: "Sensitive data movement → Google Drive (RT)",            value:  74, color: "#ef4444" },
-          { label: "First access AWS ap-southeast-2 (non-Netskope IP)",      value:  62, color: "#fb923c" },
-          { label: "Ransomware-like behaviour in OneDrive (API Connector)",  value:  54, color: "#ef4444" },
-          { label: "Spike of 20 encrypted files uploaded (API)",             value:  48, color: "#f59e0b" },
-          { label: "Spike of 24 malware files uploaded (API)",               value:  20, color: "#ef4444" },
+          { label: "UCI threshold alert",                                    value: 187, color: "#ef4444", drill: { text: "Show users with UCI threshold alerts", id: "sa-uba-uci" } },
+          { label: "Bulk Failed Logins",                                     value: 143, color: "#ef4444", drill: { text: "Show users with Bulk Failed Login alerts", id: "sa-uba-bulkfail" } },
+          { label: "Rare Event",                                             value: 112, color: "#f59e0b", drill: { text: "Show users triggering Rare Event alerts", id: "sa-uba-rare" } },
+          { label: "First access from non-Netskope IP",                      value:  98, color: "#fb923c", drill: { text: "Show users accessing from non-Netskope IPs", id: "sa-uba-firstip" } },
+          { label: "Spike of 28 encrypted files uploaded (API)",             value:  87, color: "#f59e0b", drill: { text: "Show users spiking encrypted file uploads (28 files)", id: "sa-uba-encrypted28" } },
+          { label: "Sensitive data movement → Google Drive (RT)",            value:  74, color: "#ef4444", drill: { text: "Show sensitive data movement to Google Drive", id: "sa-uba-gdrive-sensitive" } },
+          { label: "First access AWS ap-southeast-2 (non-Netskope IP)",      value:  62, color: "#fb923c", drill: { text: "Show first access to AWS ap-southeast-2 detail", id: "sa-uba-aws-first" } },
+          { label: "Ransomware-like behaviour in OneDrive (API Connector)",  value:  54, color: "#ef4444", drill: { text: "Show ransomware-like behaviour in OneDrive", id: "sa-uba-ransomware" } },
+          { label: "Spike of 20 encrypted files uploaded (API)",             value:  48, color: "#f59e0b", drill: { text: "Show users spiking encrypted file uploads (20 files)", id: "sa-uba-encrypted20" } },
+          { label: "Spike of 24 malware files uploaded (API)",               value:  20, color: "#ef4444", drill: { text: "Show users spiking malware file uploads", id: "sa-uba-malware-spike" } },
         ],
         insight: "UCI threshold alerts (187) and Bulk Failed Logins (143) together account for 37% of UBA volume — both are high-fidelity credential compromise indicators. Ransomware-like behaviour in OneDrive (54 alerts) is the most critical finding: any confirmed ransomware activity in a cloud drive can propagate across synced devices. Prioritize these 54 alerts for immediate investigation." },
 
       { type: "hbar", size: "full", title: "Top Applications Generating UBA Alerts",
         bars: [
-          { label: "Microsoft SharePoint Online",              value: 198, color: "#0ea5e9" },
-          { label: "Microsoft OneDrive for Business",          value: 187, color: "#0ea5e9" },
-          { label: "Parallel Search MCP",                      value: 156, color: "#ef4444" },
-          { label: "Microsoft Teams",                          value: 112, color: "#0ea5e9" },
-          { label: "Globalpinng MCP",                          value:  89, color: "#ef4444" },
-          { label: "Google Drive",                             value:  74, color: "#f59e0b" },
-          { label: "Amazon EC2",                               value:  69, color: "#fb923c" },
+          { label: "Microsoft SharePoint Online",              value: 198, color: "#0ea5e9", drill: { text: "Show SharePoint UBA alert users", id: "sa-uapp-sharepoint" } },
+          { label: "Microsoft OneDrive for Business",          value: 187, color: "#0ea5e9", drill: { text: "Show OneDrive UBA alert users", id: "sa-uapp-onedrive" } },
+          { label: "Parallel Search MCP",                      value: 156, color: "#ef4444", drill: { text: "Show Parallel Search MCP UBA users", id: "sa-uapp-parallel" } },
+          { label: "Microsoft Teams",                          value: 112, color: "#0ea5e9", drill: { text: "Show Microsoft Teams UBA users", id: "sa-uapp-teams" } },
+          { label: "Globalpinng MCP",                          value:  89, color: "#ef4444", drill: { text: "Show Globalpinng MCP UBA users", id: "sa-uapp-globalpinng" } },
+          { label: "Google Drive",                             value:  74, color: "#f59e0b", drill: { text: "Show Google Drive UBA alert users", id: "sa-uapp-gdrive" } },
+          { label: "Amazon EC2",                               value:  69, color: "#fb923c", drill: { text: "Show Amazon EC2 UBA alert users", id: "sa-uapp-ec2" } },
         ],
         insight: "Microsoft 365 apps (SharePoint, OneDrive, Teams) collectively generate 497 UBA alerts — 56% of total volume — reflecting their role as the primary data store and collaboration layer. Parallel Search MCP and Globalpinng MCP together account for 245 alerts, which is disproportionately high for tools that are not core productivity apps. MCP server UBA activity should be reviewed against expected usage patterns." },
     ],
@@ -1203,36 +1203,36 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "half", title: "Activity in AI Apps — Event Count by Application",
         bars: [
-          { label: "Google Gemini",          value: 5878, color: "#0ea5e9" },
-          { label: "ChatGPT",                value: 3537, color: "#10b981" },
-          { label: "Microsoft 365 Copilot",  value: 2749, color: "#6366f1" },
-          { label: "Venice",                 value:  275, color: "#f59e0b" },
-          { label: "GitHub Copilot",         value:  242, color: "#94a3b8" },
-          { label: "Anthropic Claude",       value:  151, color: "#f97316" },
-          { label: "Microsoft Copilot",      value:   90, color: "#8b5cf6" },
-          { label: "Google NotebookLM",      value:   63, color: "#0ea5e9" },
-          { label: "DeepSeek",               value:   56, color: "#ef4444" },
-          { label: "Parallel Web Systems",   value:   42, color: "#94a3b8" },
-          { label: "Cursor",                 value:   20, color: "#14b8a6" },
-          { label: "Grok",                   value:   15, color: "#64748b" },
-          { label: "Perplexity AI",          value:    4, color: "#a855f7" },
-          { label: "Fireflies.ai",           value:    2, color: "#64748b" },
-          { label: "OpenAI",                 value:    2, color: "#10b981" },
+          { label: "Google Gemini",          value: 5878, color: "#0ea5e9", drill: { text: "Show Google Gemini usage detail", id: "ga-act-gemini" } },
+          { label: "ChatGPT",                value: 3537, color: "#10b981", drill: { text: "Show ChatGPT usage detail", id: "ga-act-chatgpt" } },
+          { label: "Microsoft 365 Copilot",  value: 2749, color: "#6366f1", drill: { text: "Show Microsoft 365 Copilot usage detail", id: "ga-act-m365" } },
+          { label: "Venice",                 value:  275, color: "#f59e0b", drill: { text: "Show Venice usage detail (blocked)", id: "ga-act-venice" } },
+          { label: "GitHub Copilot",         value:  242, color: "#94a3b8", drill: { text: "Show GitHub Copilot usage detail", id: "ga-act-github" } },
+          { label: "Anthropic Claude",       value:  151, color: "#f97316", drill: { text: "Show Anthropic Claude usage detail", id: "ga-act-claude" } },
+          { label: "Microsoft Copilot",      value:   90, color: "#8b5cf6", drill: { text: "Show Microsoft Copilot usage detail", id: "ga-act-mscopilot" } },
+          { label: "Google NotebookLM",      value:   63, color: "#0ea5e9", drill: { text: "Show Google NotebookLM usage detail", id: "ga-act-notebooklm" } },
+          { label: "DeepSeek",               value:   56, color: "#ef4444", drill: { text: "Show DeepSeek usage detail (blocked)", id: "ga-act-deepseek" } },
+          { label: "Parallel Web Systems",   value:   42, color: "#94a3b8", drill: { text: "Show Parallel Web Systems usage detail", id: "ga-act-parallel" } },
+          { label: "Cursor",                 value:   20, color: "#14b8a6", drill: { text: "Show Cursor usage detail", id: "ga-act-cursor" } },
+          { label: "Grok",                   value:   15, color: "#64748b", drill: { text: "Show Grok usage detail", id: "ga-act-grok" } },
+          { label: "Perplexity AI",          value:    4, color: "#a855f7", drill: { text: "Show Perplexity AI usage detail", id: "ga-act-perplexity" } },
+          { label: "Fireflies.ai",           value:    2, color: "#64748b", drill: { text: "Show Fireflies.ai usage detail", id: "ga-act-fireflies" } },
+          { label: "OpenAI",                 value:    2, color: "#10b981", drill: { text: "Show OpenAI usage detail", id: "ga-act-openai" } },
         ],
         insight: "Google Gemini (5,878) and ChatGPT (3,537) together account for 70% of all AI app events. Microsoft 365 Copilot (2,749) is the third-largest — notable as a sanctioned enterprise tool. The long tail of 12 additional apps (Venice through OpenAI) with low event counts indicates broad exploration of new AI tools, each requiring policy assessment." },
 
       { type: "hbar", size: "half", title: "Action Taken on AI App Usage",
         bars: [
-          { label: "Google Gemini — Allow",         value: 5878, color: "#10b981" },
-          { label: "ChatGPT — Allow",               value: 3537, color: "#10b981" },
-          { label: "Microsoft 365 Copilot — Allow", value: 2749, color: "#10b981" },
-          { label: "Venice — Block",                value:  275, color: "#ef4444" },
-          { label: "GitHub Copilot — Allow",        value:  242, color: "#10b981" },
-          { label: "Anthropic Claude — Alert",      value:  151, color: "#f59e0b" },
-          { label: "Microsoft Copilot — Block",     value:   90, color: "#ef4444" },
-          { label: "Google NotebookLM — Allow",     value:   63, color: "#10b981" },
-          { label: "DeepSeek — Block",              value:   56, color: "#ef4444" },
-          { label: "Parallel Web Systems — Alert",  value:   42, color: "#f59e0b" },
+          { label: "Google Gemini — Allow",         value: 5878, color: "#10b981", drill: { text: "Show Google Gemini usage detail", id: "ga-act-gemini" } },
+          { label: "ChatGPT — Allow",               value: 3537, color: "#10b981", drill: { text: "Show ChatGPT usage detail", id: "ga-act-chatgpt" } },
+          { label: "Microsoft 365 Copilot — Allow", value: 2749, color: "#10b981", drill: { text: "Show Microsoft 365 Copilot usage detail", id: "ga-act-m365" } },
+          { label: "Venice — Block",                value:  275, color: "#ef4444", drill: { text: "Show Venice blocked events", id: "ga-act-venice" } },
+          { label: "GitHub Copilot — Allow",        value:  242, color: "#10b981", drill: { text: "Show GitHub Copilot usage detail", id: "ga-act-github" } },
+          { label: "Anthropic Claude — Alert",      value:  151, color: "#f59e0b", drill: { text: "Show Anthropic Claude alert detail", id: "ga-act-claude" } },
+          { label: "Microsoft Copilot — Block",     value:   90, color: "#ef4444", drill: { text: "Show Microsoft Copilot blocked events", id: "ga-act-mscopilot" } },
+          { label: "Google NotebookLM — Allow",     value:   63, color: "#10b981", drill: { text: "Show Google NotebookLM usage detail", id: "ga-act-notebooklm" } },
+          { label: "DeepSeek — Block",              value:   56, color: "#ef4444", drill: { text: "Show DeepSeek blocked events", id: "ga-act-deepseek" } },
+          { label: "Parallel Web Systems — Alert",  value:   42, color: "#f59e0b", drill: { text: "Show Parallel Web Systems alert detail", id: "ga-act-parallel" } },
         ],
         insight: "The three highest-volume apps (Gemini, ChatGPT, M365 Copilot) are predominantly allowed — the bulk of AI usage flows without policy intervention. Venice, Microsoft Copilot, and DeepSeek are being blocked. Anthropic Claude and Parallel Web Systems are under alert-only monitoring, meaning data flows are visible but not stopped." },
 
@@ -1251,16 +1251,16 @@ const DASHBOARDS = {
 
       { type: "hbar", size: "full", title: "Top 10 AI Apps — Event & User Count",
         bars: [
-          { label: "Google Gemini (5,878 events · 58 users)",         value: 5878, color: "#0ea5e9" },
-          { label: "ChatGPT (3,537 events · 87 users)",               value: 3537, color: "#10b981" },
-          { label: "Microsoft 365 Copilot (2,749 events · 5 users)",  value: 2749, color: "#6366f1" },
-          { label: "Venice (275 events · 1 user)",                    value:  275, color: "#f59e0b" },
-          { label: "GitHub Copilot (242 events · 1 user)",            value:  242, color: "#94a3b8" },
-          { label: "Anthropic Claude (151 events · 13 users)",        value:  151, color: "#f97316" },
-          { label: "Microsoft Copilot (90 events · 7 users)",         value:   90, color: "#8b5cf6" },
-          { label: "Google NotebookLM (63 events · 2 users)",         value:   63, color: "#0ea5e9" },
-          { label: "DeepSeek (56 events · 10 users)",                 value:   56, color: "#ef4444" },
-          { label: "Parallel Web Systems (42 events · 4 users)",      value:   42, color: "#94a3b8" },
+          { label: "Google Gemini (5,878 events · 58 users)",         value: 5878, color: "#0ea5e9", drill: { text: "Show Google Gemini usage detail", id: "ga-act-gemini" } },
+          { label: "ChatGPT (3,537 events · 87 users)",               value: 3537, color: "#10b981", drill: { text: "Show ChatGPT usage detail", id: "ga-act-chatgpt" } },
+          { label: "Microsoft 365 Copilot (2,749 events · 5 users)",  value: 2749, color: "#6366f1", drill: { text: "Show Microsoft 365 Copilot usage detail", id: "ga-act-m365" } },
+          { label: "Venice (275 events · 1 user)",                    value:  275, color: "#f59e0b", drill: { text: "Show Venice usage detail (blocked)", id: "ga-act-venice" } },
+          { label: "GitHub Copilot (242 events · 1 user)",            value:  242, color: "#94a3b8", drill: { text: "Show GitHub Copilot usage detail", id: "ga-act-github" } },
+          { label: "Anthropic Claude (151 events · 13 users)",        value:  151, color: "#f97316", drill: { text: "Show Anthropic Claude usage detail", id: "ga-act-claude" } },
+          { label: "Microsoft Copilot (90 events · 7 users)",         value:   90, color: "#8b5cf6", drill: { text: "Show Microsoft Copilot usage detail", id: "ga-act-mscopilot" } },
+          { label: "Google NotebookLM (63 events · 2 users)",         value:   63, color: "#0ea5e9", drill: { text: "Show Google NotebookLM usage detail", id: "ga-act-notebooklm" } },
+          { label: "DeepSeek (56 events · 10 users)",                 value:   56, color: "#ef4444", drill: { text: "Show DeepSeek usage detail (blocked)", id: "ga-act-deepseek" } },
+          { label: "Parallel Web Systems (42 events · 4 users)",      value:   42, color: "#94a3b8", drill: { text: "Show Parallel Web Systems usage detail", id: "ga-act-parallel" } },
         ],
         insight: "ChatGPT has the broadest user reach at 87 users despite fewer total events than Gemini (58 users) — ChatGPT sessions are shorter/more frequent while Gemini sessions are longer. Microsoft 365 Copilot generates 2,749 events from only 5 users, indicating power-user concentration. DeepSeek has 10 users despite only 56 events — monitor for growth given its data-residency risk profile." },
 
@@ -1312,13 +1312,13 @@ const DASHBOARDS = {
       /* ── Control & Monitor ───────────────────────────────────── */
       { type: "hbar", size: "full", title: "Top Policies Controlling AI Usage",
         bars: [
-          { label: "[AI Guardrails] Guardrails protection for SaaS AIs — Block",        value: 4218, color: "#ef4444" },
-          { label: "[DLP] Generative AI — Block",                                       value: 1847, color: "#ef4444" },
-          { label: "Block download of sensitive data from NotebookLM — Block",          value:  892, color: "#ef4444" },
-          { label: "[Enterprise Browser] Block Downloads for SAAS — Block",             value:  741, color: "#ef4444" },
-          { label: "Detect Credit Card / GDPR in managed ChatGPT Enterprise — Alert",  value:  312, color: "#f59e0b" },
-          { label: "Alert when sensitive content on Copilot prompts/responses — Alert", value:  198, color: "#f59e0b" },
-          { label: "No Policy (Default Allow)",                                         value: 5624, color: "#94a3b8" },
+          { label: "[AI Guardrails] Guardrails protection for SaaS AIs — Block",        value: 4218, color: "#ef4444", drill: { text: "Show AI Guardrails policy events", id: "ga-pol-guardrails" } },
+          { label: "[DLP] Generative AI — Block",                                       value: 1847, color: "#ef4444", drill: { text: "Show DLP Generative AI policy events", id: "ga-pol-dlp-genai" } },
+          { label: "Block download of sensitive data from NotebookLM — Block",          value:  892, color: "#ef4444", drill: { text: "Show NotebookLM download block events", id: "ga-pol-notebooklm" } },
+          { label: "[Enterprise Browser] Block Downloads for SAAS — Block",             value:  741, color: "#ef4444", drill: { text: "Show Enterprise Browser download block events", id: "ga-pol-eb-downloads" } },
+          { label: "Detect Credit Card / GDPR in managed ChatGPT Enterprise — Alert",  value:  312, color: "#f59e0b", drill: { text: "Show Credit Card / GDPR detection events", id: "ga-pol-cc-gdpr" } },
+          { label: "Alert when sensitive content on Copilot prompts/responses — Alert", value:  198, color: "#f59e0b", drill: { text: "Show Copilot sensitive content alerts", id: "ga-pol-copilot" } },
+          { label: "No Policy (Default Allow)",                                         value: 5624, color: "#94a3b8", drill: { text: "Show events with no policy applied", id: "ga-pol-nopolicy" } },
         ],
         insight: "[AI Guardrails] is the most active policy at 4,218 block events, providing broad coverage across SaaS AI apps. However, 5,624 events (42% of total) flow through with no policy applied — these are the highest-priority coverage gaps. The 'No Policy' segment is primarily Gemini and ChatGPT browse/interaction events that are allowed by default." },
 
@@ -1397,6 +1397,2365 @@ const DASHBOARDS = {
       M("Which users have no policy applied to AI usage?",    "top-users"),
     ],
   },
+
+  /* ───────────────────────── CISO DRILL RESPONSES ───────────────────── */
+
+  "ciso-alert-breakdown": {
+    title: "Alert Volume by Type — Jun 2025",
+    chartType: "hbar",
+    bars: [
+      { label: "Security Assessment", value: 38772, color: "#0ea5e9" },
+      { label: "Policy", value: 14270, color: "#6366f1" },
+      { label: "DLP", value: 2966, color: "#f59e0b" },
+      { label: "Malware", value: 50, color: "#ef4444" },
+      { label: "Malsite", value: 6, color: "#f43f5e" },
+      { label: "Compromised Cred.", value: 1, color: "#7c3aed" },
+    ],
+    summary: "Security Assessment dominates at 38,772 events (69% of total). One compromised credential event requires immediate investigation.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Drill into Security Assessment", id: "ciso-type-secassess" },
+      { text: "Drill into Policy violations", id: "ciso-policy-detail" },
+      { text: "Drill into DLP violations", id: "ciso-dlp-detail" },
+      { text: "Drill into Malware", id: "ciso-malware-detail" },
+      { text: "Drill into Malsite", id: "ciso-malsite-detail" },
+      { text: "Show compromised credential", id: "ciso-type-compromised" },
+    ],
+  },
+
+  "ciso-type-secassess": {
+    title: "Top Users — Security Assessment Events",
+    chartType: "table",
+    table: {
+      columns: ["User", "Events", "Top Policy"],
+      rows: [
+        ["j.smith@company.com", "6842", "[Web] Block DoH"],
+        ["s.chen@company.com", "5910", "[Web] Silent Block"],
+        ["m.patel@company.com", "5201", "[Web] Block DoH"],
+        ["a.johnson@company.com", "4887", "[Web] Policy Coaching"],
+        ["r.williams@company.com", "4312", "[Web] Silent Block"],
+        ["l.garcia@company.com", "3891", "[Web] Block DoH"],
+        ["t.brown@company.com", "3204", "[Web] Block sites"],
+        ["k.davis@company.com", "4525", "[Enterprise Browser] Restriction"],
+      ],
+    },
+    summary: "8 users account for 38,772 Security Assessment events. j.smith and s.chen together represent 33% of all events.",
+    followUps: [
+      { text: "Back to alert breakdown", id: "ciso-alert-breakdown" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-policy-detail": {
+    title: "Top Policy Violations — Jun 2025",
+    chartType: "table",
+    table: {
+      columns: ["Policy", "Violations", "Action", "Top User"],
+      rows: [
+        ["[Web] Block DoH", "9847", "Block", "j.smith@company.com"],
+        ["[Web] Silent Block", "3201", "Block", "s.chen@company.com"],
+        ["[Web] Policy coaching", "2108", "Alert", "a.johnson@company.com"],
+        ["[Enterprise Browser] Restriction", "1847", "Restrict", "k.davis@company.com"],
+        ["[Web] Block sites", "1203", "Block", "r.williams@company.com"],
+        ["[Ctx DLP] High Sensitivity Block", "987", "Block", "m.patel@company.com"],
+        ["[Enterprise Browser] Block Downloads", "741", "Block", "l.garcia@company.com"],
+        ["[Ctx DLP] Low Sensitivity Alert", "336", "Alert", "t.brown@company.com"],
+      ],
+    },
+    summary: "14,270 policy violations across 8 policies. Block DoH leads with 9,847 triggers, suggesting widespread DNS-over-HTTPS bypass attempts.",
+    followUps: [
+      { text: "Back to alert breakdown", id: "ciso-alert-breakdown" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Show Block DoH users", id: "ciso-pol-doh" },
+      { text: "Show silent block users", id: "ciso-pol-silentblock" },
+      { text: "Show coaching users", id: "ciso-pol-coaching" },
+    ],
+  },
+
+  "ciso-dlp-detail": {
+    title: "Top DLP Violations by User — Jun 2025",
+    chartType: "table",
+    table: {
+      columns: ["User", "Violations", "Top Category", "Top App"],
+      rows: [
+        ["j.smith@company.com", "412", "PII", "Google Drive"],
+        ["s.chen@company.com", "387", "Source Code", "GitHub"],
+        ["m.patel@company.com", "341", "Financial", "ChatGPT"],
+        ["a.johnson@company.com", "298", "PII", "Gmail"],
+        ["r.williams@company.com", "276", "Credentials", "Slack"],
+        ["l.garcia@company.com", "254", "Health Records", "OneDrive"],
+        ["t.brown@company.com", "198", "PII", "Google Gemini"],
+        ["k.davis@company.com", "800", "Source Code", "ChatGPT"],
+      ],
+    },
+    summary: "2,966 DLP violations across 8 users. k.davis leads with 800 violations, primarily source code exfiltration via ChatGPT.",
+    followUps: [
+      { text: "Back to alert breakdown", id: "ciso-alert-breakdown" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "DLP by GenAI apps", id: "ciso-dlp-genai" },
+      { text: "DLP by cloud storage", id: "ciso-dlp-cloudstorage" },
+    ],
+  },
+
+  "ciso-malware-detail": {
+    title: "Malware Detections — Jun 2025",
+    chartType: "table",
+    table: {
+      columns: ["User", "App", "Malware Name", "Type"],
+      rows: [
+        ["j.smith@company.com", "Chrome", "Trojan.GenericKD.71823401", "Trojan"],
+        ["s.chen@company.com", "Edge", "HEUR:Trojan-Downloader.Script.Generic", "Downloader"],
+        ["m.patel@company.com", "Chrome", "Adware.DealPly.S11571628", "Adware"],
+        ["a.johnson@company.com", "Firefox", "PUA.Win32.BundleInstaller.A", "PUA"],
+        ["r.williams@company.com", "Chrome", "Trojan.GenericKD.71841022", "Trojan"],
+        ["l.garcia@company.com", "Safari", "JS/Redirector.NKE", "Redirect"],
+        ["t.brown@company.com", "Chrome", "Exploit.HTML.Agent.gen", "Exploit"],
+        ["k.davis@company.com", "Edge", "HEUR:Trojan.Script.Iframer", "Trojan"],
+      ],
+    },
+    summary: "50 malware events detected across 8 users. Two Trojan variants (GenericKD) appear on multiple endpoints — cross-correlate with EDR.",
+    followUps: [
+      { text: "Back to alert breakdown", id: "ciso-alert-breakdown" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Malware by web design sites", id: "ciso-malware-webdesign" },
+      { text: "Malware by tech sites", id: "ciso-malware-tech" },
+    ],
+  },
+
+  "ciso-malsite-detail": {
+    title: "Malicious Site Alerts — Jun 2025",
+    chartType: "table",
+    table: {
+      columns: ["User", "URL", "Category", "# Blocks"],
+      rows: [
+        ["j.smith@company.com", "ad-track.xyz", "Online Ads", "2"],
+        ["m.patel@company.com", "dl.malware-cdn.ru", "Malware Distribution", "2"],
+        ["s.chen@company.com", "phish.login-secure.net", "Phishing", "1"],
+        ["a.johnson@company.com", "exploit-kit.top", "Malicious Sites", "1"],
+        ["r.williams@company.com", "crack-soft.cc", "Prohibited", "1"],
+        ["k.davis@company.com", "zero-day.biz", "Malicious Sites", "1"],
+      ],
+    },
+    summary: "6 malsite events across 6 users. One phishing and two malware distribution sites were blocked before payload delivery.",
+    followUps: [
+      { text: "Back to alert breakdown", id: "ciso-alert-breakdown" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Prohibited sites detail", id: "ciso-malsite-prohibited" },
+      { text: "Malware distribution detail", id: "ciso-malsite-malwaredist" },
+    ],
+  },
+
+  "ciso-type-compromised": {
+    title: "Compromised Credential Event — Jun 2025",
+    chartType: "table",
+    table: {
+      columns: ["User", "IP Address", "Geo Location", "Timestamp"],
+      rows: [
+        ["c.wilson@company.com", "185.220.101.47", "Tor Exit Node, DE", "2025-06-14 03:22:11 UTC"],
+        ["c.wilson@company.com", "185.220.101.47", "Tor Exit Node, DE", "2025-06-14 03:22:18 UTC"],
+        ["c.wilson@company.com", "104.21.8.93", "Cloudflare, US", "2025-06-14 03:25:04 UTC"],
+      ],
+    },
+    summary: "c.wilson@company.com accessed corporate resources from a Tor exit node at 03:22 UTC — credential compromise is highly likely. Immediate account suspension is recommended.",
+    followUps: [
+      { text: "Back to alert breakdown", id: "ciso-alert-breakdown" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-dlp-genai": {
+    title: "GenAI DLP Violations by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "Violations", "App", "Content Type"],
+      rows: [
+        ["k.davis@company.com", "312", "ChatGPT", "Source Code"],
+        ["m.patel@company.com", "287", "Google Gemini", "Financial Data"],
+        ["s.chen@company.com", "241", "ChatGPT", "PII"],
+        ["j.smith@company.com", "198", "Google Gemini", "Credentials"],
+        ["a.johnson@company.com", "176", "Microsoft Copilot", "Health Records"],
+        ["r.williams@company.com", "143", "ChatGPT", "Source Code"],
+        ["l.garcia@company.com", "112", "Google Gemini", "PII"],
+        ["t.brown@company.com", "88", "DeepSeek", "Financial Data"],
+      ],
+    },
+    summary: "1,557 DLP violations via GenAI apps. Source code and PII are the top content types — code exfiltration via ChatGPT is the primary risk.",
+    followUps: [
+      { text: "Back to DLP detail", id: "ciso-dlp-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-dlp-cloudstorage": {
+    title: "Cloud Storage DLP Violations",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "Destination", "Policy"],
+      rows: [
+        ["j.smith@company.com", "47", "iCloud Drive", "[Ctx DLP] High Sensitivity Block"],
+        ["l.garcia@company.com", "38", "Google Drive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["a.johnson@company.com", "29", "Dropbox", "[Ctx DLP] Low Sensitivity Alert"],
+        ["r.williams@company.com", "22", "iCloud Drive", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "18", "OneDrive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["c.wilson@company.com", "11", "Box", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "165 files flagged across 6 users uploading to personal cloud storage. iCloud Drive and personal Google Drive are the top destinations.",
+    followUps: [
+      { text: "Back to DLP detail", id: "ciso-dlp-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-dlp-tech": {
+    title: "Technology Category DLP Violations",
+    chartType: "table",
+    table: {
+      columns: ["User", "Violations", "Application", "Action"],
+      rows: [
+        ["s.chen@company.com", "241", "GitHub", "Block"],
+        ["k.davis@company.com", "198", "GitHub", "Block"],
+        ["m.patel@company.com", "87", "Stack Overflow", "Alert"],
+        ["j.smith@company.com", "64", "Pastebin", "Block"],
+        ["r.williams@company.com", "41", "npm Registry", "Alert"],
+      ],
+    },
+    summary: "631 technology-related DLP events. Source code uploads to GitHub and Pastebin account for the majority of violations.",
+    followUps: [
+      { text: "Back to DLP detail", id: "ciso-dlp-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-dlp-webmail": {
+    title: "Webmail DLP Violations",
+    chartType: "table",
+    table: {
+      columns: ["User", "Violations", "Email App", "Policy"],
+      rows: [
+        ["a.johnson@company.com", "187", "Gmail", "[Ctx DLP] High Sensitivity Block"],
+        ["l.garcia@company.com", "143", "Gmail", "[Ctx DLP] Low Sensitivity Alert"],
+        ["c.wilson@company.com", "98", "Outlook (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["t.brown@company.com", "74", "Yahoo Mail", "[Ctx DLP] Low Sensitivity Alert"],
+        ["j.martinez@company.com", "52", "Gmail", "[Ctx DLP] High Sensitivity Block"],
+      ],
+    },
+    summary: "554 webmail DLP violations. Gmail is the dominant channel — 4 of 5 users attempted to send sensitive data via personal Gmail accounts.",
+    followUps: [
+      { text: "Back to DLP detail", id: "ciso-dlp-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-dlp-collab": {
+    title: "Collaboration App DLP Violations",
+    chartType: "table",
+    table: {
+      columns: ["User", "Violations", "App", "Data Type"],
+      rows: [
+        ["r.williams@company.com", "98", "Slack", "Credentials"],
+        ["m.patel@company.com", "76", "Microsoft Teams", "PII"],
+        ["k.davis@company.com", "54", "Slack", "Source Code"],
+        ["s.chen@company.com", "31", "Zoom Chat", "Financial Data"],
+      ],
+    },
+    summary: "259 collaboration DLP violations. Credentials shared via Slack represent the highest-risk finding.",
+    followUps: [
+      { text: "Back to DLP detail", id: "ciso-dlp-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-dlp-security": {
+    title: "Security Tool DLP Violations",
+    chartType: "table",
+    table: {
+      columns: ["User", "Violations", "App", "Severity"],
+      rows: [
+        ["j.smith@company.com", "12", "VirusTotal", "High"],
+        ["s.chen@company.com", "8", "Shodan", "Critical"],
+        ["m.patel@company.com", "5", "Have I Been Pwned", "Medium"],
+      ],
+    },
+    summary: "25 security tool DLP events. Data submitted to Shodan by s.chen is classified Critical — potential reconnaissance activity.",
+    followUps: [
+      { text: "Back to DLP detail", id: "ciso-dlp-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malware-webdesign": {
+    title: "Malware via Web Design Sites",
+    chartType: "table",
+    table: {
+      columns: ["URL", "Malware Name", "Users Affected", "Action"],
+      rows: [
+        ["free-templates.design", "Adware.DealPly.S11571628", "3", "Block"],
+        ["css-cdn-assets.net", "JS/Redirector.NKE", "2", "Block"],
+        ["webdesign-dl.cc", "Trojan.GenericKD.71823401", "1", "Block"],
+        ["theme-crack.io", "PUA.Win32.BundleInstaller.A", "1", "Block"],
+      ],
+    },
+    summary: "4 web design sites serving malware, affecting 7 user sessions. All were blocked before payload execution.",
+    followUps: [
+      { text: "Back to malware detail", id: "ciso-malware-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malware-tech": {
+    title: "Malware via Technology Sites",
+    chartType: "table",
+    table: {
+      columns: ["URL", "Malware Name", "User", "Action"],
+      rows: [
+        ["crack-soft.cc", "HEUR:Trojan-Downloader.Script.Generic", "s.chen@company.com", "Block"],
+        ["dl.keygen-hub.to", "Exploit.HTML.Agent.gen", "t.brown@company.com", "Block"],
+        ["nulled-scripts.xyz", "HEUR:Trojan.Script.Iframer", "k.davis@company.com", "Block"],
+      ],
+    },
+    summary: "3 technology-category sites serving malware. All blocked at the gateway before download completion.",
+    followUps: [
+      { text: "Back to malware detail", id: "ciso-malware-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malware-hosting": {
+    title: "Malware via Web Hosting Sites",
+    chartType: "table",
+    table: {
+      columns: ["URL", "Malware Name", "User", "Action"],
+      rows: [
+        ["malware-cdn.ru", "HEUR:Trojan-Downloader.Script.Generic", "m.patel@company.com", "Block"],
+        ["free-host-dl.xyz", "Adware.DealPly.S11571628", "a.johnson@company.com", "Block"],
+      ],
+    },
+    summary: "2 web hosting sites distributing malware. Both blocked prior to any payload execution.",
+    followUps: [
+      { text: "Back to malware detail", id: "ciso-malware-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malware-phishing": {
+    title: "Malware via Phishing Sites",
+    chartType: "table",
+    table: {
+      columns: ["URL", "Malware Name", "User", "Action"],
+      rows: [
+        ["phish.login-secure.net", "Exploit.HTML.Agent.gen", "s.chen@company.com", "Block"],
+      ],
+    },
+    summary: "1 phishing site serving an HTML exploit kit, blocked for s.chen. Recommend phishing awareness training for the affected user.",
+    followUps: [
+      { text: "Back to malware detail", id: "ciso-malware-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malsite-prohibited": {
+    title: "Prohibited Site Blocks by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "URL", "# Blocks", "Category"],
+      rows: [
+        ["j.smith@company.com", "thepiratebay.org", "3", "Piracy"],
+        ["s.chen@company.com", "1337x.to", "2", "Piracy"],
+        ["m.patel@company.com", "crack-soft.cc", "2", "Crack/Hack Tools"],
+        ["a.johnson@company.com", "pastebin.com/raw/xxx", "1", "Prohibited"],
+        ["r.williams@company.com", "0day.to", "1", "Crack/Hack Tools"],
+        ["l.garcia@company.com", "nulled.to", "1", "Crack/Hack Tools"],
+        ["t.brown@company.com", "warez-bb.org", "1", "Piracy"],
+        ["k.davis@company.com", "onionshare.site", "1", "Anonymizer"],
+      ],
+    },
+    summary: "12 prohibited site blocks across 8 users. Piracy and crack/hack tool sites dominate — recommend policy awareness communication.",
+    followUps: [
+      { text: "Back to malsite detail", id: "ciso-malsite-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malsite-malwaredist": {
+    title: "Malware Distribution Points Blocked",
+    chartType: "table",
+    table: {
+      columns: ["URL", "# Blocks", "Users", "Category"],
+      rows: [
+        ["dl.malware-cdn.ru", "2", "m.patel@company.com", "Malware Distribution"],
+        ["free-host-dl.xyz", "1", "a.johnson@company.com", "Malware Distribution"],
+        ["exploit-kit.top", "1", "a.johnson@company.com", "Malware Distribution"],
+        ["dl.keygen-hub.to", "1", "t.brown@company.com", "Malware Distribution"],
+        ["nulled-scripts.xyz", "1", "k.davis@company.com", "Malware Distribution"],
+      ],
+    },
+    summary: "6 blocks across 5 malware distribution URLs. Repeat access by m.patel to malware-cdn.ru warrants endpoint investigation.",
+    followUps: [
+      { text: "Back to malsite detail", id: "ciso-malsite-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malsite-phishsite": {
+    title: "Phishing Sites Blocked",
+    chartType: "table",
+    table: {
+      columns: ["URL", "# Blocks", "Users", "Category"],
+      rows: [
+        ["phish.login-secure.net", "1", "s.chen@company.com", "Phishing"],
+        ["verify-account.support", "1", "r.williams@company.com", "Phishing"],
+        ["secure-login.bankofamerica.fake.com", "1", "j.martinez@company.com", "Phishing"],
+      ],
+    },
+    summary: "3 phishing site blocks across 3 users. All were successfully blocked — no credential entry was possible.",
+    followUps: [
+      { text: "Back to malsite detail", id: "ciso-malsite-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-malsite-malicious": {
+    title: "Malicious Sites Blocked",
+    chartType: "table",
+    table: {
+      columns: ["URL", "# Blocks", "Users", "Category"],
+      rows: [
+        ["exploit-kit.top", "1", "a.johnson@company.com", "Malicious Sites"],
+        ["zero-day.biz", "1", "k.davis@company.com", "Malicious Sites"],
+      ],
+    },
+    summary: "2 known-malicious site blocks. Both sites are associated with exploit kit infrastructure — lateral threat intelligence sharing recommended.",
+    followUps: [
+      { text: "Back to malsite detail", id: "ciso-malsite-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-doh": {
+    title: "[Web] Block DoH — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Triggers", "Browser", "Dept"],
+      rows: [
+        ["j.smith@company.com", "1842", "Chrome", "Engineering"],
+        ["m.patel@company.com", "1631", "Firefox", "Engineering"],
+        ["l.garcia@company.com", "1388", "Chrome", "Finance"],
+        ["s.chen@company.com", "1204", "Edge", "Engineering"],
+        ["k.davis@company.com", "1098", "Chrome", "Security"],
+        ["r.williams@company.com", "987", "Firefox", "Sales"],
+        ["a.johnson@company.com", "876", "Chrome", "HR"],
+        ["t.brown@company.com", "821", "Safari", "Marketing"],
+      ],
+    },
+    summary: "9,847 Block DoH triggers across 8 users. Engineering department dominates — likely development tools or browsers configured to use encrypted DNS providers.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-silentblock": {
+    title: "[Web] Silent Block — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Triggers", "Top Category", "Action"],
+      rows: [
+        ["s.chen@company.com", "712", "Anonymizer", "Block"],
+        ["j.smith@company.com", "587", "Piracy", "Block"],
+        ["k.davis@company.com", "498", "Crack/Hack Tools", "Block"],
+        ["r.williams@company.com", "441", "Anonymizer", "Block"],
+        ["m.patel@company.com", "387", "Piracy", "Block"],
+        ["a.johnson@company.com", "576", "Prohibited", "Block"],
+      ],
+    },
+    summary: "3,201 silent block events across 6 users. Anonymizer and piracy categories are the primary triggers — users are unaware their traffic is being silently blocked.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-coaching": {
+    title: "[Web] Policy Coaching — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Coached", "Policy", "Bypass Rate"],
+      rows: [
+        ["a.johnson@company.com", "487", "[Web] Policy coaching", "34%"],
+        ["t.brown@company.com", "412", "[Web] Policy coaching", "28%"],
+        ["l.garcia@company.com", "338", "[Web] Policy coaching", "41%"],
+        ["r.williams@company.com", "287", "[Web] Policy coaching", "19%"],
+        ["c.wilson@company.com", "341", "[Web] Policy coaching", "55%"],
+        ["j.martinez@company.com", "243", "[Web] Policy coaching", "22%"],
+      ],
+    },
+    summary: "2,108 coaching events. c.wilson has the highest bypass rate at 55%, suggesting targeted additional training is needed.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-eb-restriction": {
+    title: "Enterprise Browser Restrictions — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Triggers", "App", "Restriction Type"],
+      rows: [
+        ["k.davis@company.com", "498", "Salesforce", "Copy/Paste"],
+        ["m.patel@company.com", "387", "Workday", "Screenshot"],
+        ["j.smith@company.com", "312", "SAP", "Copy/Paste"],
+        ["s.chen@company.com", "287", "ServiceNow", "Print"],
+        ["r.williams@company.com", "241", "Salesforce", "Copy/Paste"],
+        ["l.garcia@company.com", "122", "Workday", "Screenshot"],
+      ],
+    },
+    summary: "1,847 Enterprise Browser restriction events. Copy/paste restrictions in Salesforce and Workday are the most triggered controls.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-blocksites": {
+    title: "[Web] Block Sites — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocks", "Category", "App"],
+      rows: [
+        ["t.brown@company.com", "312", "Social Media", "Chrome"],
+        ["j.smith@company.com", "287", "Gaming", "Chrome"],
+        ["l.garcia@company.com", "241", "Social Media", "Firefox"],
+        ["a.johnson@company.com", "198", "Adult Content", "Chrome"],
+        ["c.wilson@company.com", "165", "Gambling", "Edge"],
+      ],
+    },
+    summary: "1,203 site block events. Social media and gaming represent 50% of blocked traffic, consistent with acceptable use policy enforcement.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-ctxdlp-high": {
+    title: "Context DLP — High Sensitivity Block",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "App", "Content Type"],
+      rows: [
+        ["j.smith@company.com", "47", "iCloud Drive", "PII + Financial"],
+        ["l.garcia@company.com", "38", "Google Drive (personal)", "Health Records"],
+        ["t.brown@company.com", "18", "OneDrive (personal)", "PII"],
+        ["c.wilson@company.com", "11", "Box", "Credentials"],
+        ["j.martinez@company.com", "9", "Dropbox", "Financial"],
+      ],
+    },
+    summary: "123 high-sensitivity files blocked from leaving the organization. PII and health records are the dominant content types.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-eb-block": {
+    title: "Enterprise Browser Block Downloads — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocks", "Download Target", "App"],
+      rows: [
+        ["k.davis@company.com", "212", "Personal Device Storage", "ChatGPT"],
+        ["m.patel@company.com", "187", "USB Drive", "Google Gemini"],
+        ["s.chen@company.com", "143", "Personal Device Storage", "GitHub"],
+        ["j.smith@company.com", "112", "USB Drive", "Salesforce"],
+        ["r.williams@company.com", "87", "Personal Device Storage", "SharePoint"],
+      ],
+    },
+    summary: "741 Enterprise Browser download blocks. USB exfiltration attempts by m.patel and j.smith are high-priority findings.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-ctxdlp-low": {
+    title: "Context DLP — Low Sensitivity Alert",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "App", "Policy"],
+      rows: [
+        ["a.johnson@company.com", "29", "Dropbox", "[Ctx DLP] Low Sensitivity Alert"],
+        ["r.williams@company.com", "22", "iCloud Drive", "[Ctx DLP] Low Sensitivity Alert"],
+        ["l.garcia@company.com", "19", "Google Drive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "16", "OneDrive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["s.chen@company.com", "12", "Box", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "98 low-sensitivity file transfer alerts. No blocks were applied — review whether these should be escalated to block policy.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-accessctrl": {
+    title: "Access Control Restrictions",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Restricted", "Resource", "Reason"],
+      rows: [
+        ["c.wilson@company.com", "8", "AWS S3 Production", "Unmanaged Device"],
+        ["j.martinez@company.com", "5", "Salesforce Admin", "Non-Netskope IP"],
+        ["t.brown@company.com", "4", "HR Portal", "Unmanaged Device"],
+        ["l.garcia@company.com", "3", "Finance Dashboard", "Non-Netskope IP"],
+      ],
+    },
+    summary: "20 access control restrictions. Unmanaged device and non-corporate IP access to sensitive resources are the primary triggers.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-pol-emailsec": {
+    title: "Email Security Blocked Events",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocked", "Recipient Domain", "Reason"],
+      rows: [
+        ["a.johnson@company.com", "7", "gmail.com", "Sensitive Attachment"],
+        ["m.patel@company.com", "5", "yahoo.com", "PII in Body"],
+        ["r.williams@company.com", "4", "hotmail.com", "Sensitive Attachment"],
+        ["k.davis@company.com", "3", "protonmail.com", "Source Code Attachment"],
+      ],
+    },
+    summary: "19 email blocks across 4 users. Sending sensitive attachments to personal email accounts is the primary policy trigger.",
+    followUps: [
+      { text: "Back to policy detail", id: "ciso-policy-detail" },
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+  "ciso-cat-online-ads": {
+    title: "Online Ads Category — Blocked Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocks", "Ad Network", "Browser"],
+      rows: [
+        ["j.smith@company.com", "412", "DoubleClick", "Chrome"],
+        ["s.chen@company.com", "387", "TradeDesk", "Chrome"],
+        ["m.patel@company.com", "298", "AppNexus", "Firefox"],
+        ["a.johnson@company.com", "241", "DoubleClick", "Edge"],
+        ["r.williams@company.com", "187", "Taboola", "Chrome"],
+      ],
+    },
+    summary: "1,525 online ad blocks across 5 users. DoubleClick and TradeDesk are the most blocked ad networks — consider a network-wide ad block policy.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-prohibited": {
+    title: "Prohibited Category — Blocks by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocks", "Top Site", "Category"],
+      rows: [
+        ["t.brown@company.com", "312", "thepiratebay.org", "Piracy"],
+        ["j.smith@company.com", "287", "1337x.to", "Piracy"],
+        ["k.davis@company.com", "241", "onionshare.site", "Anonymizer"],
+        ["c.wilson@company.com", "198", "crack-soft.cc", "Crack/Hack Tools"],
+        ["j.martinez@company.com", "165", "warez-bb.org", "Piracy"],
+      ],
+    },
+    summary: "1,203 prohibited category blocks. Piracy sites dominate across multiple users — an acceptable use policy reminder is recommended.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-nonbiz": {
+    title: "Non-Business Use — Access Events",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Site", "Category"],
+      rows: [
+        ["l.garcia@company.com", "487", "reddit.com", "Social Media"],
+        ["t.brown@company.com", "412", "youtube.com", "Streaming"],
+        ["a.johnson@company.com", "338", "twitch.tv", "Streaming"],
+        ["r.williams@company.com", "287", "espn.com", "Sports"],
+        ["c.wilson@company.com", "241", "netflix.com", "Streaming"],
+      ],
+    },
+    summary: "1,765 non-business use events across 5 users. Streaming sites (YouTube, Twitch, Netflix) represent 60% of events.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-cloudstorage-traffic": {
+    title: "Cloud Storage Category — Traffic by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Policy"],
+      rows: [
+        ["j.smith@company.com", "182", "iCloud Drive", "[Ctx DLP] High Sensitivity Block"],
+        ["l.garcia@company.com", "148", "Google Drive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["r.williams@company.com", "98", "Dropbox", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "87", "OneDrive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["a.johnson@company.com", "67", "Box", "Monitor"],
+      ],
+    },
+    summary: "582 MB uploaded to personal cloud storage across 5 users. iCloud Drive is the primary destination at 31% of total upload volume.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-webmail-traffic": {
+    title: "Webmail Category — Traffic by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "App", "Action"],
+      rows: [
+        ["a.johnson@company.com", "487", "Gmail", "Alert"],
+        ["l.garcia@company.com", "312", "Yahoo Mail", "Monitor"],
+        ["c.wilson@company.com", "241", "Outlook (personal)", "Alert"],
+        ["j.martinez@company.com", "187", "Gmail", "Monitor"],
+      ],
+    },
+    summary: "1,227 webmail events across 4 users. Gmail dominates as the preferred personal webmail channel for sending work content.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-tech-traffic": {
+    title: "Technology Category — Traffic by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Site", "Action"],
+      rows: [
+        ["s.chen@company.com", "987", "github.com", "Allow"],
+        ["k.davis@company.com", "842", "stackoverflow.com", "Allow"],
+        ["m.patel@company.com", "712", "npmjs.com", "Allow"],
+        ["j.smith@company.com", "598", "developer.mozilla.org", "Allow"],
+      ],
+    },
+    summary: "3,139 technology category events — largely legitimate developer activity. GitHub and Stack Overflow dominate, consistent with engineering team usage.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-genai-traffic": {
+    title: "GenAI Category — Traffic (Mixed Allow/Block)",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "App", "Action"],
+      rows: [
+        ["m.patel@company.com", "1247", "Google Gemini", "Allow"],
+        ["k.davis@company.com", "987", "ChatGPT", "Alert"],
+        ["s.chen@company.com", "741", "Microsoft Copilot", "Block"],
+        ["j.smith@company.com", "612", "DeepSeek", "Block"],
+      ],
+    },
+    summary: "3,587 GenAI events. DeepSeek and Microsoft Copilot are blocked per policy; Google Gemini is allowed but monitored.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-weapons": {
+    title: "Weapons Category — Blocked Access",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocks", "URL", "Category"],
+      rows: [
+        ["t.brown@company.com", "3", "ar15.com", "Weapons"],
+        ["r.williams@company.com", "2", "gunbroker.com", "Weapons"],
+        ["j.martinez@company.com", "1", "armslist.com", "Weapons"],
+      ],
+    },
+    summary: "6 weapons category blocks across 3 users. All attempts were blocked per acceptable use policy. No data exfiltration risk.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-cat-security-traffic": {
+    title: "Security Tools Category — Traffic",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Site", "Action"],
+      rows: [
+        ["j.smith@company.com", "312", "virustotal.com", "Alert"],
+        ["s.chen@company.com", "287", "shodan.io", "Alert"],
+        ["m.patel@company.com", "198", "haveibeenpwned.com", "Allow"],
+      ],
+    },
+    summary: "797 security tool events. Shodan access by s.chen was flagged — review for insider threat reconnaissance indicators.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-app-icloud": {
+    title: "iCloud Drive — Users and Upload Volume",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "Device", "Policy"],
+      rows: [
+        ["j.smith@company.com", "182", "MacBook Pro (Personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["l.garcia@company.com", "148", "iPhone (Personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["r.williams@company.com", "98", "MacBook Air (Personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "74", "iPad (Personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["a.johnson@company.com", "52", "MacBook Pro (Personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["c.wilson@company.com", "28", "iPhone (Personal)", "Monitor"],
+      ],
+    },
+    summary: "582 MB uploaded to personal iCloud Drive across 6 users. 3 users triggered high-sensitivity DLP blocks — files were prevented from leaving the organization.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Show all unsanctioned cloud storage", id: "ciso-ucat-cloudstorage" },
+    ],
+  },
+
+  "ciso-app-youtube": {
+    title: "YouTube — Users and Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Upload (MB)", "Action"],
+      rows: [
+        ["t.brown@company.com", "412", "18", "Allow"],
+        ["l.garcia@company.com", "287", "12", "Allow"],
+        ["a.johnson@company.com", "241", "9", "Allow"],
+        ["r.williams@company.com", "187", "6", "Alert"],
+        ["j.martinez@company.com", "142", "3", "Allow"],
+      ],
+    },
+    summary: "1,269 YouTube events with 48 MB of uploads. Primarily viewing activity — uploads are low volume and within acceptable limits.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Show all streaming apps", id: "ciso-ucat-streaming" },
+    ],
+  },
+
+  "ciso-app-cnn": {
+    title: "CNN — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Action"],
+      rows: [
+        ["l.garcia@company.com", "187", "Allow"],
+        ["t.brown@company.com", "143", "Allow"],
+        ["a.johnson@company.com", "98", "Allow"],
+      ],
+    },
+    summary: "428 CNN access events across 3 users. News site access is permitted per policy — no risk indicators.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Show all news apps", id: "ciso-ucat-news" },
+    ],
+  },
+
+  "ciso-app-bbc": {
+    title: "BBC — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Action"],
+      rows: [
+        ["j.smith@company.com", "214", "Allow"],
+        ["c.wilson@company.com", "176", "Allow"],
+        ["r.williams@company.com", "132", "Allow"],
+      ],
+    },
+    summary: "522 BBC access events across 3 users. News reading activity — no policy violations.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Show all news apps", id: "ciso-ucat-news" },
+    ],
+  },
+
+  "ciso-app-eluniversal": {
+    title: "EL UNIVERSAL — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Action"],
+      rows: [
+        ["l.garcia@company.com", "143", "Allow"],
+        ["j.martinez@company.com", "98", "Allow"],
+      ],
+    },
+    summary: "241 EL UNIVERSAL (Spanish-language news) events across 2 users. Permitted news access, no policy violations.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Show all news apps", id: "ciso-ucat-news" },
+    ],
+  },
+
+  "ciso-ucat-cloudstorage": {
+    title: "Unsanctioned Cloud Storage Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "CCL", "# Users", "Upload (MB)"],
+      rows: [
+        ["iCloud Drive", "Poor", "6", "582"],
+        ["Google Drive (personal)", "Medium", "4", "284"],
+        ["Dropbox", "Medium", "3", "187"],
+        ["OneDrive (personal)", "Medium", "2", "98"],
+        ["Box (personal)", "High", "2", "64"],
+      ],
+    },
+    summary: "5 unsanctioned cloud storage apps used by 10 unique users, totaling 1,215 MB of uploads. iCloud Drive has the highest volume at 582 MB.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Drill into iCloud Drive", id: "ciso-app-icloud" },
+    ],
+  },
+
+  "ciso-ucat-streaming": {
+    title: "Streaming Apps — Usage Summary",
+    chartType: "table",
+    table: {
+      columns: ["App", "# Users", "# Events", "Upload (MB)"],
+      rows: [
+        ["YouTube", "5", "1269", "48"],
+        ["Twitch", "3", "412", "12"],
+        ["Netflix", "2", "287", "0"],
+        ["Spotify", "4", "876", "0"],
+      ],
+    },
+    summary: "4 streaming apps accessed by 10 users. YouTube dominates with 48 MB of uploads — review for screen recording or content uploading.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "Drill into YouTube", id: "ciso-app-youtube" },
+    ],
+  },
+
+  "ciso-ucat-news": {
+    title: "News Apps — Usage Summary",
+    chartType: "table",
+    table: {
+      columns: ["App", "# Users", "# Events"],
+      rows: [
+        ["BBC", "3", "522"],
+        ["CNN", "3", "428"],
+        ["EL UNIVERSAL", "2", "241"],
+        ["Reuters", "2", "187"],
+      ],
+    },
+    summary: "4 news apps accessed by 8 users. All access is within policy — news sites are permitted for non-business use during work hours.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-ucat-profnet": {
+    title: "Professional Networking Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "# Users", "# Events", "Risk"],
+      rows: [
+        ["LinkedIn", "8", "1247", "Low"],
+        ["Glassdoor", "4", "487", "Medium"],
+        ["Indeed", "3", "312", "Medium"],
+      ],
+    },
+    summary: "3 professional networking apps. Glassdoor and Indeed access by 7 users may indicate increased job-seeking activity — flag for HR review.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+    ],
+  },
+
+  "ciso-ucat-genai": {
+    title: "Unsanctioned GenAI Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "# Users", "# Events", "Action"],
+      rows: [
+        ["DeepSeek", "4", "987", "Block"],
+        ["Venice", "3", "412", "Block"],
+        ["Grok", "2", "287", "Alert"],
+        ["Perplexity", "1", "143", "Alert"],
+      ],
+    },
+    summary: "4 unsanctioned GenAI apps in use. DeepSeek and Venice are fully blocked — Grok and Perplexity are alerted but not yet blocked.",
+    followUps: [
+      { text: "Back to CISO dashboard", id: "ciso-overview" },
+      { text: "View GenAI admin dashboard", id: "genai-admin" },
+    ],
+  },
+  /* ───────────────────────── SECURITY ANALYST DRILL RESPONSES ───────────── */
+
+  "sa-ccl-poor": {
+    title: "Poor CCL Apps — Cloud Confidence Level",
+    chartType: "table",
+    table: {
+      columns: ["App", "Category", "CCL", "Upload (MB)"],
+      rows: [
+        ["iCloud Drive", "Cloud Storage", "Poor", "582"],
+        ["TikTok", "Social Media", "Poor", "31"],
+        ["WeChat", "Messaging", "Poor", "18"],
+        ["Yandex Disk", "Cloud Storage", "Poor", "14"],
+        ["Tencent QQ", "Messaging", "Poor", "9"],
+        ["VK", "Social Media", "Poor", "7"],
+        ["Baidu Cloud", "Cloud Storage", "Poor", "5"],
+        ["Meek", "Anonymizer", "Poor", "2"],
+      ],
+    },
+    summary: "8 poor-CCL apps in use, totaling 668 MB of uploads. iCloud Drive dominates at 87% of upload volume — recommend blocking or restricting to managed devices.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-ccl-high": {
+    title: "High CCL Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "Category", "CCL", "# Users"],
+      rows: [
+        ["Microsoft 365", "Productivity", "High", "87"],
+        ["Salesforce", "CRM", "High", "42"],
+        ["ServiceNow", "ITSM", "High", "38"],
+        ["Workday", "HR", "High", "31"],
+        ["Slack", "Collaboration", "High", "28"],
+        ["Zoom", "Video Conferencing", "High", "24"],
+      ],
+    },
+    summary: "6 high-CCL enterprise apps in use across the organization. All are sanctioned and actively managed with DLP and access controls.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-ccl-medium": {
+    title: "Medium CCL Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "Category", "CCL", "# Users"],
+      rows: [
+        ["Dropbox", "Cloud Storage", "Medium", "12"],
+        ["Google Drive (personal)", "Cloud Storage", "Medium", "9"],
+        ["Trello", "Project Management", "Medium", "7"],
+        ["Notion", "Productivity", "Medium", "6"],
+        ["Airtable", "Productivity", "Medium", "4"],
+      ],
+    },
+    summary: "5 medium-CCL apps in use. Several users are leveraging personal cloud storage apps like Dropbox and Google Drive — consider adding to blocked list.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-ccl-low": {
+    title: "Low CCL Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "Category", "CCL", "Upload (MB)"],
+      rows: [
+        ["Pastebin", "Developer Tools", "Low", "47"],
+        ["Hastebin", "Developer Tools", "Low", "12"],
+        ["transfer.sh", "File Transfer", "Low", "8"],
+        ["temp.sh", "File Transfer", "Low", "3"],
+      ],
+    },
+    summary: "4 low-CCL apps with 70 MB of uploads. Anonymous paste and file transfer sites are the primary concern — review for data exfiltration.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-ccl-excellent": {
+    title: "Excellent CCL Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "Category", "CCL", "# Users"],
+      rows: [
+        ["GitHub Enterprise", "Developer Tools", "Excellent", "34"],
+        ["AWS", "Cloud Infrastructure", "Excellent", "22"],
+        ["Google Workspace", "Productivity", "Excellent", "87"],
+        ["Microsoft Azure", "Cloud Infrastructure", "Excellent", "18"],
+      ],
+    },
+    summary: "4 excellent-CCL apps in use — all are sanctioned enterprise platforms with strong security posture and compliance certifications.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-ccl-unknown": {
+    title: "Unknown CCL Apps",
+    chartType: "table",
+    table: {
+      columns: ["App", "# Users", "# Events"],
+      rows: [
+        ["Globalpinng MCP", "3", "247"],
+        ["Parallel Web Systems", "2", "143"],
+        ["custom-ai-proxy.io", "1", "38"],
+      ],
+    },
+    summary: "3 apps with unknown CCL — likely new or shadow AI tools. Globalpinng MCP and Parallel Web Systems require immediate classification.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-managed-no": {
+    title: "Unmanaged Apps — Top by Upload Volume",
+    chartType: "hbar",
+    bars: [
+      { label: "iCloud Drive", value: 582, color: "#ef4444" },
+      { label: "Google Drive (personal)", value: 284, color: "#ef4444" },
+      { label: "YouTube", value: 48, color: "#ef4444" },
+      { label: "TikTok", value: 31, color: "#ef4444" },
+      { label: "Dropbox (personal)", value: 28, color: "#ef4444" },
+      { label: "Pastebin", value: 47, color: "#ef4444" },
+      { label: "WeChat", value: 18, color: "#ef4444" },
+      { label: "Gmail (personal)", value: 14, color: "#ef4444" },
+    ],
+    summary: "Top 8 unmanaged apps total 1,052 MB of uploads. iCloud Drive and Google Drive (personal) represent 82% — immediate DLP controls are recommended.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+      { text: "Drill into iCloud Drive", id: "ciso-app-icloud" },
+    ],
+  },
+
+  "sa-managed-yes": {
+    title: "Managed Apps — Inventory",
+    chartType: "table",
+    table: {
+      columns: ["App", "Category", "Managed Since", "Policy"],
+      rows: [
+        ["Microsoft 365", "Productivity", "2022-01-15", "DLP + Access Control"],
+        ["Salesforce", "CRM", "2022-03-01", "Access Control"],
+        ["Google Workspace", "Productivity", "2021-11-01", "DLP + Access Control"],
+        ["Slack", "Collaboration", "2022-06-15", "DLP"],
+        ["AWS", "Cloud Infrastructure", "2023-01-10", "CSPM"],
+        ["GitHub Enterprise", "Developer Tools", "2023-04-01", "DLP + Access Control"],
+      ],
+    },
+    summary: "6 managed apps with active policies. All sanctioned apps have at least DLP or access control policies in place.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-genai": {
+    title: "GenAI Category — Top Uploaders",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "Top App", "Policy"],
+      rows: [
+        ["m.patel@company.com", "1842", "Google Gemini", "[DLP GenAI] Block"],
+        ["k.davis@company.com", "1587", "ChatGPT", "[DLP GenAI] Block"],
+        ["s.chen@company.com", "1241", "ChatGPT", "[DLP GenAI] Block"],
+        ["j.smith@company.com", "987", "Google Gemini", "[DLP GenAI] Block"],
+        ["a.johnson@company.com", "741", "Microsoft Copilot", "[DLP GenAI] Block"],
+        ["r.williams@company.com", "512", "ChatGPT", "[DLP GenAI] Alert"],
+        ["l.garcia@company.com", "312", "Google Gemini", "[DLP GenAI] Alert"],
+        ["t.brown@company.com", "194", "DeepSeek", "[DLP GenAI] Block"],
+      ],
+    },
+    summary: "7,416 MB uploaded to GenAI apps across 8 users. m.patel and k.davis account for 46% of total GenAI upload volume.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-streaming": {
+    title: "Streaming Category — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Action"],
+      rows: [
+        ["t.brown@company.com", "18", "YouTube", "Allow"],
+        ["l.garcia@company.com", "12", "YouTube", "Allow"],
+        ["a.johnson@company.com", "9", "YouTube", "Allow"],
+        ["r.williams@company.com", "6", "Twitch", "Alert"],
+        ["j.martinez@company.com", "4", "Twitch", "Alert"],
+        ["c.wilson@company.com", "3", "YouTube", "Allow"],
+      ],
+    },
+    summary: "52 MB uploaded to streaming platforms across 6 users. YouTube uploads are low volume and permitted — Twitch uploads by r.williams and j.martinez warrant review.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-collaboration": {
+    title: "Collaboration Category — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Policy"],
+      rows: [
+        ["r.williams@company.com", "287", "Slack", "DLP Alert"],
+        ["m.patel@company.com", "214", "Microsoft Teams", "DLP Alert"],
+        ["k.davis@company.com", "187", "Slack", "DLP Block"],
+        ["s.chen@company.com", "143", "Zoom", "Monitor"],
+        ["j.smith@company.com", "98", "Slack", "DLP Alert"],
+      ],
+    },
+    summary: "929 MB uploaded to collaboration apps. Slack is the primary channel — k.davis triggered a DLP block with 187 MB, likely source code.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-technology": {
+    title: "Technology Category — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Policy"],
+      rows: [
+        ["s.chen@company.com", "412", "GitHub", "DLP Block"],
+        ["k.davis@company.com", "387", "GitHub", "DLP Block"],
+        ["m.patel@company.com", "241", "Stack Overflow", "Alert"],
+        ["j.smith@company.com", "198", "Pastebin", "DLP Block"],
+        ["r.williams@company.com", "87", "npm Registry", "Monitor"],
+      ],
+    },
+    summary: "1,325 MB uploaded to technology sites. GitHub uploads by s.chen and k.davis triggered DLP blocks — source code exfiltration is the primary risk.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-chat": {
+    title: "Chat / IM Category — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Action"],
+      rows: [
+        ["a.johnson@company.com", "47", "WhatsApp Web", "Alert"],
+        ["l.garcia@company.com", "32", "Telegram Web", "Block"],
+        ["t.brown@company.com", "18", "WhatsApp Web", "Alert"],
+        ["c.wilson@company.com", "12", "Signal Web", "Alert"],
+      ],
+    },
+    summary: "109 MB uploaded via chat/IM apps. Telegram use by l.garcia was blocked — WhatsApp Web uploads by two users require DLP review.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-cloudstorage": {
+    title: "Cloud Storage Category — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Policy"],
+      rows: [
+        ["j.smith@company.com", "182", "iCloud Drive", "[Ctx DLP] High Sensitivity Block"],
+        ["l.garcia@company.com", "148", "Google Drive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["r.williams@company.com", "98", "Dropbox", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "74", "OneDrive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "502 MB uploaded to personal cloud storage. High-sensitivity DLP blocks prevented 330 MB from exiting the organization.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-news": {
+    title: "News Category — Unusual Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "Site", "Action"],
+      rows: [
+        ["j.martinez@company.com", "14", "eluniversal.com.mx", "Alert"],
+        ["l.garcia@company.com", "8", "bbc.co.uk", "Alert"],
+        ["t.brown@company.com", "3", "cnn.com", "Alert"],
+      ],
+    },
+    summary: "25 MB uploaded to news sites — unusual activity worth investigating. News sites should not receive significant uploads. Review for comment form data exfiltration.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-crm": {
+    title: "CRM Category — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Policy"],
+      rows: [
+        ["k.davis@company.com", "312", "Salesforce", "Monitor"],
+        ["m.patel@company.com", "241", "HubSpot (personal)", "DLP Alert"],
+        ["r.williams@company.com", "187", "Salesforce", "Monitor"],
+      ],
+    },
+    summary: "740 MB uploaded to CRM platforms. HubSpot (personal) usage by m.patel is unsanctioned — customer data may have been exported.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-upload-profnet": {
+    title: "Professional Networking — Upload Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Upload (MB)", "App", "Action"],
+      rows: [
+        ["s.chen@company.com", "18", "LinkedIn", "Alert"],
+        ["k.davis@company.com", "12", "LinkedIn", "Alert"],
+        ["j.smith@company.com", "7", "LinkedIn", "Alert"],
+      ],
+    },
+    summary: "37 MB uploaded to LinkedIn across 3 users. Profile updates and resume uploads are likely — but cross-check with DLP for any sensitive file uploads.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-amazon": {
+    title: "Amazon Systems Manager — Upload Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Instance/Resource", "Policy"],
+      rows: [
+        ["k.davis@company.com", "142", "i-0a1b2c3d4e5f", "Monitor"],
+        ["s.chen@company.com", "98", "i-0f1e2d3c4b5a", "Monitor"],
+        ["m.patel@company.com", "87", "i-0123456789ab", "DLP Alert"],
+        ["j.smith@company.com", "63", "i-0ab9cd8ef7gh", "Monitor"],
+        ["r.williams@company.com", "47", "i-0xyz123456ab", "Monitor"],
+        ["a.johnson@company.com", "31", "i-0mnop567890q", "DLP Alert"],
+      ],
+    },
+    summary: "468 uploads to Amazon Systems Manager across 6 users. Two DLP alerts triggered by m.patel and a.johnson — likely sensitive configuration data.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-gmail": {
+    title: "Gmail — Upload Activity by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Attachment Size (MB)", "Policy"],
+      rows: [
+        ["a.johnson@company.com", "87", "47", "[Ctx DLP] High Sensitivity Block"],
+        ["l.garcia@company.com", "64", "38", "[Ctx DLP] Low Sensitivity Alert"],
+        ["c.wilson@company.com", "52", "28", "[Ctx DLP] High Sensitivity Block"],
+        ["j.martinez@company.com", "41", "22", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "37", "18", "[Ctx DLP] High Sensitivity Block"],
+        ["m.patel@company.com", "28", "12", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "309 Gmail uploads totaling 165 MB in attachments. 3 users triggered high-sensitivity DLP blocks — sensitive files were prevented from leaving.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-gdrive": {
+    title: "Google Drive — Upload Activity by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Upload Size (MB)", "Policy"],
+      rows: [
+        ["l.garcia@company.com", "98", "148", "[Ctx DLP] High Sensitivity Block"],
+        ["j.smith@company.com", "74", "112", "[Ctx DLP] Low Sensitivity Alert"],
+        ["r.williams@company.com", "61", "87", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "47", "62", "[Ctx DLP] High Sensitivity Block"],
+        ["k.davis@company.com", "38", "47", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "318 uploads to personal Google Drive totaling 456 MB. l.garcia has the highest volume at 148 MB — 2 high-sensitivity blocks were applied.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-gemini": {
+    title: "Google Gemini — Upload Activity by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Content Type", "Policy"],
+      rows: [
+        ["m.patel@company.com", "287", "Source Code", "[DLP GenAI] Block"],
+        ["j.smith@company.com", "241", "Financial Data", "[DLP GenAI] Block"],
+        ["l.garcia@company.com", "187", "PII", "[DLP GenAI] Block"],
+        ["r.williams@company.com", "143", "Credentials", "[DLP GenAI] Alert"],
+        ["t.brown@company.com", "98", "Health Records", "[DLP GenAI] Block"],
+      ],
+    },
+    summary: "956 uploads to Google Gemini — 4 of 5 users triggered DLP blocks. Source code and financial data are the most frequently uploaded sensitive content types.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-brave": {
+    title: "Brave Browser — Upload Activity by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Destination", "Policy"],
+      rows: [
+        ["k.davis@company.com", "47", "Personal Cloud Storage", "DLP Alert"],
+        ["s.chen@company.com", "38", "GenAI Apps", "DLP Block"],
+        ["j.smith@company.com", "28", "Personal Cloud Storage", "DLP Alert"],
+        ["m.patel@company.com", "19", "GenAI Apps", "DLP Block"],
+      ],
+    },
+    summary: "132 uploads via Brave browser. Brave is being used to bypass corporate browser controls — consider Enterprise Browser enforcement.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-slack": {
+    title: "Slack — Upload Activity by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Channel", "File Type"],
+      rows: [
+        ["r.williams@company.com", "112", "#engineering-general", "Source Code"],
+        ["k.davis@company.com", "87", "#random", "Archive (ZIP)"],
+        ["j.smith@company.com", "74", "#dev-ops", "Config Files"],
+        ["m.patel@company.com", "58", "#finance", "Spreadsheet"],
+      ],
+    },
+    summary: "331 Slack uploads across 4 users. Config file uploads by j.smith and archive uploads by k.davis may contain sensitive infrastructure data.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-gcalendar": {
+    title: "Google Calendar — Download Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Downloads", "Calendar", "Policy"],
+      rows: [
+        ["c.wilson@company.com", "12", "Corporate All Hands", "Alert"],
+        ["j.martinez@company.com", "8", "Product Roadmap", "Alert"],
+        ["l.garcia@company.com", "6", "Executive Schedule", "Block"],
+      ],
+    },
+    summary: "26 Google Calendar downloads. l.garcia attempted to export the Executive Schedule — this was blocked as a potential data exfiltration event.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-act-chatgpt": {
+    title: "ChatGPT — Upload Activity by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Uploads", "Content Type", "Action"],
+      rows: [
+        ["k.davis@company.com", "312", "Source Code", "Block"],
+        ["s.chen@company.com", "241", "PII Data", "Block"],
+        ["m.patel@company.com", "198", "Financial Data", "Block"],
+        ["r.williams@company.com", "143", "Internal Docs", "Alert"],
+      ],
+    },
+    summary: "894 uploads to ChatGPT across 4 users — all blocked or alerted. Source code uploads by k.davis are the highest-risk finding.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dsev-low": {
+    title: "DLP Violations — Low Severity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "App", "Policy"],
+      rows: [
+        ["r.williams@company.com", "22", "iCloud Drive", "[Ctx DLP] Low Sensitivity Alert"],
+        ["l.garcia@company.com", "19", "Google Drive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["t.brown@company.com", "16", "OneDrive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["a.johnson@company.com", "14", "Dropbox", "[Ctx DLP] Low Sensitivity Alert"],
+        ["s.chen@company.com", "12", "Gmail", "[Ctx DLP] Low Sensitivity Alert"],
+        ["j.martinez@company.com", "9", "Box", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "92 low-severity DLP violations. All were alerted rather than blocked — consider escalating to block policy for repeated violators.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dsev-critical": {
+    title: "DLP Violations — Critical Severity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "App", "Policy"],
+      rows: [
+        ["k.davis@company.com", "47", "ChatGPT", "[DLP GenAI] Block — Source Code"],
+        ["c.wilson@company.com", "12", "Outlook (personal)", "[Ctx DLP] High Sensitivity Block — Credentials"],
+        ["s.chen@company.com", "8", "Shodan", "[Ctx DLP] High Sensitivity Block — Reconnaissance"],
+        ["m.patel@company.com", "6", "HubSpot (personal)", "[Ctx DLP] High Sensitivity Block — Customer PII"],
+        ["l.garcia@company.com", "4", "Google Calendar", "[Ctx DLP] High Sensitivity Block — Exec Schedule"],
+      ],
+    },
+    summary: "77 critical DLP violations across 5 users. Source code to ChatGPT by k.davis and credential exfiltration by c.wilson are the most urgent findings.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dsev-medium": {
+    title: "DLP Violations — Medium Severity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "App", "Policy"],
+      rows: [
+        ["j.smith@company.com", "47", "iCloud Drive", "[Ctx DLP] High Sensitivity Block"],
+        ["a.johnson@company.com", "38", "Gmail", "[Ctx DLP] High Sensitivity Block"],
+        ["t.brown@company.com", "29", "OneDrive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["r.williams@company.com", "22", "Slack", "[DLP GenAI] Alert"],
+        ["m.patel@company.com", "18", "Google Gemini", "[DLP GenAI] Block"],
+      ],
+    },
+    summary: "154 medium-severity DLP violations. PII and health records moving to personal cloud storage account for the bulk of these events.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dsev-high": {
+    title: "DLP Violations — High Severity",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files", "App", "Policy"],
+      rows: [
+        ["j.smith@company.com", "28", "Pastebin", "[Ctx DLP] High Sensitivity Block — Source Code"],
+        ["k.davis@company.com", "19", "GitHub (personal)", "[Ctx DLP] High Sensitivity Block — Source Code"],
+      ],
+    },
+    summary: "47 high-severity DLP violations. Both users attempted to post source code to public repositories — blocks prevented disclosure.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dact-block": {
+    title: "DLP Block Action — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocked", "Top App", "Policy"],
+      rows: [
+        ["k.davis@company.com", "47", "ChatGPT", "[DLP GenAI] Block"],
+        ["m.patel@company.com", "38", "Google Gemini", "[DLP GenAI] Block"],
+        ["s.chen@company.com", "34", "GitHub", "DLP Block — Source Code"],
+        ["j.smith@company.com", "29", "Pastebin", "DLP Block"],
+        ["l.garcia@company.com", "24", "Google Drive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["a.johnson@company.com", "21", "Gmail", "[Ctx DLP] High Sensitivity Block"],
+        ["t.brown@company.com", "18", "OneDrive (personal)", "[Ctx DLP] High Sensitivity Block"],
+        ["c.wilson@company.com", "10", "Outlook (personal)", "[Ctx DLP] High Sensitivity Block"],
+      ],
+    },
+    summary: "221 DLP block actions across 8 users. ChatGPT and Google Gemini account for 38% of all blocks — GenAI policy is actively preventing data exfiltration.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dact-useralert": {
+    title: "DLP User Alert (Coaching) — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Coached", "Policy", "Bypass Rate"],
+      rows: [
+        ["a.johnson@company.com", "74", "[Web] Policy Coaching", "34%"],
+        ["r.williams@company.com", "62", "[Web] Policy Coaching", "19%"],
+        ["l.garcia@company.com", "58", "[Web] Policy Coaching", "41%"],
+        ["t.brown@company.com", "47", "[Web] Policy Coaching", "28%"],
+        ["c.wilson@company.com", "41", "[Web] Policy Coaching", "55%"],
+        ["j.martinez@company.com", "36", "[Web] Policy Coaching", "22%"],
+      ],
+    },
+    summary: "318 DLP coaching events. c.wilson bypasses 55% of coaching prompts — escalate to targeted security awareness training.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dact-alert": {
+    title: "DLP Alert Action — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "App", "Policy"],
+      rows: [
+        ["r.williams@company.com", "87", "ChatGPT", "[DLP GenAI] Alert"],
+        ["l.garcia@company.com", "74", "Google Drive (personal)", "[Ctx DLP] Low Sensitivity Alert"],
+        ["j.smith@company.com", "62", "Slack", "[DLP GenAI] Alert"],
+        ["m.patel@company.com", "51", "iCloud Drive", "[Ctx DLP] Low Sensitivity Alert"],
+        ["s.chen@company.com", "43", "Gmail", "[Ctx DLP] Low Sensitivity Alert"],
+      ],
+    },
+    summary: "317 DLP alerts across 5 users. Alerts alone may not be sufficient for r.williams — 87 ChatGPT alerts without behavior change suggests escalation to block.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dact-revoke": {
+    title: "Public Sharing Revoked — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files Revoked", "App", "Policy"],
+      rows: [
+        ["l.garcia@company.com", "14", "Google Drive", "Auto-Revoke Public Share"],
+        ["j.smith@company.com", "9", "OneDrive", "Auto-Revoke Public Share"],
+        ["t.brown@company.com", "7", "SharePoint", "Auto-Revoke Public Share"],
+        ["a.johnson@company.com", "4", "Google Drive", "Auto-Revoke Public Share"],
+      ],
+    },
+    summary: "34 files had public sharing automatically revoked. l.garcia had 14 files with public links — automated policy response prevented unauthorized data exposure.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dact-label": {
+    title: "Sensitivity Labels Applied — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "Files Labeled", "Label", "App"],
+      rows: [
+        ["m.patel@company.com", "28", "Confidential", "SharePoint"],
+        ["k.davis@company.com", "22", "Highly Confidential", "OneDrive"],
+        ["s.chen@company.com", "17", "Confidential", "Google Drive"],
+        ["j.smith@company.com", "14", "Internal Only", "SharePoint"],
+      ],
+    },
+    summary: "81 sensitivity labels auto-applied across 4 users. Automated labeling ensures proper classification for downstream DLP enforcement.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-dact-bypass": {
+    title: "DLP Policy Bypass Events",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Bypasses", "Policy", "Justification"],
+      rows: [
+        ["c.wilson@company.com", "23", "[Web] Policy Coaching", "\"Work requirement\""],
+        ["l.garcia@company.com", "17", "[Web] Policy Coaching", "\"Approved by manager\""],
+      ],
+    },
+    summary: "40 policy bypasses by 2 users. Justifications provided are vague — recommend manager verification and enhanced coaching for both users.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-uci": {
+    title: "UCI Threshold Alert — Top Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "UCI Score", "# Alerts", "Top App"],
+      rows: [
+        ["c.wilson@company.com", "94", "38", "OneDrive"],
+        ["k.davis@company.com", "87", "31", "ChatGPT"],
+        ["j.smith@company.com", "79", "24", "SharePoint"],
+        ["m.patel@company.com", "76", "19", "Google Gemini"],
+        ["l.garcia@company.com", "71", "18", "Google Drive"],
+        ["s.chen@company.com", "68", "17", "GitHub"],
+        ["r.williams@company.com", "64", "14", "Slack"],
+        ["a.johnson@company.com", "61", "26", "Gmail"],
+      ],
+    },
+    summary: "187 UCI threshold alerts across 8 users. c.wilson scores 94 — highest risk profile in the organization. Immediate investigation recommended.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-bulkfail": {
+    title: "Bulk Failed Logins — Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Failed Logins", "App", "Time Window"],
+      rows: [
+        ["c.wilson@company.com", "47", "AWS Console", "30 min"],
+        ["j.smith@company.com", "38", "Salesforce", "15 min"],
+        ["m.patel@company.com", "29", "ServiceNow", "45 min"],
+        ["k.davis@company.com", "24", "GitHub Enterprise", "20 min"],
+        ["l.garcia@company.com", "19", "Workday", "60 min"],
+        ["t.brown@company.com", "14", "Salesforce", "30 min"],
+        ["r.williams@company.com", "11", "Jira", "25 min"],
+      ],
+    },
+    summary: "182 bulk failed login events across 7 users. c.wilson's 47 AWS failed logins in 30 minutes is a critical finding — potential credential stuffing attack.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-rare": {
+    title: "Rare Event Alerts — Users",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Rare Events", "Activity", "App"],
+      rows: [
+        ["c.wilson@company.com", "8", "First access from Tor IP", "AWS Console"],
+        ["j.martinez@company.com", "6", "First admin action", "Salesforce"],
+        ["t.brown@company.com", "5", "First bulk download", "SharePoint"],
+        ["l.garcia@company.com", "4", "First access from new country", "Workday"],
+        ["a.johnson@company.com", "3", "First sensitive share", "OneDrive"],
+        ["r.williams@company.com", "2", "First API key generation", "GitHub"],
+      ],
+    },
+    summary: "28 rare event alerts across 6 users. Tor IP access by c.wilson and first admin actions by j.martinez are the highest-priority findings.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-firstip": {
+    title: "First Access from Non-Netskope IP",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "IP Address", "Geo Location"],
+      rows: [
+        ["c.wilson@company.com", "3", "185.220.101.47", "Tor Exit Node, DE"],
+        ["l.garcia@company.com", "2", "103.21.244.0", "Cloudflare CDN, SG"],
+        ["j.martinez@company.com", "2", "193.189.100.201", "VPN Provider, NL"],
+        ["t.brown@company.com", "1", "91.108.4.1", "Telegram Infrastructure, NL"],
+        ["r.williams@company.com", "1", "104.16.123.96", "Cloudflare CDN, US"],
+      ],
+    },
+    summary: "9 first-access events from non-Netskope IPs. c.wilson accessing via Tor is a critical finding requiring immediate account review.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-encrypted28": {
+    title: "Spiking Encrypted File Uploads (28 Files)",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Files", "App", "File Types"],
+      rows: [
+        ["k.davis@company.com", "28", "OneDrive", ".enc, .gpg"],
+        ["c.wilson@company.com", "21", "Google Drive", ".7z, .enc"],
+        ["m.patel@company.com", "17", "iCloud Drive", ".gpg, .age"],
+        ["j.smith@company.com", "14", "Dropbox", ".enc, .zip"],
+        ["s.chen@company.com", "11", "GitHub", ".gpg"],
+      ],
+    },
+    summary: "91 encrypted file uploads flagged across 5 users. k.davis uploading 28 encrypted files to OneDrive in a single session is consistent with ransomware staging behavior.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-gdrive-sensitive": {
+    title: "Sensitive Data Moved to Google Drive",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Files Moved", "Policy"],
+      rows: [
+        ["l.garcia@company.com", "12", "Healthcare_Records_Q2.xlsx", "DLP Block"],
+        ["a.johnson@company.com", "8", "Employee_SSN_List.csv", "DLP Block"],
+        ["t.brown@company.com", "6", "Financial_Projections_2025.pdf", "DLP Block"],
+        ["r.williams@company.com", "4", "Client_Contracts_Signed.pdf", "DLP Alert"],
+      ],
+    },
+    summary: "30 sensitive file move events to Google Drive across 4 users. Healthcare records and SSN data were blocked from exfiltration.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-aws-first": {
+    title: "First Access to AWS ap-southeast-2 from Non-Netskope IP",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "IP Address", "Instance"],
+      rows: [
+        ["c.wilson@company.com", "4", "185.220.101.47", "i-0a1b2c3d4e5f (prod-db)"],
+        ["k.davis@company.com", "3", "193.189.100.201", "i-0f1e2d3c4b5a (prod-api)"],
+        ["j.smith@company.com", "2", "103.21.244.0", "i-0xyz123456ab (staging)"],
+        ["m.patel@company.com", "1", "91.108.4.1", "i-0ab9cd8ef7gh (dev)"],
+      ],
+    },
+    summary: "10 first-access events to AWS ap-southeast-2 production instances from non-corporate IPs. c.wilson accessing prod-db via Tor is a critical finding.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-ransomware": {
+    title: "Ransomware-Like Behavior in OneDrive",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Encrypted Files", "Timeframe", "Risk Level"],
+      rows: [
+        ["k.davis@company.com", "28", "< 4 minutes", "Critical"],
+        ["c.wilson@company.com", "21", "< 7 minutes", "Critical"],
+        ["m.patel@company.com", "17", "< 12 minutes", "High"],
+        ["j.smith@company.com", "11", "< 18 minutes", "High"],
+      ],
+    },
+    summary: "CRITICAL: k.davis uploaded 28 encrypted files to OneDrive in under 4 minutes — consistent with ransomware staging. Immediate containment and EDR investigation required.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-encrypted20": {
+    title: "Spiking 20 Encrypted File Uploads",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Files", "App", "Risk"],
+      rows: [
+        ["c.wilson@company.com", "22", "Google Drive", "Critical"],
+        ["l.garcia@company.com", "21", "iCloud Drive", "High"],
+        ["t.brown@company.com", "20", "Dropbox", "High"],
+      ],
+    },
+    summary: "63 encrypted file uploads flagged at the 20-file threshold. All three users exceeded the threshold within the same 24-hour window — correlated investigation recommended.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uba-malware-spike": {
+    title: "Malware File Upload Spike",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Files", "Malware Name", "App"],
+      rows: [
+        ["j.smith@company.com", "3", "Trojan.GenericKD.71823401", "SharePoint"],
+        ["s.chen@company.com", "2", "HEUR:Trojan-Downloader.Script.Generic", "OneDrive"],
+      ],
+    },
+    summary: "5 malware-positive files uploaded to corporate cloud storage across 2 users. Quarantine initiated — endpoint scans required for both users.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-sharepoint": {
+    title: "SharePoint — UBA Alerts by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Alert Type", "Risk Level"],
+      rows: [
+        ["t.brown@company.com", "14", "Bulk Download", "High"],
+        ["j.smith@company.com", "12", "Malware Upload", "Critical"],
+        ["k.davis@company.com", "9", "Unusual Access Time", "Medium"],
+        ["l.garcia@company.com", "8", "Mass Permission Change", "High"],
+        ["m.patel@company.com", "7", "First Access New Device", "Medium"],
+        ["r.williams@company.com", "6", "Bulk Download", "Medium"],
+        ["c.wilson@company.com", "5", "Anonymous Share Created", "High"],
+      ],
+    },
+    summary: "61 SharePoint UBA alerts. Malware uploads by j.smith and bulk downloads by t.brown are the highest-severity findings.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-onedrive": {
+    title: "OneDrive — UBA Alerts by User",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Alert Type", "Risk Level"],
+      rows: [
+        ["k.davis@company.com", "28", "Ransomware-Like Behavior", "Critical"],
+        ["c.wilson@company.com", "21", "Encrypted File Spike", "Critical"],
+        ["s.chen@company.com", "14", "Malware Upload", "Critical"],
+        ["m.patel@company.com", "11", "Bulk Download", "High"],
+        ["a.johnson@company.com", "8", "Sensitive Share External", "High"],
+        ["l.garcia@company.com", "6", "Mass Deletion", "High"],
+        ["j.smith@company.com", "5", "Unusual Access Pattern", "Medium"],
+      ],
+    },
+    summary: "93 OneDrive UBA alerts. Three Critical-level alerts involving ransomware-like behavior and encrypted file spikes require immediate incident response.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-parallel": {
+    title: "Parallel Search MCP — UBA Alerts",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Activity", "Data Accessed"],
+      rows: [
+        ["k.davis@company.com", "12", "Mass Data Query", "Customer Database"],
+        ["c.wilson@company.com", "9", "Anomalous API Calls", "Employee Records"],
+        ["j.smith@company.com", "7", "After-Hours Access", "Financial Data"],
+        ["m.patel@company.com", "5", "Bulk Export", "Product Roadmap"],
+        ["s.chen@company.com", "4", "First Access from New IP", "Source Code Repo"],
+      ],
+    },
+    summary: "37 UBA alerts for Parallel Search MCP — an unclassified AI tool. Mass data queries to customer database by k.davis is a critical finding requiring immediate review.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-teams": {
+    title: "Microsoft Teams — UBA Alerts",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Alert Type", "Channel"],
+      rows: [
+        ["r.williams@company.com", "11", "Credential Sharing Detected", "#engineering"],
+        ["a.johnson@company.com", "9", "Sensitive File Share", "#hr-confidential"],
+        ["l.garcia@company.com", "7", "External Guest Invite", "#finance"],
+        ["t.brown@company.com", "6", "Bulk Message Deletion", "#all-hands"],
+        ["j.martinez@company.com", "4", "Anomalous Webhook", "#dev-general"],
+      ],
+    },
+    summary: "37 Teams UBA alerts. Credential sharing in #engineering by r.williams and sensitive file sharing to #hr-confidential by a.johnson are immediate priorities.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-globalpinng": {
+    title: "Globalpinng MCP — UBA Alerts",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Activity", "Risk Level"],
+      rows: [
+        ["c.wilson@company.com", "8", "Excessive API Calls — Network Scan", "Critical"],
+        ["k.davis@company.com", "6", "Data Exfil via MCP Protocol", "Critical"],
+        ["m.patel@company.com", "4", "After-Hours Bulk Query", "High"],
+        ["j.smith@company.com", "3", "First Use of Tool", "Medium"],
+      ],
+    },
+    summary: "21 UBA alerts for Globalpinng MCP — an unknown-CCL tool. Network scanning activity by c.wilson is a critical indicator of insider threat or compromised account.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-gdrive": {
+    title: "Google Drive — UBA Alerts",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Alert Type", "Files"],
+      rows: [
+        ["l.garcia@company.com", "12", "Sensitive Data Move", "Healthcare_Records_Q2.xlsx"],
+        ["a.johnson@company.com", "8", "Sensitive Data Move", "Employee_SSN_List.csv"],
+        ["t.brown@company.com", "6", "Public Share Created", "Financial_Projections_2025.pdf"],
+        ["r.williams@company.com", "4", "Bulk Download to Unmanaged Device", "Client_Contracts_Signed.pdf"],
+      ],
+    },
+    summary: "30 Google Drive UBA alerts. Healthcare and PII data movements by l.garcia and a.johnson are the most critical findings — both were blocked.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+
+  "sa-uapp-ec2": {
+    title: "Amazon EC2 — UBA Alerts",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerts", "Activity", "Region"],
+      rows: [
+        ["c.wilson@company.com", "4", "First Access from Tor IP", "ap-southeast-2"],
+        ["k.davis@company.com", "3", "Unusual Instance Type Launch", "us-east-1"],
+        ["j.smith@company.com", "2", "After-Hours Root Login", "ap-southeast-2"],
+        ["m.patel@company.com", "1", "Security Group Modification", "eu-west-1"],
+      ],
+    },
+    summary: "10 EC2 UBA alerts. c.wilson accessing production instances via Tor IP is a critical finding requiring immediate IAM key rotation and account suspension.",
+    followUps: [
+      { text: "Back to Security Analyst dashboard", id: "security-analyst" },
+    ],
+  },
+  /* ───────────────────────── GENAI ADMIN DRILL RESPONSES ─────────────── */
+
+  "ga-act-gemini": {
+    title: "Google Gemini — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "# Uploads", "Action"],
+      rows: [
+        ["m.patel@company.com", "1247", "287", "Allow"],
+        ["j.smith@company.com", "987", "241", "Alert"],
+        ["l.garcia@company.com", "742", "187", "Allow"],
+        ["r.williams@company.com", "598", "143", "Alert"],
+        ["t.brown@company.com", "487", "98", "Allow"],
+        ["k.davis@company.com", "412", "112", "Alert"],
+        ["a.johnson@company.com", "298", "76", "Allow"],
+        ["s.chen@company.com", "107", "41", "Allow"],
+      ],
+    },
+    summary: "5,878 Gemini events across 58 users (top 8 shown). 1,185 upload events flagged for DLP review — source code and financial data are primary content types.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-chatgpt": {
+    title: "ChatGPT — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Instance", "Action"],
+      rows: [
+        ["k.davis@company.com", "712", "ChatGPT-4o", "Alert"],
+        ["s.chen@company.com", "598", "ChatGPT-4o", "Alert"],
+        ["m.patel@company.com", "487", "ChatGPT-4", "Alert"],
+        ["r.williams@company.com", "412", "ChatGPT-4o", "Allow"],
+        ["a.johnson@company.com", "341", "ChatGPT-4", "Allow"],
+        ["j.smith@company.com", "287", "ChatGPT-4o", "Alert"],
+        ["t.brown@company.com", "412", "ChatGPT-4o-mini", "Allow"],
+        ["c.wilson@company.com", "288", "ChatGPT-4o", "Alert"],
+      ],
+    },
+    summary: "3,537 ChatGPT events across 87 users. Alerts on 5 power users reflect active DLP monitoring — source code uploads are the primary risk vector.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-m365": {
+    title: "Microsoft 365 Copilot — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Instance", "Action"],
+      rows: [
+        ["k.davis@company.com", "847", "Word Copilot", "Allow"],
+        ["m.patel@company.com", "712", "Excel Copilot", "Allow"],
+        ["j.smith@company.com", "587", "Outlook Copilot", "Allow"],
+        ["s.chen@company.com", "341", "Teams Copilot", "Alert"],
+        ["r.williams@company.com", "262", "PowerPoint Copilot", "Allow"],
+      ],
+    },
+    summary: "2,749 Microsoft 365 Copilot events across 5 users — all licensed users. Teams Copilot usage by s.chen triggered an alert for sensitive data in meeting transcripts.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-venice": {
+    title: "Venice — All Blocked",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocked Events", "Activity", "Policy"],
+      rows: [
+        ["j.smith@company.com", "87", "Chat", "[AI Guardrails] Block Venice"],
+        ["t.brown@company.com", "64", "Image Generation", "[AI Guardrails] Block Venice"],
+        ["c.wilson@company.com", "41", "Chat", "[AI Guardrails] Block Venice"],
+      ],
+    },
+    summary: "192 Venice events, all blocked. Venice is an unsanctioned, privacy-focused AI with no enterprise controls — block policy is working as intended.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-github": {
+    title: "GitHub Copilot — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Repo", "Action"],
+      rows: [
+        ["s.chen@company.com", "112", "netskope/core-api", "Allow"],
+        ["k.davis@company.com", "47", "netskope/frontend", "Allow"],
+        ["m.patel@company.com", "30", "netskope/data-pipeline", "Alert"],
+      ],
+    },
+    summary: "189 GitHub Copilot events. m.patel triggered an alert for using Copilot in a repository containing customer PII — review data residency compliance.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-claude": {
+    title: "Anthropic Claude — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "# Alerts", "Policy"],
+      rows: [
+        ["m.patel@company.com", "312", "47", "[Copilot Alert] Claude"],
+        ["j.smith@company.com", "287", "38", "[Copilot Alert] Claude"],
+        ["s.chen@company.com", "241", "31", "[Copilot Alert] Claude"],
+        ["k.davis@company.com", "198", "29", "[Copilot Alert] Claude"],
+        ["r.williams@company.com", "143", "19", "[Copilot Alert] Claude"],
+      ],
+    },
+    summary: "1,181 Claude events across 5 users — all alerted but allowed. 164 alerts triggered by sensitive content uploads. Review whether block policy is warranted.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-mscopilot": {
+    title: "Microsoft Copilot (Web) — Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "# Blocked", "Policy"],
+      rows: [
+        ["a.johnson@company.com", "87", "87", "[AI Guardrails] Block MS Copilot Web"],
+        ["t.brown@company.com", "64", "64", "[AI Guardrails] Block MS Copilot Web"],
+        ["l.garcia@company.com", "41", "41", "[AI Guardrails] Block MS Copilot Web"],
+        ["c.wilson@company.com", "28", "28", "[AI Guardrails] Block MS Copilot Web"],
+      ],
+    },
+    summary: "220 Microsoft Copilot (Web) events, all blocked. Users are attempting to use the consumer Copilot instead of the licensed M365 Copilot — communication recommended.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-notebooklm": {
+    title: "Google NotebookLM — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Upload (KB)", "Action"],
+      rows: [
+        ["l.garcia@company.com", "47", "2847", "Allow"],
+        ["m.patel@company.com", "38", "1987", "Block"],
+        ["r.williams@company.com", "29", "1204", "Allow"],
+      ],
+    },
+    summary: "114 NotebookLM events. m.patel's downloads were blocked per the NotebookLM download block policy. 6,038 KB uploaded to external AI notebook service.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-deepseek": {
+    title: "DeepSeek — All Blocked",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Attempts", "Instance", "Block Reason"],
+      rows: [
+        ["j.smith@company.com", "312", "DeepSeek-R1", "Unsanctioned AI — Data Residency Risk"],
+        ["t.brown@company.com", "287", "DeepSeek-V3", "Unsanctioned AI — Data Residency Risk"],
+        ["s.chen@company.com", "241", "DeepSeek-R1", "Unsanctioned AI — Data Residency Risk"],
+        ["a.johnson@company.com", "147", "DeepSeek-Chat", "Unsanctioned AI — Data Residency Risk"],
+      ],
+    },
+    summary: "987 DeepSeek access attempts, all blocked. Data residency concerns (China-based model) are the primary block reason. Users should be notified of approved AI alternatives.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-parallel": {
+    title: "Parallel Web Systems — Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "# Alerted", "Policy"],
+      rows: [
+        ["k.davis@company.com", "98", "98", "[AI Guardrails] Alert Parallel"],
+        ["c.wilson@company.com", "74", "74", "[AI Guardrails] Alert Parallel"],
+        ["j.smith@company.com", "52", "52", "[AI Guardrails] Alert Parallel"],
+      ],
+    },
+    summary: "224 Parallel Web Systems events — all alerted. This unknown-CCL MCP tool is under active review. Recommend blocking pending vendor security assessment.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-cursor": {
+    title: "Cursor — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Repo", "Action"],
+      rows: [
+        ["s.chen@company.com", "87", "netskope/core-api", "Allow"],
+        ["k.davis@company.com", "62", "netskope/frontend", "Allow"],
+      ],
+    },
+    summary: "149 Cursor AI IDE events across 2 users. Both users are accessing internal repositories — review whether Cursor's data handling meets security requirements.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-grok": {
+    title: "Grok — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Action"],
+      rows: [
+        ["t.brown@company.com", "184", "Alert"],
+        ["j.martinez@company.com", "103", "Alert"],
+      ],
+    },
+    summary: "287 Grok events across 2 users — both alerted. Grok is currently in the alert-only phase of a planned block rollout.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-perplexity": {
+    title: "Perplexity AI — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Action"],
+      rows: [
+        ["l.garcia@company.com", "143", "Alert"],
+      ],
+    },
+    summary: "143 Perplexity AI events from a single user — alerted. Perplexity is being evaluated for sanctioned use; no DLP violations recorded.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-fireflies": {
+    title: "Fireflies.ai — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Action"],
+      rows: [
+        ["a.johnson@company.com", "98", "Alert"],
+      ],
+    },
+    summary: "98 Fireflies.ai events — meeting transcription AI tool used by a.johnson. Alert triggered because Fireflies receives audio recordings of potentially confidential meetings.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-act-openai": {
+    title: "OpenAI API — User Activity",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Events", "Instance", "Action"],
+      rows: [
+        ["m.patel@company.com", "47", "gpt-4o API", "Alert"],
+      ],
+    },
+    summary: "47 direct OpenAI API calls by m.patel — alerted. API access bypasses browser-level controls; recommend API-layer DLP enforcement.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-guardrails": {
+    title: "AI Guardrails Policy — Activity by App",
+    chartType: "table",
+    table: {
+      columns: ["App", "Instance", "Activity", "# Blocked", "# Users"],
+      rows: [
+        ["DeepSeek", "DeepSeek-R1/V3", "Chat / Code Gen", "987", "4"],
+        ["Venice", "Venice Chat", "Chat / Image Gen", "192", "3"],
+        ["Microsoft Copilot (Web)", "Consumer Copilot", "Chat", "220", "4"],
+        ["TikTok", "TikTok Web", "Video Upload", "31", "2"],
+        ["WeChat", "WeChat Web", "Messaging", "18", "1"],
+        ["Baidu Cloud", "Baidu Pan", "File Upload", "5", "1"],
+      ],
+    },
+    summary: "4,218 AI Guardrails policy events. DeepSeek blocks dominate at 987 events — data residency and compliance risk are the primary reasons for blocking.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-dlp-genai": {
+    title: "DLP GenAI Policy — Blocked Events",
+    chartType: "table",
+    table: {
+      columns: ["App", "User", "Content Type", "# Blocked"],
+      rows: [
+        ["ChatGPT", "k.davis@company.com", "Source Code", "312"],
+        ["Google Gemini", "m.patel@company.com", "Financial Data", "287"],
+        ["ChatGPT", "s.chen@company.com", "PII", "241"],
+        ["Google Gemini", "j.smith@company.com", "Credentials", "198"],
+        ["Microsoft Copilot", "a.johnson@company.com", "Health Records", "176"],
+      ],
+    },
+    summary: "1,847 DLP GenAI policy blocks across 5 users. Source code to ChatGPT and financial data to Gemini are the most frequent violation patterns.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-notebooklm": {
+    title: "NotebookLM Download Block — Events",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocked", "File Type", "Instance"],
+      rows: [
+        ["m.patel@company.com", "312", "PDF", "NotebookLM"],
+        ["l.garcia@company.com", "241", "Audio (mp3)", "NotebookLM"],
+        ["r.williams@company.com", "198", "PDF", "NotebookLM"],
+        ["j.smith@company.com", "141", "Audio (mp3)", "NotebookLM"],
+      ],
+    },
+    summary: "892 NotebookLM download blocks. Users are generating audio summaries and PDFs from potentially sensitive uploaded documents — all downloads blocked per policy.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-eb-downloads": {
+    title: "Enterprise Browser Download Blocks",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Blocked", "App", "Download Target"],
+      rows: [
+        ["k.davis@company.com", "212", "ChatGPT", "Personal Device Storage"],
+        ["m.patel@company.com", "187", "Google Gemini", "USB Drive"],
+        ["s.chen@company.com", "198", "GitHub Copilot", "Personal Device Storage"],
+        ["j.smith@company.com", "144", "Salesforce", "USB Drive"],
+      ],
+    },
+    summary: "741 Enterprise Browser download blocks for GenAI apps. USB exfiltration attempts by m.patel and j.smith are high-priority findings requiring HR review.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-cc-gdpr": {
+    title: "Credit Card / GDPR Data Detected",
+    chartType: "table",
+    table: {
+      columns: ["App", "Instance", "# Detected", "Data Type"],
+      rows: [
+        ["ChatGPT", "ChatGPT-4o", "147", "Credit Card Numbers"],
+        ["Google Gemini", "Gemini 1.5 Pro", "112", "GDPR Personal Data (EU)"],
+        ["Microsoft Copilot", "M365 Copilot", "53", "Credit Card + GDPR"],
+      ],
+    },
+    summary: "312 credit card and GDPR data detection events across 3 GenAI apps. Immediate review required for compliance with PCI-DSS and GDPR Article 25.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-copilot": {
+    title: "Copilot Alert Policy — Events",
+    chartType: "table",
+    table: {
+      columns: ["User", "# Alerted", "Activity", "Content Type"],
+      rows: [
+        ["m.patel@company.com", "87", "File Upload to Claude", "Financial Reports"],
+        ["j.smith@company.com", "64", "File Upload to Claude", "Source Code"],
+        ["s.chen@company.com", "47", "File Upload to Claude", "Internal Docs"],
+      ],
+    },
+    summary: "198 Copilot alert events. All three users are uploading sensitive files to Anthropic Claude — alerted but not blocked. Review whether block policy is appropriate.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
+  "ga-pol-nopolicy": {
+    title: "Events with No Policy Applied — Top Apps",
+    chartType: "hbar",
+    bars: [
+      { label: "Google Gemini", value: 2847, color: "#94a3b8" },
+      { label: "ChatGPT", value: 1543, color: "#94a3b8" },
+      { label: "M365 Copilot", value: 891, color: "#94a3b8" },
+      { label: "GitHub Copilot", value: 189, color: "#94a3b8" },
+      { label: "NotebookLM", value: 63, color: "#94a3b8" },
+      { label: "Others", value: 91, color: "#94a3b8" },
+    ],
+    summary: "5,624 GenAI events have no policy applied. Google Gemini alone has 2,847 uncontrolled events — immediate policy coverage gap review is recommended.",
+    followUps: [
+      { text: "Back to GenAI Admin dashboard", id: "genai-admin" },
+    ],
+  },
+
 };
 
 function HeaderMenu({ icon, title, items, onPick }) {
