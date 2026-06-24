@@ -8225,7 +8225,7 @@ function App() {
         <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
                          onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
                          onPickAgent={onPickAgent} userAgents={userAgents}
-                         onOpenDashboardGallery={() => { pushHistory(); setShowDashboardGallery(true); }}
+                         onOpenDashboardGallery={() => { if (!showDashboardGallery) { pushHistory(); setShowAgentGallery(false); setShowWelcome(false); setShowDashboardGallery(true); } }}
                          onOpenAgentGallery={() => { pushHistory(); setShowAgentGallery(true); }}
                          onBack={goBack} canGoBack={navHistory.length > 0}
                          persona={persona} onChangePersona={onChangePersona}
