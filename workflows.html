@@ -7307,7 +7307,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
         <div className="w-full">
           <PromptInput onSend={onSend} busy={busy} libraryItems={libraryItems} />
         </div>
-        <div className="grid grid-cols-3 gap-3 w-full max-w-2xl">
+        <div className="grid grid-cols-3 gap-4 w-full">
           {["luke","tim","david","ciso","secleader","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
             const PERSONA_ICONS = {
               luke: (
@@ -7370,9 +7370,9 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
             };
             return (
               <button key={p.id} onClick={() => onChangePersona(p.id)}
-                className="flex items-center gap-3.5 px-6 py-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring">
+                className="flex items-center gap-3 px-5 py-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring w-full min-w-0">
                 {PERSONA_ICONS[p.id]}
-                <div className="text-[15px] font-medium text-slate-800 whitespace-nowrap">{p.role}</div>
+                <div className="text-[14px] font-medium text-slate-800 leading-snug text-left">{p.role}</div>
               </button>
             );
           })}
