@@ -7873,6 +7873,108 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
   );
 }
 
+function AgentPane({ agentMessages, followUpMessages, loading, onSend, onPickFollowup, scrollRef, onAddToDashboard, onSaveWidget, onCreateAgent, onPickPrompt, libraryItems }) {
+  const containerRef = useRef(null);
+  const [chatWidth, setChatWidth] = useState(360);
+  const [chatOpen, setChatOpen] = useState(true);
+  const [dragging, setDragging] = useState(false);
+
+  const startDrag = (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = chatWidth;
+    const onMove = (ev) => {
+      const containerW = containerRef.current?.offsetWidth || 1000;
+      const next = Math.max(280, Math.min(containerW * 0.6, startWidth + (startX - ev.clientX)));
+      setChatWidth(next);
+    };
+    const onUp = () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      setDragging(false);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    setDragging(true);
+  };
+
+  const followUpEmpty = followUpMessages.length === 0;
+
+  const conversationPanel = (
+    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      {followUpEmpty ? (
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+          <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 grid place-items-center mb-3">{I.spark}</div>
+          <p className="text-[13px] text-slate-700 font-medium">Ask anything about this agent</p>
+          <p className="text-[12px] text-slate-400 mt-1">Run the agent, modify settings, or ask follow-up questions.</p>
+        </div>
+      ) : (
+        <Conversation messages={followUpMessages} loading={loading} onPickFollowup={onPickFollowup}
+                      scrollRef={scrollRef} onAddToDashboard={onAddToDashboard}
+                      onSaveWidget={onSaveWidget} onCreateAgent={onCreateAgent} />
+      )}
+      <PromptInput onSend={onSend} busy={loading} onPickPrompt={onPickPrompt} libraryItems={libraryItems} />
+    </div>
+  );
+
+  return (
+    <div ref={containerRef} className="flex-1 flex overflow-hidden min-h-0">
+      {/* Left: agent flow */}
+      <div className="flex-1 overflow-y-auto">
+        <Conversation messages={agentMessages} loading={false} onPickFollowup={onPickFollowup}
+                      scrollRef={null} onAddToDashboard={onAddToDashboard}
+                      onSaveWidget={onSaveWidget} onCreateAgent={onCreateAgent} />
+      </div>
+
+      {/* Right: collapsible AI assistant */}
+      <div className="flex-shrink-0 flex" style={{ position: "relative" }}>
+        <button
+          onClick={() => setChatOpen(o => !o)}
+          title={chatOpen ? "Collapse AI Assistant" : "Expand AI Assistant"}
+          className="flex-shrink-0 flex flex-col items-center justify-center gap-2 bg-blue-800 border-l border-blue-900 hover:bg-blue-700 transition-colors"
+          style={{ width: 32 }}
+        >
+          <div className="w-5 h-5 rounded-full bg-blue-600 text-white grid place-items-center flex-shrink-0">{I.spark}</div>
+          <span className="text-[10px] font-semibold tracking-wide text-blue-100 uppercase select-none"
+            style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "rotate(180deg)" }}>
+            AI Assistant
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round"
+            className="w-3 h-3 text-blue-200 flex-shrink-0"
+            style={{ transform: chatOpen ? "rotate(0deg)" : "rotate(180deg)", transition: "transform 0.2s" }}>
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+
+        {chatOpen && (
+          <>
+            <div onMouseDown={startDrag} title="Drag to resize"
+              className={`flex-shrink-0 w-1 cursor-col-resize transition-colors ${dragging ? "bg-blue-500" : "bg-slate-200 hover:bg-blue-400"}`} />
+            <div style={{ width: chatWidth }} className="flex-shrink-0 flex flex-col bg-white border-l border-slate-100">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 flex-shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 grid place-items-center">{I.spark}</div>
+                  <span className="text-[12px] font-semibold text-slate-700">AI Assistant</span>
+                </div>
+                <button onClick={() => setChatOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 rounded">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              {conversationPanel}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* Convert an in-chat response card into a dashboard widget. Returns null
    for response types that don't have a chart payload to add. */
 function responseToWidget(r) {
@@ -8270,57 +8372,23 @@ function App() {
                         onResizeWidget={resizeWidget}
                         onReorderWidget={reorderWidget}
                         libraryItems={getLibraryFor(personaId)} />
-            ) : (() => {
-              const agentFlowIdx = messages.findIndex(m => m.response?.chartType === "agent-flow");
-              const isAgentView = agentFlowIdx !== -1;
-              if (isAgentView) {
-                const agentMessages = messages.slice(agentFlowIdx, agentFlowIdx + 1);
-                const followUpMessages = messages.slice(agentFlowIdx + 1);
-                const followUpEmpty = followUpMessages.length === 0;
-                return (
-                  <div className="flex-1 flex overflow-hidden min-h-0">
-                    {/* Left: agent flow visualization */}
-                    <div className="flex-1 overflow-y-auto">
-                      <Conversation messages={agentMessages} loading={false} onPickFollowup={onFollowup}
-                                    scrollRef={null} onAddToDashboard={addToDashboard}
-                                    onSaveWidget={saveWidget} onCreateAgent={createAgent} />
-                    </div>
-                    {/* Divider */}
-                    <div className="w-px bg-slate-200 flex-shrink-0" />
-                    {/* Right: AI assistant */}
-                    <div className="flex-shrink-0 flex flex-col bg-white" style={{ width: 360 }}>
-                      <div className="flex items-center gap-1.5 px-3 py-2 border-b border-slate-100 flex-shrink-0">
-                        <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 grid place-items-center">{I.spark}</div>
-                        <span className="text-[12px] font-semibold text-slate-700">AI Assistant</span>
-                      </div>
-                      <div className="flex-1 flex flex-col min-h-0">
-                        {followUpEmpty ? (
-                          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 grid place-items-center mb-3">{I.spark}</div>
-                            <p className="text-[13px] text-slate-700 font-medium">Ask anything about this agent</p>
-                            <p className="text-[12px] text-slate-400 mt-1">Run the agent, modify settings, or ask follow-up questions.</p>
-                          </div>
-                        ) : (
-                          <Conversation messages={followUpMessages} loading={loading} onPickFollowup={onFollowup}
-                                        scrollRef={scrollRef} onAddToDashboard={addToDashboard}
-                                        onSaveWidget={saveWidget} onCreateAgent={createAgent} />
-                        )}
-                        <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-              return (
-                <>
-                  {isEmpty ? <Landing onPick={onQuickAction} persona={persona} /> :
-                    <Conversation messages={messages} loading={loading} onPickFollowup={onFollowup}
-                                  scrollRef={scrollRef} onAddToDashboard={addToDashboard}
-                                  onSaveWidget={saveWidget} onCreateAgent={createAgent} />}
-                  <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
-                </>
-              );
-            })()}
+            ) : messages.some(m => m.response?.chartType === "agent-flow") ? (
+              <AgentPane
+                agentMessages={messages.slice(messages.findIndex(m => m.response?.chartType === "agent-flow"), messages.findIndex(m => m.response?.chartType === "agent-flow") + 1)}
+                followUpMessages={messages.slice(messages.findIndex(m => m.response?.chartType === "agent-flow") + 1)}
+                loading={loading} onSend={send} onPickFollowup={onFollowup}
+                scrollRef={scrollRef} onAddToDashboard={addToDashboard}
+                onSaveWidget={saveWidget} onCreateAgent={createAgent}
+                onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
+            ) : (
+              <>
+                {isEmpty ? <Landing onPick={onQuickAction} persona={persona} /> :
+                  <Conversation messages={messages} loading={loading} onPickFollowup={onFollowup}
+                                scrollRef={scrollRef} onAddToDashboard={addToDashboard}
+                                onSaveWidget={saveWidget} onCreateAgent={createAgent} />}
+                <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
+              </>
+            )}
           </>
         )}
       </div>
