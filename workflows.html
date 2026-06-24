@@ -4599,16 +4599,16 @@ function AgentConfigInline({ agent, onCancel, onSave, isNew }) {
           )}
         </AgentSection>
 
-        <AgentSection title="AI Reasoning">
-          <div>
-            <AgentSubLabel>Summary instructions</AgentSubLabel>
-            <textarea value={cfg.summary} onChange={e => update("summary", e.target.value)}
-              rows={3} placeholder="How should results be rolled up for reporting?" className={AGENT_INPUT_CLASS} />
-          </div>
+        <AgentSection title="Analysis & Summary">
           <div>
             <AgentSubLabel>Analysis instructions</AgentSubLabel>
             <textarea value={cfg.analysis} onChange={e => update("analysis", e.target.value)}
               rows={3} placeholder="What dimensions to analyze (app, policy, user, etc.)?" className={AGENT_INPUT_CLASS} />
+          </div>
+          <div>
+            <AgentSubLabel>Summary instructions</AgentSubLabel>
+            <textarea value={cfg.summary} onChange={e => update("summary", e.target.value)}
+              rows={3} placeholder="How should results be rolled up for reporting?" className={AGENT_INPUT_CLASS} />
           </div>
         </AgentSection>
 
