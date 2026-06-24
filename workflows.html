@@ -4603,6 +4603,13 @@ function AgentConfigInline({ agent, onCancel, onSave, isNew }) {
         <AgentSection title="Create Artifact">
           <textarea value={cfg.artifact} onChange={e => update("artifact", e.target.value)}
             rows={2} placeholder="How and when should the report be generated?" className={AGENT_INPUT_CLASS} />
+          <div>
+            <AgentSubLabel>Report Format</AgentSubLabel>
+            <select value={cfg.reportFormat || "PDF"} onChange={e => update("reportFormat", e.target.value)}
+              className={AGENT_INPUT_CLASS + " bg-white"}>
+              {["PDF", "PNG", "CSV", "XLSX", "HTML", "JSON"].map(f => <option key={f} value={f}>{f}</option>)}
+            </select>
+          </div>
         </AgentSection>
 
         <AgentSection title="Delivery Method">
