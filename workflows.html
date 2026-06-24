@@ -4053,7 +4053,7 @@ function PromptLibraryMenu({ persona, onPickPrompt }) {
   );
 }
 
-function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher }) {
+function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher }) {
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
       {/* Left side: Back + New chat + persona switcher */}
@@ -4088,37 +4088,10 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
         {I.chart}<span>Dashboards</span>
       </button>
       <WidgetsLibrary savedWidgets={savedWidgets} onAddWidgetToDashboard={onAddWidgetToDashboard} onRemoveSavedWidget={onRemoveSavedWidget} onRenameSavedWidget={onRenameSavedWidget} />
-      <LabeledMenuButton icon={I.bot} label="Agents" items={({ close }) => {
-        const allAgents = [...AGENTS, ...(userAgents || [])];
-        const grouped = allAgents.reduce((acc, a) => {
-          const k = a.category || "Other";
-          (acc[k] = acc[k] || []).push(a);
-          return acc;
-        }, {});
-        return (
-          <>
-            {Object.entries(grouped).map(([cat, items]) => (
-              <div key={cat} className="py-1">
-                <div className="px-3 py-1 text-[10.5px] uppercase tracking-wide text-slate-400 font-semibold">{cat}</div>
-                {items.map(a => (
-                  <button key={a.id} onClick={() => { close(); onPickAgent(a); }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-blue-50 hover:text-blue-700 focus-ring whitespace-normal break-words">
-                    <div className="text-[13px] text-slate-800 leading-snug">{a.name}</div>
-                    <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">{a.desc} · Last run {a.lastRunDate}</div>
-                  </button>
-                ))}
-              </div>
-            ))}
-            <div className="border-t border-slate-200 mt-1 pt-1">
-              <button onClick={() => { close(); onPickAgent({ id: "agent-new", name: "New agent", isNew: true }); }}
-                className="w-full text-left px-3 py-2 hover:bg-blue-50 hover:text-blue-700 focus-ring inline-flex items-center gap-2">
-                <span className="text-blue-600">{I.plus}</span>
-                <span className="text-[13px] text-slate-800 font-medium">Add an Agent</span>
-              </button>
-            </div>
-          </>
-        );
-      }} />
+      <button onClick={onOpenAgentGallery}
+        className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
+        {I.bot}<span>Agents</span>
+      </button>
       </div>
     </div>
   );
@@ -7201,6 +7174,119 @@ function DashboardGallery({ onClose, onPickDashboard }) {
   );
 }
 
+/* ------------------------------ Agent Gallery ----------------------------- */
+const STATUS_COLORS = {
+  "Success": { bg: "#dcfce7", text: "#166534", bar: "#10b981" },
+  "Draft":   { bg: "#f1f5f9", text: "#475569", bar: "#94a3b8" },
+  "Running": { bg: "#dbeafe", text: "#1e40af", bar: "#3b82f6" },
+  "Failed":  { bg: "#fee2e2", text: "#b91c1c", bar: "#ef4444" },
+};
+
+function AgentGallery({ onClose, onPickAgent, allAgents }) {
+  const [query, setQuery]           = React.useState("");
+  const [catFilter, setCatFilter]   = React.useState("All");
+  const [statusFilter, setStatusFilter] = React.useState("All");
+
+  const allCats    = ["All", ...Array.from(new Set(allAgents.map(a => a.category || "Other")))];
+  const allStatuses = ["All", ...Array.from(new Set(allAgents.map(a => a.status || "—").filter(s => s !== "—")))];
+
+  const filtered = allAgents.filter(a => {
+    const q = query.toLowerCase();
+    const matchQ = !q || a.name.toLowerCase().includes(q) || (a.desc || "").toLowerCase().includes(q) || (a.category || "").toLowerCase().includes(q);
+    const matchCat    = catFilter    === "All" || (a.category || "Other") === catFilter;
+    const matchStatus = statusFilter === "All" || (a.status || "—") === statusFilter;
+    return matchQ && matchCat && matchStatus;
+  });
+
+  const FilterChip = ({ label, active, onClick }) => (
+    <button onClick={onClick}
+      className={`px-3 py-1 rounded-full text-[12px] font-medium border transition-all ${active ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}>
+      {label}
+    </button>
+  );
+
+  return (
+    <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-4 px-6 py-3.5 bg-white border-b border-slate-200 flex-shrink-0">
+        <button onClick={onClose}
+          className="flex items-center gap-1.5 text-[13px] text-slate-500 hover:text-slate-800 transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <div className="w-px h-4 bg-slate-200" />
+        <h1 className="text-[15px] font-semibold text-slate-900">Agents</h1>
+        <span className="text-[12px] text-slate-400">{filtered.length} of {allAgents.length}</span>
+        <button onClick={() => onPickAgent({ id: "agent-new", name: "New agent", isNew: true })}
+          className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12.5px] font-medium transition-colors">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+          New agent
+        </button>
+      </div>
+
+      {/* Search + Filters */}
+      <div className="px-6 py-4 bg-white border-b border-slate-200 flex-shrink-0 flex flex-col gap-3">
+        <div className="relative">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path strokeLinecap="round" d="m21 21-4.35-4.35"/></svg>
+          <input value={query} onChange={e => setQuery(e.target.value)}
+            placeholder="Search agents…"
+            className="w-full pl-9 pr-4 py-2 text-[13px] border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold w-14 flex-shrink-0">Category</span>
+            {allCats.map(c => <FilterChip key={c} label={c} active={catFilter === c} onClick={() => setCatFilter(c)} />)}
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold w-14 flex-shrink-0">Status</span>
+            {allStatuses.map(s => <FilterChip key={s} label={s} active={statusFilter === s} onClick={() => setStatusFilter(s)} />)}
+          </div>
+        </div>
+      </div>
+
+      {/* Grid */}
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-40 text-slate-400">
+            <svg className="w-8 h-8 mb-2 opacity-40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.22-6.78-1.42 1.42M5.64 18.36l-1.42 1.42M18.36 18.36l-1.42-1.42M5.64 5.64 4.22 4.22"/></svg>
+            <p className="text-[13px]">No agents match your filters</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
+            {filtered.map(a => {
+              const sc = STATUS_COLORS[a.status] || STATUS_COLORS["Draft"];
+              return (
+                <button key={a.id} onClick={() => onPickAgent(a)}
+                  className="text-left bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all overflow-hidden group">
+                  <div className="h-1 w-full" style={{ backgroundColor: sc.bar }} />
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <span className="text-[14px] font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">{a.name}</span>
+                      <span className="text-[10.5px] font-medium px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5" style={{ backgroundColor: sc.bg, color: sc.text }}>{a.status || "—"}</span>
+                    </div>
+                    <p className="text-[12px] text-slate-500 leading-relaxed mb-3">{a.desc}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {a.category && (
+                        <span className="text-[10.5px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{a.category}</span>
+                      )}
+                      {a.lastRunDate && a.lastRunDate !== "—" && (
+                        <span className="text-[10.5px] text-slate-400">Last run {a.lastRunDate}</span>
+                      )}
+                      {a.nextRunDate && a.nextRunDate !== "—" && (
+                        <span className="text-[10.5px] text-slate-400">· Next {a.nextRunDate}</span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ----------------------------- Welcome Page ------------------------------- */
 function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
   return (
@@ -7849,9 +7935,10 @@ function App() {
   const [userAgents, setUserAgents] = useState([]);
   const [showWelcome, setShowWelcome] = useState(true);
   const [showDashboardGallery, setShowDashboardGallery] = useState(false);
+  const [showAgentGallery, setShowAgentGallery] = useState(false);
   const [navHistory, setNavHistory] = useState([]);
   const pushHistory = () => {
-    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, activeDashboard }]);
+    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, activeDashboard }]);
   };
   const goBack = () => {
     setNavHistory(prev => {
@@ -7859,6 +7946,7 @@ function App() {
       const snap = prev[prev.length - 1];
       setShowWelcome(snap.showWelcome);
       setShowDashboardGallery(snap.showDashboardGallery);
+      setShowAgentGallery(snap.showAgentGallery || false);
       setActiveDashboard(snap.activeDashboard);
       return prev.slice(0, -1);
     });
@@ -7912,7 +8000,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setNavHistory([]); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setNavHistory([]); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
@@ -8171,6 +8259,7 @@ function App() {
                          onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
                          onPickAgent={onPickAgent} userAgents={userAgents}
                          onOpenDashboardGallery={() => { pushHistory(); setShowDashboardGallery(true); }}
+                         onOpenAgentGallery={() => { pushHistory(); setShowAgentGallery(true); }}
                          onBack={goBack} canGoBack={navHistory.length > 0}
                          persona={persona} onChangePersona={onChangePersona}
                          savedWidgets={savedWidgets}
@@ -8178,7 +8267,11 @@ function App() {
                          onRemoveSavedWidget={removeSavedWidget}
                          onRenameSavedWidget={renameSavedWidget}
                          hidePersonaSwitcher={showWelcome} />
-        {showDashboardGallery ? (
+        {showAgentGallery ? (
+          <AgentGallery onClose={() => setShowAgentGallery(false)}
+                        allAgents={[...AGENTS, ...userAgents]}
+                        onPickAgent={(a) => { setShowAgentGallery(false); onPickAgent(a); }} />
+        ) : showDashboardGallery ? (
           <DashboardGallery onClose={() => setShowDashboardGallery(false)}
                             onPickDashboard={(d) => { setShowDashboardGallery(false); onPickDashboard(d); }} />
         ) : showWelcome ? (
