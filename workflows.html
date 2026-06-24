@@ -8230,7 +8230,7 @@ function App() {
                          onAddWidgetToDashboard={addWidgetToDashboard}
                          onRemoveSavedWidget={removeSavedWidget}
                          onRenameSavedWidget={renameSavedWidget}
-                         hidePersonaSwitcher={showWelcome} />
+                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery} />
         {showAgentGallery ? (
           <AgentGallery onClose={() => setShowAgentGallery(false)}
                         allAgents={[...AGENTS, ...userAgents]}
