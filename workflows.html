@@ -7221,10 +7221,8 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
         <div className="w-full">
           <PromptInput onSend={onSend} busy={busy} libraryItems={libraryItems} />
         </div>
-        <div className="flex flex-col items-center gap-3 w-full max-w-2xl">
-          {[["luke","tim","david"],["ciso","secleader","genaiadmin"]].map((row, ri) => (
-          <div key={ri} className="flex items-center justify-center gap-3 w-full">
-          {row.map(id => { const p = PERSONAS[id]; if (!p) return null;
+        <div className="grid grid-cols-3 gap-3 w-full max-w-2xl">
+          {["luke","tim","david","ciso","secleader","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
             const PERSONA_ICONS = {
               luke: (
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
@@ -7286,14 +7284,12 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
             };
             return (
               <button key={p.id} onClick={() => onChangePersona(p.id)}
-                className="flex flex-1 items-center gap-3.5 px-6 py-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring">
+                className="flex items-center gap-3.5 px-6 py-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring">
                 {PERSONA_ICONS[p.id]}
                 <div className="text-[15px] font-medium text-slate-800 whitespace-nowrap">{p.role}</div>
               </button>
             );
           })}
-          </div>
-          ))}
         </div>
       </div>
     </div>
