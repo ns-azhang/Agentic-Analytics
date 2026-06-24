@@ -4601,8 +4601,6 @@ function AgentConfigInline({ agent, onCancel, onSave, isNew }) {
         </AgentSection>
 
         <AgentSection title="Create Artifact">
-          <textarea value={cfg.artifact} onChange={e => update("artifact", e.target.value)}
-            rows={2} placeholder="How and when should the report be generated?" className={AGENT_INPUT_CLASS} />
           <div>
             <AgentSubLabel>Report Format</AgentSubLabel>
             <select value={cfg.reportFormat || "PDF"} onChange={e => update("reportFormat", e.target.value)}
