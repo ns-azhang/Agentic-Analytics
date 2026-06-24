@@ -7171,7 +7171,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
             };
             return (
               <button key={p.id} onClick={() => onChangePersona(p.id)}
-                className="flex items-center gap-3.5 px-6 py-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring">
+                className="flex flex-1 items-center gap-3.5 px-6 py-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 transition-all focus-ring">
                 {PERSONA_ICONS[p.id]}
                 <div className="text-[15px] font-medium text-slate-800 whitespace-nowrap">{p.role}</div>
               </button>
