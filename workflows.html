@@ -8235,7 +8235,7 @@ function App() {
                          onAddWidgetToDashboard={addWidgetToDashboard}
                          onRemoveSavedWidget={removeSavedWidget}
                          onRenameSavedWidget={renameSavedWidget}
-                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery} />
+                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery || messages.some(m => m.response?.chartType === "agent-flow")} />
         {showAgentGallery ? (
           <AgentGallery onClose={() => setShowAgentGallery(false)}
                         allAgents={[...AGENTS, ...userAgents]}
