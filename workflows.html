@@ -6493,7 +6493,7 @@ const RESPONSES = {
   "agent-soc-behavior": {
     title: "SOC Behavior Analytics Weekly Report",
     chartType: "agent-flow",
-    summary: "This pre-built agent runs every Monday at 10:00 AM. It detects UEBA alerts on apps with low and poor CCL, fetches data from the naa-tenant collection, identifies the app names, UEBA policies, and users behind those alerts, then generates and emails a weekly digest to user@abc.com.",
+    summary: "This pre-built agent runs when there are UEBA alerts detected for apps with low and poor CCL. It fetches data from naa-tenant, identifies the app names, UEBA policies, and users behind those alerts, then generates and emails a PDF export of the report to user@abc.com.",
     followUps: [
       M("Run this agent now",                             "agent-run-confirmed"),
       M("What happens if the agent loses access to the data?", "agent-access-fallback"),
