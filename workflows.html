@@ -8029,6 +8029,8 @@ function App() {
   const onPickAgent = (agent) => {
     pushHistory();
     setShowWelcome(false);
+    setShowAgentGallery(false);
+    setShowDashboardGallery(false);
     setActiveDashboard(null);
     if (agent.isNew) {
       const blank = {
