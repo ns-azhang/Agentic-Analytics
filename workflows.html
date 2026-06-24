@@ -4577,26 +4577,14 @@ function AgentConfigInline({ agent, onCancel, onSave, isNew }) {
         </AgentSection>
 
         <AgentSection title="Data Source">
-          <div className="flex flex-wrap gap-2">
-            <AgentRadio name="dataType" value="tenant" current={cfg.dataType} onChange={v => update("dataType", v)} label="Tenant Data" />
-            <AgentRadio name="dataType" value="mcp"    current={cfg.dataType} onChange={v => update("dataType", v)} label="MCP" />
+          <div>
+            <AgentSubLabel>Tenant</AgentSubLabel>
+            <select value={cfg.dataSource || "naa-tenant"} onChange={e => { update("dataSource", e.target.value); update("data", `Only fetch data from ${e.target.value}`); }}
+              className={AGENT_INPUT_CLASS + " bg-white"}>
+              {TENANT_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <div className="text-[10.5px] text-slate-400 mt-1">Tenants you have access to</div>
           </div>
-          {cfg.dataType === "tenant" ? (
-            <div>
-              <AgentSubLabel>Tenant</AgentSubLabel>
-              <select value={cfg.dataSource || "naa-tenant"} onChange={e => { update("dataSource", e.target.value); update("data", `Only fetch data from ${e.target.value}`); }}
-                className={AGENT_INPUT_CLASS + " bg-white"}>
-                {TENANT_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-              <div className="text-[10.5px] text-slate-400 mt-1">Tenants you have access to</div>
-            </div>
-          ) : (
-            <div>
-              <AgentSubLabel>MCP server URL</AgentSubLabel>
-              <input type="text" value={cfg.mcpServer} onChange={e => update("mcpServer", e.target.value)}
-                placeholder="https://mcp.example.com" className={AGENT_INPUT_CLASS} />
-            </div>
-          )}
         </AgentSection>
 
         <AgentSection title="Analysis & Summary">
