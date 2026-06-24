@@ -4576,7 +4576,7 @@ function AgentConfigInline({ agent, onCancel, onSave, isNew }) {
           </div>
         </AgentSection>
 
-        <AgentSection title="Manage Data">
+        <AgentSection title="Data Source">
           <div className="flex flex-wrap gap-2">
             <AgentRadio name="dataType" value="tenant" current={cfg.dataType} onChange={v => update("dataType", v)} label="Tenant Data" />
             <AgentRadio name="dataType" value="mcp"    current={cfg.dataType} onChange={v => update("dataType", v)} label="MCP" />
