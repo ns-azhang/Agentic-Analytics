@@ -8270,15 +8270,57 @@ function App() {
                         onResizeWidget={resizeWidget}
                         onReorderWidget={reorderWidget}
                         libraryItems={getLibraryFor(personaId)} />
-            ) : (
-              <>
-                {isEmpty ? <Landing onPick={onQuickAction} persona={persona} /> :
-                  <Conversation messages={messages} loading={loading} onPickFollowup={onFollowup}
-                                scrollRef={scrollRef} onAddToDashboard={addToDashboard}
-                                onSaveWidget={saveWidget} onCreateAgent={createAgent} />}
-                <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
-              </>
-            )}
+            ) : (() => {
+              const agentFlowIdx = messages.findIndex(m => m.response?.chartType === "agent-flow");
+              const isAgentView = agentFlowIdx !== -1;
+              if (isAgentView) {
+                const agentMessages = messages.slice(agentFlowIdx, agentFlowIdx + 1);
+                const followUpMessages = messages.slice(agentFlowIdx + 1);
+                const followUpEmpty = followUpMessages.length === 0;
+                return (
+                  <div className="flex-1 flex overflow-hidden min-h-0">
+                    {/* Left: agent flow visualization */}
+                    <div className="flex-1 overflow-y-auto">
+                      <Conversation messages={agentMessages} loading={false} onPickFollowup={onFollowup}
+                                    scrollRef={null} onAddToDashboard={addToDashboard}
+                                    onSaveWidget={saveWidget} onCreateAgent={createAgent} />
+                    </div>
+                    {/* Divider */}
+                    <div className="w-px bg-slate-200 flex-shrink-0" />
+                    {/* Right: AI assistant */}
+                    <div className="flex-shrink-0 flex flex-col bg-white" style={{ width: 360 }}>
+                      <div className="flex items-center gap-1.5 px-3 py-2 border-b border-slate-100 flex-shrink-0">
+                        <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 grid place-items-center">{I.spark}</div>
+                        <span className="text-[12px] font-semibold text-slate-700">AI Assistant</span>
+                      </div>
+                      <div className="flex-1 flex flex-col min-h-0">
+                        {followUpEmpty ? (
+                          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 grid place-items-center mb-3">{I.spark}</div>
+                            <p className="text-[13px] text-slate-700 font-medium">Ask anything about this agent</p>
+                            <p className="text-[12px] text-slate-400 mt-1">Run the agent, modify settings, or ask follow-up questions.</p>
+                          </div>
+                        ) : (
+                          <Conversation messages={followUpMessages} loading={loading} onPickFollowup={onFollowup}
+                                        scrollRef={scrollRef} onAddToDashboard={addToDashboard}
+                                        onSaveWidget={saveWidget} onCreateAgent={createAgent} />
+                        )}
+                        <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <>
+                  {isEmpty ? <Landing onPick={onQuickAction} persona={persona} /> :
+                    <Conversation messages={messages} loading={loading} onPickFollowup={onFollowup}
+                                  scrollRef={scrollRef} onAddToDashboard={addToDashboard}
+                                  onSaveWidget={saveWidget} onCreateAgent={createAgent} />}
+                  <PromptInput onSend={send} busy={loading} onPickPrompt={onPickPrompt} libraryItems={getLibraryFor(personaId)} />
+                </>
+              );
+            })()}
           </>
         )}
       </div>
