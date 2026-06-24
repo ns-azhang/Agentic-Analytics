@@ -4569,25 +4569,11 @@ function AgentConfigInline({ agent, onCancel, onSave, isNew }) {
         )}
 
         <AgentSection title="Define Trigger">
-          <div className="flex flex-wrap gap-2">
-            <AgentRadio name="triggerType" value="manual"   current={cfg.triggerType} onChange={v => update("triggerType", v)} label="Manual trigger" />
-            <AgentRadio name="triggerType" value="schedule" current={cfg.triggerType} onChange={v => update("triggerType", v)} label="Schedule" />
+          <div>
+            <AgentSubLabel>Trigger criteria</AgentSubLabel>
+            <textarea value={cfg.trigger} onChange={e => update("trigger", e.target.value)}
+              rows={2} placeholder="When should this agent run?" className={AGENT_INPUT_CLASS} />
           </div>
-          {cfg.triggerType === "manual" ? (
-            <div>
-              <AgentSubLabel>Trigger criteria</AgentSubLabel>
-              <textarea value={cfg.trigger} onChange={e => update("trigger", e.target.value)}
-                rows={2} placeholder="When should this agent run?" className={AGENT_INPUT_CLASS} />
-            </div>
-          ) : (
-            <AgentSchedulePicker
-              frequency={cfg.scheduleFrequency}
-              day={cfg.scheduleDay}
-              dayOfMonth={cfg.scheduleDayOfMonth}
-              time={cfg.scheduleTime}
-              onChange={update}
-            />
-          )}
         </AgentSection>
 
         <AgentSection title="Manage Data">
