@@ -4053,11 +4053,26 @@ function PromptLibraryMenu({ persona, onPickPrompt }) {
   );
 }
 
-function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher }) {
+function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher }) {
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
-      {!hidePersonaSwitcher && <PersonaSwitcher persona={persona} onChange={onChangePersona} />}
-      <div className={`flex items-center gap-1${hidePersonaSwitcher ? " ml-auto" : ""}`}>
+      {/* Left side: Back + New chat + persona switcher */}
+      <div className="flex items-center gap-1">
+        {canGoBack && (
+          <button onClick={onBack}
+            className="inline-flex items-center gap-1 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+        )}
+        <button onClick={onNewChat}
+          className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
+          <span className="text-slate-500">{I.plus}</span>New chat
+        </button>
+        {!hidePersonaSwitcher && <PersonaSwitcher persona={persona} onChange={onChangePersona} />}
+      </div>
+      {/* Right side: nav tools */}
+      <div className="flex items-center gap-1">
       <LabeledMenuButton icon={I.history} label="Session history" items={({ close }) => (
         <>{HISTORY_ITEMS.map(h => (
           <button key={h.title} onClick={() => { close(); onPickHistory(h); }}
@@ -4104,10 +4119,6 @@ function ContentControls({ onNewChat, onPickPrompt, onPickHistory, onPickDashboa
           </>
         );
       }} />
-      <button onClick={onNewChat}
-        className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
-        <span className="text-slate-500">{I.plus}</span>New chat
-      </button>
       </div>
     </div>
   );
@@ -7842,9 +7853,25 @@ function App() {
   const [userAgents, setUserAgents] = useState([]);
   const [showWelcome, setShowWelcome] = useState(true);
   const [showDashboardGallery, setShowDashboardGallery] = useState(false);
+  const [navHistory, setNavHistory] = useState([]);
+  const pushHistory = () => {
+    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, activeDashboard }]);
+  };
+  const goBack = () => {
+    setNavHistory(prev => {
+      if (!prev.length) return prev;
+      const snap = prev[prev.length - 1];
+      setShowWelcome(snap.showWelcome);
+      setShowDashboardGallery(snap.showDashboardGallery);
+      setActiveDashboard(snap.activeDashboard);
+      return prev.slice(0, -1);
+    });
+  };
+
   const [personaId, setPersonaId] = useState("luke");
   const persona = PERSONAS[personaId] || PERSONAS.luke;
   const onChangePersona = (id) => {
+    pushHistory();
     setPersonaId(id);
     setMessages([]);
     setShowWelcome(false);
@@ -7874,6 +7901,7 @@ function App() {
   }, [messages, loading]);
 
   const send = (text, knownResponseId) => {
+    if (showWelcome) pushHistory();
     setShowWelcome(false);
     setMessages(m => [...m, { role: "user", text }]);
     setLoading(true);
@@ -7888,7 +7916,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setNavHistory([]); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
@@ -7906,6 +7934,7 @@ function App() {
      main canvas, and the chat is seeded with a plain-language summary plus
      a couple of example prompts so the user has an immediate starting point. */
   const onPickDashboard = (item) => {
+    pushHistory();
     setShowWelcome(false);
     setActiveDashboard(item);
     const dash = DASHBOARDS[item.dashboardId];
@@ -7926,6 +7955,7 @@ function App() {
   };
 
   const onPickAgent = (agent) => {
+    pushHistory();
     setShowWelcome(false);
     setActiveDashboard(null);
     if (agent.isNew) {
@@ -8144,7 +8174,8 @@ function App() {
         <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
                          onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
                          onPickAgent={onPickAgent} userAgents={userAgents}
-                         onOpenDashboardGallery={() => setShowDashboardGallery(true)}
+                         onOpenDashboardGallery={() => { pushHistory(); setShowDashboardGallery(true); }}
+                         onBack={goBack} canGoBack={navHistory.length > 0}
                          persona={persona} onChangePersona={onChangePersona}
                          savedWidgets={savedWidgets}
                          onAddWidgetToDashboard={addWidgetToDashboard}
