@@ -8003,9 +8003,10 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showDashboardGallery, setShowDashboardGallery] = useState(false);
   const [showAgentGallery, setShowAgentGallery] = useState(false);
+  const [isAgentView, setIsAgentView] = useState(false);
   const [navHistory, setNavHistory] = useState([]);
   const pushHistory = () => {
-    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, activeDashboard }]);
+    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, activeDashboard, isAgentView }]);
   };
   const goBack = () => {
     setNavHistory(prev => {
@@ -8015,6 +8016,7 @@ function App() {
       setShowDashboardGallery(snap.showDashboardGallery);
       setShowAgentGallery(snap.showAgentGallery || false);
       setActiveDashboard(snap.activeDashboard);
+      setIsAgentView(snap.isAgentView || false);
       return prev.slice(0, -1);
     });
   };
@@ -8067,7 +8069,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setNavHistory([]); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setIsAgentView(false); setNavHistory([]); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
@@ -8111,6 +8113,7 @@ function App() {
     setShowAgentGallery(false);
     setShowDashboardGallery(false);
     setActiveDashboard(null);
+    setIsAgentView(true);
     if (agent.isNew) {
       const blank = {
         id: "agent-new",
@@ -8335,7 +8338,7 @@ function App() {
                          onAddWidgetToDashboard={addWidgetToDashboard}
                          onRemoveSavedWidget={removeSavedWidget}
                          onRenameSavedWidget={renameSavedWidget}
-                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery || !!activeDashboard || messages.some(m => m.response?.chartType === "agent-flow")} />
+                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery || !!activeDashboard || isAgentView} />
         {showAgentGallery ? (
           <AgentGallery onClose={() => setShowAgentGallery(false)}
                         allAgents={[...AGENTS, ...userAgents]}
@@ -8372,7 +8375,7 @@ function App() {
                         onResizeWidget={resizeWidget}
                         onReorderWidget={reorderWidget}
                         libraryItems={getLibraryFor(personaId)} />
-            ) : messages.some(m => m.response?.chartType === "agent-flow") ? (
+            ) : isAgentView ? (
               <AgentPane
                 agentMessages={messages.slice(messages.findIndex(m => m.response?.chartType === "agent-flow"), messages.findIndex(m => m.response?.chartType === "agent-flow") + 1)}
                 followUpMessages={messages.slice(messages.findIndex(m => m.response?.chartType === "agent-flow") + 1)}
