@@ -8102,18 +8102,30 @@ function App() {
   };
 
   const matchWidgetsFromDashboards = (text) => {
-    const words = text.toLowerCase().split(/\W+/).filter(w => w.length >= 3);
+    const words = text.toLowerCase().split(/\W+/).filter(w => w.length >= 2);
     if (!words.length) return [];
+    // Also include DASHBOARD_ITEMS metadata for folder/persona matching
+    const allMeta = DASHBOARD_ITEMS.flatMap(g => g.items.map(d => ({ ...d, folder: g.folder })));
     const results = [];
     Object.entries(DASHBOARDS).forEach(([dashId, dash]) => {
       if (dashId === "new-dashboard") return;
+      const meta = allMeta.find(d => d.dashboardId === dashId);
+      // context string: dashboard title + id + folder + personas
+      const ctx = [
+        dash.title,
+        dashId.replace(/-/g, " "),
+        meta?.folder || "",
+        ...(meta?.personas || []),
+        meta?.desc || "",
+      ].join(" ").toLowerCase();
       (dash.widgets || []).forEach(w => {
-        const hay = (w.title + " " + (w.type || "")).toLowerCase();
-        const score = words.filter(word => hay.includes(word)).length;
+        const hay = (w.title || "") + " " + ctx;
+        const hayLower = hay.toLowerCase();
+        const score = words.reduce((acc, word) => acc + (hayLower.includes(word) ? 1 : 0), 0);
         if (score > 0) results.push({ widget: w, score, sourceDashTitle: dash.title });
       });
     });
-    return results.sort((a, b) => b.score - a.score).slice(0, 6).map(r => r);
+    return results.sort((a, b) => b.score - a.score).slice(0, 6);
   };
 
   const send = (text, knownResponseId) => {
