@@ -6783,7 +6783,9 @@ function ResponseCard({ response, onPickFollowup, onAddToDashboard, activeDashbo
                     <button onClick={() => setMenuView("main")} className="w-full text-left px-3 py-1.5 text-[11.5px] text-slate-500 hover:bg-slate-50 flex items-center gap-1 focus-ring">‹ Back</button>
                     <div className="h-px bg-slate-100 my-1" />
                     {activeDashboardId && (() => {
-                      const current = DASHBOARD_ITEMS.flatMap(g => g.items).find(d => d.dashboardId === activeDashboardId);
+                      const current = activeDashboardId === "new-dashboard"
+                        ? { dashboardId: "new-dashboard", title: "New Dashboard" }
+                        : DASHBOARD_ITEMS.flatMap(g => g.items).find(d => d.dashboardId === activeDashboardId);
                       if (!current) return null;
                       return (
                         <>
