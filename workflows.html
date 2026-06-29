@@ -8088,10 +8088,50 @@ function App() {
     }) || null;
   };
 
+  const widgetToResponse = (widget, sourceDashTitle) => {
+    const base = { title: widget.title, summary: `From: ${sourceDashTitle}.`, followUps: [] };
+    if (widget.type === "kpi")   return { ...base, chartType: "kpi",      kpis: widget.kpis };
+    if (widget.type === "line")  return { ...base, chartType: "kpi+line", series: widget.series, xLabels: widget.xLabels || [], anomalies: widget.anomalies || [], forecastIndex: widget.forecastIndex ?? null };
+    if (widget.type === "hbar")  return { ...base, chartType: "hbar",     bars: widget.bars };
+    if (widget.type === "donut") return { ...base, chartType: "donut",    slices: widget.slices };
+    if (widget.type === "table") return { ...base, chartType: "table",    table: { columns: widget.columns, rows: widget.rows } };
+    return null;
+  };
+
+  const matchWidgetsFromDashboards = (text) => {
+    const words = text.toLowerCase().split(/\W+/).filter(w => w.length >= 3);
+    if (!words.length) return [];
+    const results = [];
+    Object.entries(DASHBOARDS).forEach(([dashId, dash]) => {
+      if (dashId === "new-dashboard") return;
+      (dash.widgets || []).forEach(w => {
+        const hay = (w.title + " " + (w.type || "")).toLowerCase();
+        const score = words.filter(word => hay.includes(word)).length;
+        if (score > 0) results.push({ widget: w, score, sourceDashTitle: dash.title });
+      });
+    });
+    return results.sort((a, b) => b.score - a.score).slice(0, 6).map(r => r);
+  };
+
   const send = (text, knownResponseId) => {
     if (!knownResponseId) {
       const dashMatch = matchDashboardByKeyword(text);
       if (dashMatch) { onPickDashboard(dashMatch); return; }
+    }
+    // On the new blank dashboard: search existing widgets and surface matches
+    if (!knownResponseId && activeDashboard?.dashboardId === "new-dashboard") {
+      const matches = matchWidgetsFromDashboards(text);
+      if (matches.length > 0) {
+        const newMsgs = [
+          { role: "user", text },
+          ...matches.map(({ widget, sourceDashTitle }) => {
+            const response = widgetToResponse(widget, sourceDashTitle);
+            return response ? { role: "ai", response } : null;
+          }).filter(Boolean),
+        ];
+        setMessages(m => [...m, ...newMsgs]);
+        return;
+      }
     }
     if (showWelcome) pushHistory();
     setShowWelcome(false);
