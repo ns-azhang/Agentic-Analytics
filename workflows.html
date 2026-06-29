@@ -6951,7 +6951,7 @@ function estimateTokens(s) {
   return Math.max(1, Math.round(s.trim().split(/\s+/).length * 1.3));
 }
 
-function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [] }) {
+function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenCount = false }) {
   const toast = useToast();
   const [val, setVal] = useState("");
   const [libOpen, setLibOpen] = useState(false);
@@ -7015,7 +7015,7 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [] }) {
               </div>
               <button onClick={() => toast("Data search is read-only in this prototype", { kind: "info" })}
                 className="p-1.5 rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-ring" title="Search data">{I.search}</button>
-              <span className="text-[11px] text-slate-400 ml-2">~{tokens} tokens · Enter to send · Shift+Enter for newline</span>
+              {!hideTokenCount && <span className="text-[11px] text-slate-400 ml-2">~{tokens} tokens · Enter to send · Shift+Enter for newline</span>}
             </div>
             <button
               onClick={submit}
@@ -7269,7 +7269,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
           <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a persona to get started.</p>
         </div>
         <div className="w-full">
-          <PromptInput onSend={onSend} busy={busy} />
+          <PromptInput onSend={onSend} busy={busy} hideTokenCount />
         </div>
         <div className="grid grid-cols-3 gap-4 w-full">
           {["luke","tim","david","ciso","secleader","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
