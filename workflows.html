@@ -4072,7 +4072,7 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
       </div>
       {/* Right side: nav tools */}
       <div className="flex items-center gap-1">
-      <LabeledMenuButton icon={I.history} label="Session history" items={({ close }) => (
+      <LabeledMenuButton icon={I.history} label="Prompt history" items={({ close }) => (
         <>{HISTORY_ITEMS.map(h => (
           <button key={h.title} onClick={() => { close(); onPickHistory(h); }}
             className="w-full text-left px-3 py-2 hover:bg-slate-50 focus-ring">
