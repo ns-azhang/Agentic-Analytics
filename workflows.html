@@ -8116,7 +8116,7 @@ function App() {
   };
 
   const send = (text, knownResponseId) => {
-    if (!knownResponseId) {
+    if (!knownResponseId && activeDashboard?.dashboardId !== "new-dashboard") {
       const dashMatch = matchDashboardByKeyword(text);
       if (dashMatch) { onPickDashboard(dashMatch); return; }
     }
