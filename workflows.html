@@ -4053,7 +4053,7 @@ function PromptLibraryMenu({ persona, onPickPrompt }) {
   );
 }
 
-function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher }) {
+function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher, hideRightExtras }) {
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
       {/* Left side: Back + New chat + persona switcher */}
@@ -4081,12 +4081,12 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
           </button>
         ))}</>
       )} />
-      <PromptLibraryMenu persona={persona} onPickPrompt={onPickPrompt} />
+      {!hideRightExtras && <PromptLibraryMenu persona={persona} onPickPrompt={onPickPrompt} />}
       <button onClick={onOpenDashboardGallery}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         {I.chart}<span>Dashboards</span>
       </button>
-      <WidgetsLibrary savedWidgets={savedWidgets} onAddWidgetToDashboard={onAddWidgetToDashboard} onRemoveSavedWidget={onRemoveSavedWidget} onRenameSavedWidget={onRenameSavedWidget} />
+      {!hideRightExtras && <WidgetsLibrary savedWidgets={savedWidgets} onAddWidgetToDashboard={onAddWidgetToDashboard} onRemoveSavedWidget={onRemoveSavedWidget} onRenameSavedWidget={onRenameSavedWidget} />}
       <button onClick={onOpenAgentGallery}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         {I.bot}<span>Agents</span>
@@ -8359,7 +8359,8 @@ function App() {
                          onAddWidgetToDashboard={addWidgetToDashboard}
                          onRemoveSavedWidget={removeSavedWidget}
                          onRenameSavedWidget={renameSavedWidget}
-                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery || !!activeDashboard || isAgentView} />
+                         hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery || !!activeDashboard || isAgentView}
+                         hideRightExtras={showWelcome} />
         {showAgentGallery ? (
           <AgentGallery onClose={() => setShowAgentGallery(false)}
                         allAgents={[...AGENTS, ...userAgents]}
