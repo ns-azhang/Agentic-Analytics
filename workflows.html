@@ -398,7 +398,7 @@ const DASHBOARD_ITEMS = [
     { dashboardId: "security-analyst", title: "Security Analyst", desc: "Cloud app discovery, DLP, threats, UBA · last 90 days",   personas: ["Security Analyst"] },
   ]},
   { folder: "GenAI Admin", items: [
-    { dashboardId: "genai-admin", title: "GenAI Admin", desc: "AI app usage, policies, web traffic · last 90 days",                personas: ["GenAI Admin"] },
+    { dashboardId: "genai-admin", title: "GenAI Admin", desc: "AI app usage, policies, web traffic · last 90 days",                personas: ["GenAI Admin"], keywords: ["genai", "ai", "artificial intelligence", "llm", "copilot"] },
   ]},
 ];
 
@@ -8057,6 +8057,11 @@ function App() {
     if (t.length < 2) return null;
     const allItems = DASHBOARD_ITEMS.flatMap(g => g.items.map(d => ({ ...d, folder: g.folder })));
     return allItems.find(d => {
+      const extra = (d.keywords || []).map(s => s.toLowerCase());
+      if (extra.some(k => {
+        const pattern = new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+        return pattern.test(t);
+      })) return true;
       const keywords = [
         d.title, d.folder, d.dashboardId.replace(/-/g, " "),
         ...(d.personas || []),
