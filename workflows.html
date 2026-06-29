@@ -8052,7 +8052,24 @@ function App() {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, loading]);
 
+  const matchDashboardByKeyword = (text) => {
+    const t = text.toLowerCase().trim();
+    if (t.length < 2) return null;
+    const allItems = DASHBOARD_ITEMS.flatMap(g => g.items.map(d => ({ ...d, folder: g.folder })));
+    return allItems.find(d => {
+      const keywords = [
+        d.title, d.folder, d.dashboardId.replace(/-/g, " "),
+        ...(d.personas || []),
+      ].map(s => s.toLowerCase());
+      return keywords.some(k => t.includes(k) || (k.length >= 4 && k.includes(t) && t.length >= 3));
+    }) || null;
+  };
+
   const send = (text, knownResponseId) => {
+    if (!knownResponseId) {
+      const dashMatch = matchDashboardByKeyword(text);
+      if (dashMatch) { onPickDashboard(dashMatch); return; }
+    }
     if (showWelcome) pushHistory();
     setShowWelcome(false);
     setMessages(m => [...m, { role: "user", text }]);
