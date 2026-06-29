@@ -8009,6 +8009,7 @@ function App() {
   const toast = useToast();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pendingWidgetSearch, setPendingWidgetSearch] = useState(false);
   const [activeDashboard, setActiveDashboard] = useState(null);
   const [dashboardExtras, setDashboardExtras] = useState({});
   const [dashboardReplacements, setDashboardReplacements] = useState({});
@@ -8120,8 +8121,35 @@ function App() {
       const dashMatch = matchDashboardByKeyword(text);
       if (dashMatch) { onPickDashboard(dashMatch); return; }
     }
-    // On the new blank dashboard: search existing widgets and surface matches
+    // On the new blank dashboard: guided widget search flow
     if (!knownResponseId && activeDashboard?.dashboardId === "new-dashboard") {
+      // Step 2: user replied with risk type keywords → search widgets
+      if (pendingWidgetSearch) {
+        setPendingWidgetSearch(false);
+        const matches = matchWidgetsFromDashboards(text);
+        const newMsgs = [{ role: "user", text }];
+        if (matches.length > 0) {
+          matches.forEach(({ widget, sourceDashTitle }) => {
+            const response = widgetToResponse(widget, sourceDashTitle);
+            if (response) newMsgs.push({ role: "ai", response });
+          });
+        } else {
+          newMsgs.push({ role: "ai", response: { chartType: "text", title: "No matching widgets", summary: "No widgets matched your query. Try different keywords like 'DLP', 'behavior', or 'severity'.", followUps: [] } });
+        }
+        setMessages(m => [...m, ...newMsgs]);
+        return;
+      }
+      // Step 1: detect "risky users" intent → ask follow-up
+      const isRiskyUsers = /risky\s+user|top\s+user|user\s+risk/i.test(text);
+      if (isRiskyUsers) {
+        setPendingWidgetSearch(true);
+        setMessages(m => [...m,
+          { role: "user", text },
+          { role: "ai", response: { chartType: "text", title: "Risky users", summary: "What types of risks are you interested in? (e.g. DLP, behavioral, severity, policy violations)", followUps: [] } },
+        ]);
+        return;
+      }
+      // General widget keyword search
       const matches = matchWidgetsFromDashboards(text);
       if (matches.length > 0) {
         const newMsgs = [
@@ -8150,7 +8178,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setIsAgentView(false); setNavHistory([]); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setIsAgentView(false); setNavHistory([]); setPendingWidgetSearch(false); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
