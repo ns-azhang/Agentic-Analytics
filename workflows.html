@@ -8135,17 +8135,17 @@ function App() {
     // On the new blank dashboard: search existing widgets and surface matches
     if (!knownResponseId && activeDashboard?.dashboardId === "new-dashboard") {
       const matches = matchWidgetsFromDashboards(text);
+      const newMsgs = [{ role: "user", text }];
       if (matches.length > 0) {
-        const newMsgs = [
-          { role: "user", text },
-          ...matches.map(({ widget, sourceDashTitle }) => {
-            const response = widgetToResponse(widget, sourceDashTitle);
-            return response ? { role: "ai", response } : null;
-          }).filter(Boolean),
-        ];
-        setMessages(m => [...m, ...newMsgs]);
-        return;
+        matches.forEach(({ widget, sourceDashTitle }) => {
+          const response = widgetToResponse(widget, sourceDashTitle);
+          if (response) newMsgs.push({ role: "ai", response });
+        });
+      } else {
+        newMsgs.push({ role: "ai", response: { chartType: "freeform", title: "No matching widgets found", summary: "No existing widgets matched your query. Try keywords like 'DLP', 'users', 'severity', 'CISO', or 'GenAI'.", followUps: [] } });
       }
+      setMessages(m => [...m, ...newMsgs]);
+      return;
     }
     if (showWelcome) pushHistory();
     setShowWelcome(false);
