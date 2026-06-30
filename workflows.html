@@ -4068,7 +4068,7 @@ function PromptLibraryMenu({ persona, onPickPrompt }) {
   );
 }
 
-function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher, hideRightExtras }) {
+function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, onOpenHistoryPage, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher, hideRightExtras }) {
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
       {/* Left side: Back + New chat + persona switcher */}
@@ -4087,15 +4087,10 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
       </div>
       {/* Right side: nav tools */}
       <div className="flex items-center gap-1">
-      <LabeledMenuButton icon={I.history} label="Prompt history" items={({ close }) => (
-        <>{HISTORY_ITEMS.map(h => (
-          <button key={h.title} onClick={() => { close(); onPickHistory(h); }}
-            className="w-full text-left px-3 py-2 hover:bg-slate-50 focus-ring">
-            <div className="text-[13px] text-slate-800 truncate">{h.title}</div>
-            <div className="text-[11px] text-slate-500 mt-0.5">{h.when} · {h.messages.length / 2 | 0} turns</div>
-          </button>
-        ))}</>
-      )} />
+      <button onClick={onOpenHistoryPage}
+        className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
+        {I.history}<span>Prompt history</span>
+      </button>
       <button onClick={onOpenDashboardGallery}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         {I.chart}<span>Dashboards</span>
@@ -4173,6 +4168,36 @@ function QuickActionCard({ action, onPick }) {
         </div>
       </div>
     </button>
+  );
+}
+
+/* ------------------------------ Prompt History Page ----------------------- */
+function PromptHistoryPage({ onPickHistory }) {
+  const allPrompts = HISTORY_ITEMS.flatMap(h =>
+    h.messages.filter(m => m.role === "user").map(m => ({ prompt: m.text, session: h }))
+  );
+  return (
+    <div className="flex-1 overflow-y-auto bg-slate-50">
+      <div className="max-w-3xl mx-auto px-6 py-8">
+        <h2 className="text-xl font-semibold text-slate-900 mb-1">Prompt history</h2>
+        <p className="text-[13px] text-slate-500 mb-6">Your previous prompts — click any to resume that session.</p>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          {allPrompts.map(({ prompt, session }, idx) => (
+            <button key={idx}
+              onClick={() => onPickHistory(session)}
+              className={`w-full text-left px-5 py-3.5 flex items-center gap-4 hover:bg-blue-50/60 focus-ring group transition-colors
+                ${idx < allPrompts.length - 1 ? "border-b border-slate-100" : ""}`}>
+              <span className="text-slate-300 group-hover:text-blue-400 flex-shrink-0">{I.history}</span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13.5px] text-slate-800 group-hover:text-blue-700 truncate">{prompt}</div>
+                <div className="text-[11.5px] text-slate-400 mt-0.5">{session.title} · {session.when}</div>
+              </div>
+              <span className="text-slate-300 group-hover:text-blue-400 flex-shrink-0">›</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -8066,10 +8091,11 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showDashboardGallery, setShowDashboardGallery] = useState(false);
   const [showAgentGallery, setShowAgentGallery] = useState(false);
+  const [showHistoryPage, setShowHistoryPage] = useState(false);
   const [isAgentView, setIsAgentView] = useState(false);
   const [navHistory, setNavHistory] = useState([]);
   const pushHistory = () => {
-    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, activeDashboard, isAgentView }]);
+    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, showHistoryPage, activeDashboard, isAgentView }]);
   };
   const goBack = () => {
     setNavHistory(prev => {
@@ -8078,6 +8104,7 @@ function App() {
       setShowWelcome(snap.showWelcome);
       setShowDashboardGallery(snap.showDashboardGallery);
       setShowAgentGallery(snap.showAgentGallery || false);
+      setShowHistoryPage(snap.showHistoryPage || false);
       setActiveDashboard(snap.activeDashboard);
       setIsAgentView(snap.isAgentView || false);
       return prev.slice(0, -1);
@@ -8480,8 +8507,9 @@ function App() {
         <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
                          onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
                          onPickAgent={onPickAgent} userAgents={userAgents}
-                         onOpenDashboardGallery={() => { if (!showDashboardGallery) { pushHistory(); setShowAgentGallery(false); setShowWelcome(false); setIsAgentView(false); setShowDashboardGallery(true); } }}
-                         onOpenAgentGallery={() => { pushHistory(); setShowAgentGallery(true); }}
+                         onOpenDashboardGallery={() => { if (!showDashboardGallery) { pushHistory(); setShowAgentGallery(false); setShowHistoryPage(false); setShowWelcome(false); setIsAgentView(false); setShowDashboardGallery(true); } }}
+                         onOpenAgentGallery={() => { pushHistory(); setShowAgentGallery(true); setShowHistoryPage(false); }}
+                         onOpenHistoryPage={() => { pushHistory(); setShowHistoryPage(true); setShowAgentGallery(false); setShowDashboardGallery(false); }}
                          onBack={goBack} canGoBack={navHistory.length > 0}
                          persona={persona} onChangePersona={onChangePersona}
                          savedWidgets={savedWidgets}
@@ -8490,7 +8518,9 @@ function App() {
                          onRenameSavedWidget={renameSavedWidget}
                          hidePersonaSwitcher={showWelcome || showDashboardGallery || showAgentGallery || !!activeDashboard || isAgentView}
                          hideRightExtras={showWelcome} />
-        {showAgentGallery ? (
+        {showHistoryPage ? (
+          <PromptHistoryPage onPickHistory={(h) => { setShowHistoryPage(false); onPickHistory(h); }} />
+        ) : showAgentGallery ? (
           <AgentGallery onClose={() => setShowAgentGallery(false)}
                         allAgents={[...AGENTS, ...userAgents]}
                         onPickAgent={(a) => { setShowAgentGallery(false); onPickAgent(a); }} />
