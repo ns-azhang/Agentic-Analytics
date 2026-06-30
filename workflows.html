@@ -8128,12 +8128,8 @@ function App() {
   };
 
   const send = (text, knownResponseId) => {
-    if (!knownResponseId && activeDashboard?.dashboardId !== "new-dashboard") {
-      const dashMatch = matchDashboardByKeyword(text);
-      if (dashMatch) { onPickDashboard(dashMatch); return; }
-    }
     // On the new blank dashboard: search existing widgets and surface matches
-    if (!knownResponseId && activeDashboard?.dashboardId === "new-dashboard") {
+    if (activeDashboard?.dashboardId === "new-dashboard" && !knownResponseId) {
       const matches = matchWidgetsFromDashboards(text);
       const newMsgs = [{ role: "user", text }];
       if (matches.length > 0) {
@@ -8146,6 +8142,23 @@ function App() {
       }
       setMessages(m => [...m, ...newMsgs]);
       return;
+    }
+    // On any other active dashboard: stay on the dashboard, add to chat
+    if (activeDashboard) {
+      setMessages(m => [...m, { role: "user", text }]);
+      setLoading(true);
+      setTimeout(() => {
+        const id = knownResponseId || classifyPrompt(text);
+        const response = RESPONSES[id] || RESPONSES.freeform;
+        setMessages(m => [...m, { role: "ai", response }]);
+        setLoading(false);
+      }, 1000);
+      return;
+    }
+    // Welcome page / no active dashboard: keyword routing + normal chat
+    if (!knownResponseId) {
+      const dashMatch = matchDashboardByKeyword(text);
+      if (dashMatch) { onPickDashboard(dashMatch); return; }
     }
     if (showWelcome) pushHistory();
     setShowWelcome(false);
