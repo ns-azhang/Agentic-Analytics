@@ -4214,27 +4214,20 @@ function Landing({ onPick, persona, onPickHistory }) {
         )}
 
         {activeTab === "history" && (
-          <div className="space-y-2">
-            {HISTORY_ITEMS.map(h => (
-              <button key={h.title} onClick={() => onPickHistory && onPickHistory(h)}
-                className="w-full text-left bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-blue-300 hover:shadow-sm focus-ring transition-all card-shadow-hover group">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <span className="mt-0.5 text-slate-400 group-hover:text-blue-500 flex-shrink-0">{I.history}</span>
-                    <div className="min-w-0">
-                      <div className="text-[14px] font-medium text-slate-900 truncate">{h.title}</div>
-                      <div className="text-[12px] text-slate-500 mt-0.5">
-                        {h.when} · {h.messages.length / 2 | 0} turns
-                      </div>
-                      <div className="mt-2 space-y-1">
-                        {h.messages.filter(m => m.role === "user").map((m, i) => (
-                          <div key={i} className="text-[12px] text-slate-400 truncate">"{m.text}"</div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-slate-300 group-hover:text-blue-400 text-[18px] flex-shrink-0 mt-0.5">›</span>
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            {HISTORY_ITEMS.flatMap(h =>
+              h.messages.filter(m => m.role === "user").map((m, i) => ({ prompt: m.text, session: h }))
+            ).map(({ prompt, session }, idx, arr) => (
+              <button key={idx}
+                onClick={() => onPickHistory && onPickHistory(session)}
+                className={`w-full text-left px-5 py-3.5 flex items-center gap-4 hover:bg-blue-50/60 focus-ring group transition-colors
+                  ${idx < arr.length - 1 ? "border-b border-slate-100" : ""}`}>
+                <span className="text-slate-300 group-hover:text-blue-400 flex-shrink-0">{I.history}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] text-slate-800 group-hover:text-blue-700 truncate">{prompt}</div>
+                  <div className="text-[11.5px] text-slate-400 mt-0.5">{session.title} · {session.when}</div>
                 </div>
+                <span className="text-slate-300 group-hover:text-blue-400 flex-shrink-0">›</span>
               </button>
             ))}
           </div>
