@@ -6687,7 +6687,7 @@ function ResponseCard({ response, onPickFollowup, onAddToDashboard, activeDashbo
       }
       return (
         <div className="space-y-5">
-          <KPIRow kpis={response.kpis} />
+          {response.kpis && <KPIRow kpis={response.kpis} />}
           <LineChart series={response.series} xLabels={response.xLabels} anomalies={response.anomalies}
                      forecastIndex={response.forecastIndex ?? null} onDrill={onPickFollowup} />
         </div>
