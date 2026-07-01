@@ -7105,7 +7105,7 @@ function estimateTokens(s) {
   return Math.max(1, Math.round(s.trim().split(/\s+/).length * 1.3));
 }
 
-function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenCount = false, prefillValue, fullHeight = false, bottomSlot, minHeight, hideSearch = false }) {
+function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenCount = false, prefillValue, fullHeight = false, bottomSlot, minHeight, hideSearch = false, bare = false }) {
   const toast = useToast();
   const [val, setVal] = useState("");
   const [libOpen, setLibOpen] = useState(false);
@@ -7136,9 +7136,7 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenC
 
   const tokens = estimateTokens(val);
 
-  return (
-    <div className={fullHeight ? "h-full flex flex-col" : "border-t border-slate-200 bg-white"}>
-      <div className={fullHeight ? "h-full flex flex-col" : "max-w-4xl mx-auto px-6 py-4"}>
+  const innerBox = (
         <div className={`border border-slate-300 rounded-xl bg-white card-shadow focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all${fullHeight ? " flex-1 flex flex-col justify-between" : ""}`} style={minHeight ? { minHeight } : {}}>
           <textarea
             ref={taRef}
@@ -7184,6 +7182,12 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenC
           </div>
           {bottomSlot && <div className="border-t border-slate-100">{bottomSlot}</div>}
         </div>
+  );
+  if (bare) return innerBox;
+  return (
+    <div className={fullHeight ? "h-full flex flex-col" : "border-t border-slate-200 bg-white"}>
+      <div className={fullHeight ? "h-full flex flex-col" : "max-w-4xl mx-auto px-6 py-4"}>
+        {innerBox}
         <div className="text-[11px] text-slate-400 text-center mt-2">
           AI-generated insights may be inaccurate. Always verify before acting on regulated data.
         </div>
@@ -7773,7 +7777,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
           <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a topic to get started.</p>
         </div>
         <div className="w-full">
-          <PromptInput onSend={onSend} busy={busy} hideTokenCount hideSearch />
+          <PromptInput onSend={onSend} busy={busy} hideTokenCount hideSearch bare />
         </div>
         {busy && (
           <div className="w-full flex justify-start">
