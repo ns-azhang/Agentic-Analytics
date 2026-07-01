@@ -7329,6 +7329,146 @@ const SHARED_DASHBOARDS   = [
   { ...ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === "severity-sla"),      recipients: ["Carlos Rivera", "Sophie Andersen", "Jin Park"] },
 ];
 
+function SpaceGallery({ onPickDashboard }) {
+  const [accessState, setAccessState] = React.useState(() =>
+    Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { level: "only-me", people: [] }]))
+  );
+  const [openModal, setOpenModal] = React.useState(null); // dashboardId
+  const [emailInput, setEmailInput] = React.useState("");
+  const [addRole, setAddRole] = React.useState("Viewer");
+
+  const addPerson = (dashboardId) => {
+    const email = emailInput.trim();
+    if (!email) return;
+    setAccessState(prev => ({
+      ...prev,
+      [dashboardId]: { ...prev[dashboardId], people: [...(prev[dashboardId].people || []), { email, role: addRole }] }
+    }));
+    setEmailInput("");
+  };
+
+  const removePerson = (dashboardId, email) => {
+    setAccessState(prev => ({
+      ...prev,
+      [dashboardId]: { ...prev[dashboardId], people: prev[dashboardId].people.filter(p => p.email !== email) }
+    }));
+  };
+
+  const ACCESS_LEVELS = [
+    { id: "only-me",  label: "Only me",             icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" strokeLinecap="round"/><path d="M11 3h4M11 5h4" strokeLinecap="round"/></svg> },
+    { id: "netskope", label: "Everyone at Netskope", icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2c0 0-3 2-3 6s3 6 3 6M8 2c0 0 3 2 3 6s-3 6-3 6M2 8h12" strokeLinecap="round"/></svg> },
+    { id: "specific", label: "Specific people",      icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><circle cx="5.5" cy="5" r="2.5"/><path d="M1 14c0-2.8 2-4.5 4.5-4.5S10 11.2 10 14" strokeLinecap="round"/><circle cx="11.5" cy="5" r="2.5"/><path d="M10.5 9.6c.4-.1.7-.1 1-.1 2.5 0 4.5 1.7 4.5 4.5" strokeLinecap="round"/></svg> },
+  ];
+
+  const modal = openModal ? PERSONAL_DASHBOARDS.find(d => d && d.dashboardId === openModal) : null;
+  const modalAccess = openModal ? accessState[openModal] : null;
+
+  return (
+    <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
+      <div className="flex items-center gap-3 px-6 py-3.5 bg-white border-b border-slate-200 flex-shrink-0">
+        <svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+        <h1 className="text-[15px] font-semibold text-slate-900">Space</h1>
+        <span className="text-[12px] text-slate-400">{PERSONAL_DASHBOARDS.length} dashboards</span>
+      </div>
+      <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex flex-col gap-2">
+          {PERSONAL_DASHBOARDS.filter(Boolean).map(d => {
+            const acc = accessState[d.dashboardId];
+            const levelInfo = ACCESS_LEVELS.find(l => l.id === acc.level);
+            return (
+              <div key={d.dashboardId} className="bg-white rounded-xl border border-slate-200 hover:border-slate-300 transition-all px-5 py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <button className="text-left min-w-0 flex-1 group" onClick={() => onPickDashboard(d)}>
+                    <div className="text-[14px] font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors mb-0.5">{d.title}</div>
+                    <div className="text-[12px] text-slate-500 leading-relaxed">{d.desc}</div>
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); setOpenModal(d.dashboardId); setEmailInput(""); }}
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-all">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><circle cx="13" cy="3" r="2"/><circle cx="13" cy="13" r="2"/><circle cx="3" cy="8" r="2"/><path d="M5 8h3.5M11 3.8L8.5 7M11 12.2L8.5 9" strokeLinecap="round"/></svg>
+                    <span>{levelInfo.label}</span>
+                  </button>
+                  <span className="text-slate-300 text-lg flex-shrink-0">›</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Access Control Modal */}
+      {openModal && modal && modalAccess && (
+        <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" onClick={() => setOpenModal(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-[15px] font-semibold text-slate-900">Share "{modal.title}"</h2>
+              <button onClick={() => setOpenModal(null)} className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            {/* Add people (only for specific) */}
+            {modalAccess.level === "specific" && (
+              <div className="flex gap-2 mb-4">
+                <input value={emailInput} onChange={e => setEmailInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addPerson(openModal)}
+                  placeholder="Add people by email"
+                  className="flex-1 text-[13px] border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400" />
+                <select value={addRole} onChange={e => setAddRole(e.target.value)}
+                  className="text-[12px] border border-slate-200 rounded-lg px-2 py-2 focus:outline-none bg-white text-slate-600">
+                  <option>Viewer</option>
+                  <option>Editor</option>
+                </select>
+                <button onClick={() => addPerson(openModal)}
+                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[12.5px] font-medium rounded-lg transition-colors">Add</button>
+              </div>
+            )}
+
+            {/* People list */}
+            {modalAccess.level === "specific" && modalAccess.people.length > 0 && (
+              <div className="mb-4 flex flex-col gap-1.5">
+                {modalAccess.people.map(p => (
+                  <div key={p.email} className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-50">
+                    <div className="flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold flex items-center justify-center">{p.email[0].toUpperCase()}</span>
+                      <span className="text-[13px] text-slate-700">{p.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11.5px] text-slate-400">{p.role}</span>
+                      <button onClick={() => removePerson(openModal, p.email)} className="text-slate-300 hover:text-red-400 transition-colors">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Access level selector */}
+            <div className="border-t border-slate-100 pt-4">
+              <p className="text-[11.5px] text-slate-400 font-medium mb-2 uppercase tracking-wide">General access</p>
+              <div className="flex flex-col gap-1">
+                {ACCESS_LEVELS.map(l => (
+                  <button key={l.id} onClick={() => setAccessState(prev => ({ ...prev, [openModal]: { ...prev[openModal], level: l.id } }))}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all ${modalAccess.level === l.id ? "bg-blue-50 border border-blue-200" : "hover:bg-slate-50 border border-transparent"}`}>
+                    <span className={modalAccess.level === l.id ? "text-blue-600" : "text-slate-400"}>{l.icon}</span>
+                    <span className={`text-[13px] font-medium ${modalAccess.level === l.id ? "text-blue-700" : "text-slate-700"}`}>{l.label}</span>
+                    {modalAccess.level === l.id && <svg className="w-4 h-4 text-blue-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button onClick={() => setOpenModal(null)}
+              className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium py-2 rounded-xl transition-colors">
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TabGallery({ title, icon, items, onPickDashboard, onClose }) {
   return (
     <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
@@ -8718,9 +8858,7 @@ function App() {
                         allAgents={[...AGENTS, ...userAgents]}
                         onPickAgent={(a) => { setShowAgentGallery(false); onPickAgent(a); }} />
         ) : showPersonalGallery ? (
-          <TabGallery title="Personal" items={PERSONAL_DASHBOARDS}
-            icon={<svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>}
-            onPickDashboard={(d) => { setShowPersonalGallery(false); onPickDashboard(d); }} />
+          <SpaceGallery onPickDashboard={(d) => { setShowPersonalGallery(false); onPickDashboard(d); }} />
         ) : showGroupGallery ? (
           <TabGallery title="Group" items={GROUP_DASHBOARDS}
             icon={<svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M1 14c0-2.761 2.015-4.5 4.5-4.5S10 11.239 10 14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><circle cx="11.5" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M10.5 9.6C11.1 9.55 11.3 9.5 11.5 9.5c2.485 0 4.5 1.739 4.5 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>}
