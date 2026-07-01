@@ -7152,7 +7152,7 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenC
   const tokens = estimateTokens(val);
 
   const innerBox = (
-        <div className={`border border-slate-300 rounded-xl bg-white card-shadow focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all${fullHeight ? " flex-1 flex flex-col justify-between" : ""}`} style={minHeight ? { minHeight } : {}}>
+        <div className={`border border-slate-300 rounded-xl bg-white card-shadow focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all flex flex-col${fullHeight ? " flex-1" : ""}`} style={minHeight ? { minHeight } : {}}>
           <textarea
             ref={taRef}
             value={val}
@@ -7162,6 +7162,7 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenC
             placeholder="Ask about incidents, policies, users, or destinations…"
             className="w-full resize-none bg-transparent px-4 pt-3 pb-1 text-[14px] text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
+          <div className="flex-1" />
           <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
             <div className="flex items-center gap-1">
               {suggestedPrompts && (
@@ -7823,7 +7824,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
           <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a topic to get started.</p>
         </div>
         <div className="w-full">
-          <PromptInput onSend={onSend} busy={busy} hideTokenCount hideSearch bare minHeight="220px"
+          <PromptInput onSend={onSend} busy={busy} hideTokenCount hideSearch bare minHeight="200px"
             suggestedPrompts={[
               "Show me top DLP incidents this week",
               "Which users have the most policy violations?",
