@@ -7390,6 +7390,7 @@ const SHARED_DASHBOARDS   = [
 function SpaceGallery({ onPickDashboard }) {
   const [accessState, setAccessState] = React.useState(() => {
     const defaults = Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { level: "only-me", role: "View", people: [] }]));
+    defaults["security-engineer"] = { level: "netskope", role: "View", people: [] };
     defaults["dlp-overview"] = {
       level: "specific",
       role: "View",
