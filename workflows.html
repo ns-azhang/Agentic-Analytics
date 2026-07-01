@@ -7418,6 +7418,7 @@ function SpaceGallery({ onPickDashboard }) {
   const [recurMonthDay, setRecurMonthDay] = React.useState("1st");
   const [recurTime, setRecurTime] = React.useState("09:00");
   const [recurRole, setRecurRole] = React.useState("View");
+  const [recurFormat, setRecurFormat] = React.useState("PDF");
 
   const WEEKDAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const MONTH_DAYS = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th","13th","14th","15th","16th","17th","18th","19th","20th","21st","22nd","23rd","24th","25th","26th","27th","28th","29th","30th","31st","Last day"];
@@ -7430,7 +7431,7 @@ function SpaceGallery({ onPickDashboard }) {
                                             `Monthly · ${recurMonthDay} at ${recurTime}`;
     setRecurState(prev => ({
       ...prev,
-      [dashboardId]: { schedules: [...prev[dashboardId].schedules, { id: Date.now(), email, role: recurRole, freq: recurFreq, days: [...recurDays], monthDay: recurMonthDay, time: recurTime, label }] }
+      [dashboardId]: { schedules: [...prev[dashboardId].schedules, { id: Date.now(), email, role: recurRole, format: recurFormat, freq: recurFreq, days: [...recurDays], monthDay: recurMonthDay, time: recurTime, label }] }
     }));
     setRecurEmail("");
   };
@@ -7649,7 +7650,7 @@ function SpaceGallery({ onPickDashboard }) {
                       <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold flex items-center justify-center flex-shrink-0">{s.email[0].toUpperCase()}</span>
                       <div className="min-w-0">
                         <p className="text-[12.5px] text-slate-700 truncate">{s.email}</p>
-                        <p className="text-[11px] text-slate-400">{s.label} · {s.role}</p>
+                        <p className="text-[11px] text-slate-400">{s.label} · {s.role} · {s.format}</p>
                       </div>
                     </div>
                     <button onClick={() => removeSchedule(openRecurModal, s.id)} className="text-slate-300 hover:text-red-400 transition-colors flex-shrink-0 ml-2">
@@ -7737,6 +7738,19 @@ function SpaceGallery({ onPickDashboard }) {
                 <label className="text-[12px] text-slate-500 font-medium mb-1 block">At</label>
                 <input type="time" value={recurTime} onChange={e => setRecurTime(e.target.value)}
                   className="text-[13px] border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700" />
+              </div>
+
+              {/* Format */}
+              <div>
+                <label className="text-[12px] text-slate-500 font-medium mb-1.5 block">Format</label>
+                <div className="flex gap-1.5">
+                  {["PDF","CSV","PNG"].map(f => (
+                    <button key={f} onClick={() => setRecurFormat(f)}
+                      className={`flex-1 py-1.5 rounded-lg text-[12.5px] font-medium border transition-all ${recurFormat === f ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}>
+                      {f}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <button onClick={() => addSchedule(openRecurModal)} disabled={!recurEmail.trim() || (recurFreq === "weekly" && recurDays.length === 0)}
