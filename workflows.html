@@ -7394,6 +7394,7 @@ function SpaceGallery({ onPickDashboard }) {
   const [openModal, setOpenModal] = React.useState(null); // dashboardId
   const [emailInput, setEmailInput] = React.useState("");
   const [addRole, setAddRole] = React.useState("Viewer");
+  const [filterLevel, setFilterLevel] = React.useState("all");
 
   const addPerson = (dashboardId) => {
     const email = emailInput.trim();
@@ -7425,12 +7426,27 @@ function SpaceGallery({ onPickDashboard }) {
     <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
       <div className="flex items-center gap-3 px-6 py-3.5 bg-white border-b border-slate-200 flex-shrink-0">
         <svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
-        <h1 className="text-[15px] font-semibold text-slate-900">Space</h1>
+        <h1 className="text-[15px] font-semibold text-slate-900">My Dashboards</h1>
         <span className="text-[12px] text-slate-400">{PERSONAL_DASHBOARDS.length} dashboards</span>
+      </div>
+      <div className="flex items-center gap-2 px-6 py-2.5 bg-white border-b border-slate-100 flex-shrink-0">
+        <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" d="M2 4h12M4 8h8M6 12h4"/></svg>
+        <span className="text-[11.5px] text-slate-400 font-medium mr-1">Access:</span>
+        {[
+          { id: "all",      label: "All" },
+          { id: "only-me",  label: "Only me" },
+          { id: "netskope", label: "Everyone at Netskope" },
+          { id: "specific", label: "Specific people" },
+        ].map(f => (
+          <button key={f.id} onClick={() => setFilterLevel(f.id)}
+            className={`px-2.5 py-1 rounded-full text-[12px] font-medium transition-all ${filterLevel === f.id ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}>
+            {f.label}
+          </button>
+        ))}
       </div>
       <div className="flex-1 overflow-y-auto px-6 py-4">
         <div className="flex flex-col gap-2">
-          {PERSONAL_DASHBOARDS.filter(Boolean).map(d => {
+          {PERSONAL_DASHBOARDS.filter(Boolean).filter(d => filterLevel === "all" || accessState[d.dashboardId]?.level === filterLevel).map(d => {
             const acc = accessState[d.dashboardId];
             const levelInfo = ACCESS_LEVELS.find(l => l.id === acc.level);
             return (
@@ -7450,6 +7466,12 @@ function SpaceGallery({ onPickDashboard }) {
               </div>
             );
           })}
+          {PERSONAL_DASHBOARDS.filter(Boolean).filter(d => filterLevel === "all" || accessState[d.dashboardId]?.level === filterLevel).length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <svg className="w-8 h-8 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M6 7V5a1 1 0 011-1h10a1 1 0 011 1v2M9 11v6m6-6v6"/></svg>
+              <p className="text-[13px] text-slate-400">No dashboards with this access type.</p>
+            </div>
+          )}
         </div>
       </div>
 
