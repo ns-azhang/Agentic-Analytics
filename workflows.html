@@ -7079,8 +7079,8 @@ function TypingBubble() {
   return (
     <div className="bg-white border border-slate-200 rounded-xl px-5 py-4 inline-flex items-center gap-2.5 card-shadow fade-in">
       <div className="w-7 h-7 rounded bg-blue-50 text-blue-600 grid place-items-center">{I.spark}</div>
-      <div className="text-[13px] text-slate-600">Analyzing DLP data</div>
-      <div className="flex gap-1 ml-1">
+      <div className="text-[13px] text-slate-600 font-medium">Thinking</div>
+      <div className="flex gap-1 ml-0.5">
         <span className="typing-dot w-1.5 h-1.5 rounded-full bg-blue-500"/>
         <span className="typing-dot w-1.5 h-1.5 rounded-full bg-blue-500"/>
         <span className="typing-dot w-1.5 h-1.5 rounded-full bg-blue-500"/>
@@ -8369,7 +8369,7 @@ function App() {
         const response = RESPONSES[id] || RESPONSES.freeform;
         setMessages(m => [...m, { role: "ai", response }]);
         setLoading(false);
-      }, 1000);
+      }, 800);
       return;
     }
     // Welcome page / no active dashboard: keyword routing + normal chat
@@ -8386,7 +8386,7 @@ function App() {
       const response = RESPONSES[id] || RESPONSES.freeform;
       setMessages(m => [...m, { role: "ai", response }]);
       setLoading(false);
-    }, 1000);
+    }, 800);
   };
 
   const onQuickAction = (action) => send(action.title, action.responseId);
