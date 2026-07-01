@@ -7388,9 +7388,19 @@ const SHARED_DASHBOARDS   = [
 ];
 
 function SpaceGallery({ onPickDashboard }) {
-  const [accessState, setAccessState] = React.useState(() =>
-    Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { level: "only-me", role: "View", people: [] }]))
-  );
+  const [accessState, setAccessState] = React.useState(() => {
+    const defaults = Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { level: "only-me", role: "View", people: [] }]));
+    defaults["dlp-overview"] = {
+      level: "specific",
+      role: "View",
+      people: [
+        { email: "aarondemo@netskope.com", role: "Edit" },
+        { email: "maydemo@netskope.com",   role: "View" },
+        { email: "jamesdemo@netskope.com", role: "View" },
+      ],
+    };
+    return defaults;
+  });
   const [openModal, setOpenModal] = React.useState(null); // dashboardId
   const [emailInput, setEmailInput] = React.useState("");
   const [addRole, setAddRole] = React.useState("Viewer");
