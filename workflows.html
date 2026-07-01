@@ -7715,10 +7715,10 @@ function SpaceGallery({ onPickDashboard }) {
               {recurFreq === "monthly" && (
                 <div>
                   <label className="text-[12px] text-slate-500 font-medium mb-1.5 block">On the</label>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex gap-1.5 overflow-x-auto pb-1" style={{scrollbarWidth:"none"}}>
                     {MONTH_DAYS.map(day => (
                       <button key={day} onClick={() => setRecurMonthDay(day)}
-                        className={`px-3 py-1 rounded-lg text-[12px] font-medium border transition-all ${recurMonthDay === day ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"}`}>
+                        className={`flex-shrink-0 px-3 py-1 rounded-lg text-[12px] font-medium border transition-all ${recurMonthDay === day ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"}`}>
                         {day}
                       </button>
                     ))}
