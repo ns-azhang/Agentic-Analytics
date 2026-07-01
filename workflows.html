@@ -384,19 +384,19 @@ const getLibraryFor = (id) => LIBRARY_ITEMS_BY_ROLE[id] || LIBRARY_ITEMS_BY_ROLE
    conversation with that view as the first AI turn. */
 const DASHBOARD_ITEMS = [
   { folder: "DLP", items: [
-    { dashboardId: "dlp-overview",     title: "DLP incidents — overview", desc: "Volume, severity, top policies, top users",         personas: ["DLP Incident Monitoring"] },
-    { dashboardId: "dlp-policies",     title: "DLP policies",             desc: "Top policies, 30-day trend, quarter compare",       personas: ["DLP Incident Monitoring"] },
+    { dashboardId: "dlp-overview",     title: "DLP incidents — overview", desc: "Volume, severity, top policies, top users",         personas: ["Security Leader"] },
+    { dashboardId: "dlp-policies",     title: "DLP policies",             desc: "Top policies, 30-day trend, quarter compare",       personas: ["Security Leader"] },
     { dashboardId: "dlp-destinations", title: "Sensitive Data Movement",  desc: "Destinations, file types, sanctioned trend",        personas: ["Sensitive Data Movement"] },
     { dashboardId: "dlp-users",        title: "Risky User Behaviors",     desc: "Top users, baseline, month comparison",             personas: ["Risky User Behaviors"] },
   ]},
   { folder: "Severity & SLA", items: [
-    { dashboardId: "severity-sla",     title: "Severity & SLA",           desc: "Severity mix, 30d trend, resolution time",          personas: ["DLP Incident Monitoring"] },
+    { dashboardId: "severity-sla",     title: "Severity & SLA",           desc: "Severity mix, 30d trend, resolution time",          personas: ["Security Leader"] },
   ]},
   { folder: "Forecast", items: [
-    { dashboardId: "forecast",         title: "Incident forecast",        desc: "Projected next 7 days · drivers",                   personas: ["DLP Incident Monitoring"] },
+    { dashboardId: "forecast",         title: "Incident forecast",        desc: "Projected next 7 days · drivers",                   personas: ["Security Leader"] },
   ]},
   { folder: "SOC", items: [
-    { dashboardId: "soc-dlp-monitoring", title: "DLP Incident Monitoring",  desc: "Policy violations, top policies, apps and DLP rules", personas: ["DLP Incident Monitoring"] },
+    { dashboardId: "soc-dlp-monitoring", title: "Security Leader",  desc: "Policy violations, top policies, apps and DLP rules", personas: ["Security Leader"] },
   ]},
   { folder: "CISO", items: [
     { dashboardId: "ciso-overview", title: "CISO", desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025",     personas: ["CISO"] },
@@ -755,7 +755,7 @@ const DASHBOARDS = {
   },
 
   "soc-dlp-monitoring": {
-    title: "DLP Incident Monitoring",
+    title: "Security Leader",
     description: "Policy violations, top policies, apps and DLP rules for the current week.",
     summary: "This week your environment generated 12,847 security events — an 8% increase week-over-week, driven primarily by a Wednesday–Friday surge in DLP activity and shadow-IT app usage. Critical incidents climbed 15%, with three of them traceable to unsanctioned Generative AI usage (ChatGPT accounted for the most alerts of any single app at 387). DLP remains your top risk category at 31% of incidents, though absolute DLP volume is actually down 5% versus last week. Your highest-risk user, sarah.chen@company.com (Engineering), generated 14 incidents across multiple unsanctioned cloud-storage and GenAI apps and warrants a closer look.",
     examplePrompts: [
@@ -4109,7 +4109,7 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
    RBAC token; in this prototype, a switcher in the controls bar lets reviewers
    demo each role's Quick Actions and greeting. */
 const PERSONAS = {
-  luke:   { id: "luke",   name: "Luke Hayward",  firstName: "Luke",   role: "DLP Incident Monitoring",    initials: "LH", bg: "#dbeafe", fg: "#1e40af",
+  luke:   { id: "luke",   name: "Luke Hayward",  firstName: "Luke",   role: "Security Leader",    initials: "LH", bg: "#dbeafe", fg: "#1e40af",
             greeting: "Good afternoon, Luke.",   subtitle: "Review cloud exposure, sanctioned vs. unsanctioned usage, and risk posture trends.",              scope: "Cloud risk scope" },
   tim:    { id: "tim",    name: "Tim Reyes",     firstName: "Tim",    role: "Sensitive Data Movement",  initials: "TR", bg: "#fef3c7", fg: "#b45309",
             greeting: "Good afternoon, Tim.",    subtitle: "Track where confidential data is moving, which destinations are risky, and what to block.",       scope: "Data movement scope" },
@@ -4140,7 +4140,7 @@ const QUICK_ACTIONS_BY_ROLE = {
     { id: "qa3", icon: I.history,title:"Resolution SLA compliance",        desc: "Mean time to resolve by severity vs. SLA targets",                 responseId: "resolution-time-severity" },
     { id: "qa4", icon: I.trend, title: "This quarter vs. last quarter",    desc: "How the security posture has shifted across the last 90 days",     responseId: "policy-compare-quarter" },
     { id: "qa5", icon: I.spark, title: "Forecast for next 7 days",         desc: "Projected incident volume and Critical exposure",                  responseId: "forecast-7d" },
-    { id: "qa6", icon: I.shield,title: "DLP Incident Monitoring",            desc: "Policy violations, top policies, apps and DLP rules",              responseId: "soc-dlp-monitoring" },
+    { id: "qa6", icon: I.shield,title: "Security Leader",            desc: "Policy violations, top policies, apps and DLP rules",              responseId: "soc-dlp-monitoring" },
   ],
   david: [
     { id: "qa1", icon: I.cloud, title: "Sensitive Data Movement",          desc: "Destinations receiving confidential data this week",               responseId: "destinations" },
@@ -5027,7 +5027,7 @@ const RESPONSES = {
   },
 
   "soc-dlp-monitoring": {
-    title: "DLP Incident Monitoring",
+    title: "Security Leader",
     chartType: "kpi+line",
     kpis: [
       { label: "Total security events",   value: "12,847", delta: "+8%",  deltaDir: "up", neutral: true },
@@ -5114,7 +5114,7 @@ const RESPONSES = {
     followUps: [
       M("Show all DLP violations involving ChatGPT this week",  "soc-weekly-chatgpt-dlp"),
       M("Top users in the Wed–Fri Critical incidents",          "soc-weekly-storage-users"),
-      M("Back to DLP Incident Monitoring",                        "soc-dlp-monitoring"),
+      M("Back to Security Leader",                        "soc-dlp-monitoring"),
     ],
   },
 
@@ -5132,7 +5132,7 @@ const RESPONSES = {
     followUps: [
       M("Show the users behind these ChatGPT alerts",  "soc-weekly-risky-users"),
       M("What caused the Wed–Fri Critical spike?",     "soc-weekly-rca-wedfri"),
-      M("Back to DLP Incident Monitoring",               "soc-dlp-monitoring"),
+      M("Back to Security Leader",               "soc-dlp-monitoring"),
     ],
   },
 
@@ -5153,7 +5153,7 @@ const RESPONSES = {
     followUps: [
       M("Show all incidents for sarah.chen",          "soc-weekly-risky-users"),
       M("Top apps generating alerts this week",       "soc-weekly-top-apps"),
-      M("Back to DLP Incident Monitoring",              "soc-dlp-monitoring"),
+      M("Back to Security Leader",              "soc-dlp-monitoring"),
     ],
   },
 
@@ -5171,7 +5171,7 @@ const RESPONSES = {
     followUps: [
       M("Drill into DLP Violations",                       "soc-weekly-chatgpt-dlp"),
       M("Show the top users behind these incidents",       "soc-weekly-risky-users"),
-      M("Back to DLP Incident Monitoring",                   "soc-dlp-monitoring"),
+      M("Back to Security Leader",                   "soc-dlp-monitoring"),
     ],
   },
 
@@ -5191,7 +5191,7 @@ const RESPONSES = {
     followUps: [
       M("Show DLP violations on ChatGPT",                   "soc-weekly-chatgpt-dlp"),
       M("Top users on unsanctioned cloud storage",          "soc-weekly-storage-users"),
-      M("Back to DLP Incident Monitoring",                    "soc-dlp-monitoring"),
+      M("Back to Security Leader",                    "soc-dlp-monitoring"),
     ],
   },
 
@@ -5212,7 +5212,7 @@ const RESPONSES = {
     followUps: [
       M("Show sarah.chen's incidents in detail",       "soc-weekly-chatgpt-dlp"),
       M("Top apps generating alerts this week",        "soc-weekly-top-apps"),
-      M("Back to DLP Incident Monitoring",               "soc-dlp-monitoring"),
+      M("Back to Security Leader",               "soc-dlp-monitoring"),
     ],
   },
 
@@ -7136,7 +7136,7 @@ const FOLDER_COLORS = {
   "GenAI Admin":      { bg: "#cffafe", text: "#0e7490", bar: "#06b6d4" },
 };
 const PERSONA_COLORS = {
-  "DLP Incident Monitoring":  { bg: "#dbeafe", text: "#1e40af" },
+  "Security Leader":  { bg: "#dbeafe", text: "#1e40af" },
   "Sensitive Data Movement":  { bg: "#fef3c7", text: "#b45309" },
   "Risky User Behaviors":     { bg: "#e0e7ff", text: "#3730a3" },
   "CISO":                     { bg: "#dcfce7", text: "#166534" },
@@ -7150,7 +7150,7 @@ function DashboardGallery({ onClose, onPickDashboard, onNewDashboard }) {
   const [roleFilter, setRoleFilter] = React.useState("All");
 
   const allItems = DASHBOARD_ITEMS.flatMap(g => g.items.map(d => ({ ...d, folder: g.folder })));
-  const allTags    = ["All", ...DASHBOARD_ITEMS.map(g => g.folder), "DLP Incident Monitoring", "Sensitive Data Movement", "Risky User Behaviors"];
+  const allTags    = ["All", ...DASHBOARD_ITEMS.map(g => g.folder), "Security Leader", "Sensitive Data Movement", "Risky User Behaviors"];
   const allPersonas = ["All", "CISO", "Security Analyst", "GenAI Admin"];
 
   const filtered = allItems.filter(d => {
@@ -8127,7 +8127,7 @@ function App() {
     setMessages([]);
     setShowWelcome(false);
     const DEFAULT_DASHBOARD_BY_PERSONA = {
-      luke:       { dashboardId: "soc-dlp-monitoring", title: "DLP Incident Monitoring", desc: "Policy violations, top policies, apps and DLP rules" },
+      luke:       { dashboardId: "soc-dlp-monitoring", title: "Security Leader", desc: "Policy violations, top policies, apps and DLP rules" },
       tim:        { dashboardId: "dlp-destinations",   title: "Sensitive Data Movement",  desc: "Destinations, file types, sanctioned trend" },
       david:      { dashboardId: "dlp-users",          title: "Risky User Behaviors",     desc: "Top users, baseline, month comparison" },
       ciso:       { dashboardId: "ciso-overview",      title: "CISO",                     desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025" },
