@@ -7168,7 +7168,7 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenC
               {suggestedPrompts && (
                 <div className="relative" ref={suggestRef}>
                   {suggestOpen && (
-                    <div className="menu-pop absolute bottom-full left-0 mb-1.5 w-72 bg-white border border-slate-200 rounded-xl card-shadow z-30 overflow-hidden">
+                    <div className="menu-pop absolute top-full left-0 mt-1.5 w-72 bg-white border border-slate-200 rounded-xl card-shadow z-30 overflow-hidden">
                       <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
                         <span className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">Suggested Prompts</span>
                         <button onClick={openSuggest} className="text-[11px] text-blue-500 hover:text-blue-700 font-medium">Refresh</button>
