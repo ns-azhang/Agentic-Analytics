@@ -4121,7 +4121,7 @@ function PromptLibraryMenu({ persona, onPickPrompt }) {
   );
 }
 
-function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, onOpenHistoryPage, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher, hideRightExtras }) {
+function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, onOpenHistoryPage, onOpenPersonal, onOpenGroup, onOpenShared, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher, hideRightExtras }) {
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
       {/* Left side: Back + New chat + persona switcher */}
@@ -4152,7 +4152,7 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         {I.bot}<span>Agents</span>
       </button>
-      <button onClick={() => toast("Personal dashboards coming soon", { kind: "info" })}
+      <button onClick={onOpenPersonal}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.4"/>
@@ -4160,7 +4160,7 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
         </svg>
         <span>Personal</span>
       </button>
-      <button onClick={() => toast("Group dashboards coming soon", { kind: "info" })}
+      <button onClick={onOpenGroup}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="5.5" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.4"/>
@@ -4170,7 +4170,7 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
         </svg>
         <span>Group</span>
       </button>
-      <button onClick={() => toast("Shared dashboards coming soon", { kind: "info" })}
+      <button onClick={onOpenShared}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
         <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="13" cy="3" r="2" stroke="currentColor" strokeWidth="1.4"/>
@@ -7313,6 +7313,62 @@ function DashboardGallery({ onClose, onPickDashboard, onNewDashboard }) {
   );
 }
 
+/* ----------------------- Personal / Group / Shared Galleries -------------- */
+const ALL_DASHBOARD_ITEMS = [
+  { dashboardId: "dlp-overview",      title: "DLP incidents — overview", desc: "Volume, severity, top policies, top users",              folder: "DLP",              personas: ["Security Leader"] },
+  { dashboardId: "dlp-policies",      title: "DLP policies",             desc: "Top policies, 30-day trend, quarter compare",            folder: "DLP",              personas: ["Security Leader"] },
+  { dashboardId: "security-engineer", title: "Security Engineer",        desc: "Sensitive data movement, risky users, destinations",     folder: "DLP",              personas: ["Security Engineer"] },
+  { dashboardId: "severity-sla",      title: "Severity & SLA",           desc: "Severity mix, 30d trend, resolution time",               folder: "Severity & SLA",   personas: ["Security Leader"] },
+  { dashboardId: "forecast",          title: "Incident forecast",        desc: "Projected next 7 days · drivers",                        folder: "Forecast",         personas: ["Security Leader"] },
+  { dashboardId: "soc-dlp-monitoring",title: "Security Leader",          desc: "Policy violations, top policies, apps and DLP rules",    folder: "SOC",              personas: ["Security Leader"] },
+  { dashboardId: "ciso-overview",     title: "CISO",                     desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025", folder: "CISO", personas: ["CISO"] },
+  { dashboardId: "security-analyst",  title: "Security Analyst",         desc: "Cloud app discovery, DLP, threats, UBA · last 90 days",  folder: "Security Analyst", personas: ["Security Analyst"] },
+  { dashboardId: "genai-admin",       title: "GenAI Admin",              desc: "AI app usage, policies, web traffic · last 90 days",     folder: "GenAI Admin",      personas: ["GenAI Admin"] },
+];
+const PERSONAL_DASHBOARDS = ["dlp-overview","security-engineer","severity-sla","forecast","ciso-overview"].map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === id));
+const GROUP_DASHBOARDS    = ["dlp-policies","soc-dlp-monitoring","security-analyst","genai-admin","forecast"].map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === id));
+const SHARED_DASHBOARDS   = ["security-engineer","ciso-overview","dlp-overview","security-analyst","severity-sla"].map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === id));
+
+function TabGallery({ title, icon, items, onPickDashboard, onClose }) {
+  return (
+    <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden">
+      <div className="flex items-center gap-3 px-6 py-3.5 bg-white border-b border-slate-200 flex-shrink-0">
+        {icon}
+        <h1 className="text-[15px] font-semibold text-slate-900">{title}</h1>
+        <span className="text-[12px] text-slate-400">{items.length} dashboards</span>
+      </div>
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="grid grid-cols-1 gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+          {items.filter(Boolean).map(d => {
+            const fc = FOLDER_COLORS[d.folder] || { bg: "#f1f5f9", text: "#475569", bar: "#94a3b8" };
+            return (
+              <button key={d.dashboardId} onClick={() => onPickDashboard(d)}
+                className="text-left bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all overflow-hidden group">
+                <div className="h-1 w-full" style={{ backgroundColor: fc.bar }} />
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <span className="text-[14px] font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">{d.title}</span>
+                    <span className="text-[10.5px] font-medium px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5" style={{ backgroundColor: fc.bg, color: fc.text }}>{d.folder}</span>
+                  </div>
+                  <p className="text-[12px] text-slate-500 leading-relaxed mb-3">{d.desc}</p>
+                  {d.personas && d.personas.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {d.personas.map(p => {
+                        const pc = PERSONA_COLORS[p] || { bg: "#f1f5f9", text: "#475569" };
+                        return <span key={p} className="text-[10.5px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: pc.bg, color: pc.text }}>{p}</span>;
+                      })}
+                    </div>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------ Agent Gallery ----------------------------- */
 const STATUS_COLORS = {
   "Success": { bg: "#dcfce7", text: "#166534", bar: "#10b981" },
@@ -8164,11 +8220,15 @@ function App() {
   const [showDashboardGallery, setShowDashboardGallery] = useState(false);
   const [showAgentGallery, setShowAgentGallery] = useState(false);
   const [showHistoryPage, setShowHistoryPage] = useState(false);
+  const [showPersonalGallery, setShowPersonalGallery] = useState(false);
+  const [showGroupGallery, setShowGroupGallery] = useState(false);
+  const [showSharedGallery, setShowSharedGallery] = useState(false);
   const [isAgentView, setIsAgentView] = useState(false);
   const [navHistory, setNavHistory] = useState([]);
   const pushHistory = () => {
-    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, showHistoryPage, activeDashboard, isAgentView }]);
+    setNavHistory(prev => [...prev, { showWelcome, showDashboardGallery, showAgentGallery, showHistoryPage, showPersonalGallery, showGroupGallery, showSharedGallery, activeDashboard, isAgentView }]);
   };
+  const clearGalleries = () => { setShowDashboardGallery(false); setShowAgentGallery(false); setShowHistoryPage(false); setShowPersonalGallery(false); setShowGroupGallery(false); setShowSharedGallery(false); setShowWelcome(false); setIsAgentView(false); };
   const goBack = () => {
     setNavHistory(prev => {
       if (!prev.length) return prev;
@@ -8177,6 +8237,9 @@ function App() {
       setShowDashboardGallery(snap.showDashboardGallery);
       setShowAgentGallery(snap.showAgentGallery || false);
       setShowHistoryPage(snap.showHistoryPage || false);
+      setShowPersonalGallery(snap.showPersonalGallery || false);
+      setShowGroupGallery(snap.showGroupGallery || false);
+      setShowSharedGallery(snap.showSharedGallery || false);
       setActiveDashboard(snap.activeDashboard);
       setIsAgentView(snap.isAgentView || false);
       return prev.slice(0, -1);
@@ -8578,9 +8641,12 @@ function App() {
         <ContentControls onNewChat={reset} onPickPrompt={onPickPrompt}
                          onPickHistory={onPickHistory} onPickDashboard={onPickDashboard}
                          onPickAgent={onPickAgent} userAgents={userAgents}
-                         onOpenDashboardGallery={() => { if (!showDashboardGallery) { pushHistory(); setShowAgentGallery(false); setShowHistoryPage(false); setShowWelcome(false); setIsAgentView(false); setShowDashboardGallery(true); } }}
-                         onOpenAgentGallery={() => { pushHistory(); setShowAgentGallery(true); setShowHistoryPage(false); }}
-                         onOpenHistoryPage={() => { pushHistory(); setShowHistoryPage(true); setShowAgentGallery(false); setShowDashboardGallery(false); }}
+                         onOpenDashboardGallery={() => { if (!showDashboardGallery) { pushHistory(); clearGalleries(); setShowDashboardGallery(true); } }}
+                         onOpenAgentGallery={() => { pushHistory(); clearGalleries(); setShowAgentGallery(true); }}
+                         onOpenHistoryPage={() => { pushHistory(); clearGalleries(); setShowHistoryPage(true); }}
+                         onOpenPersonal={() => { pushHistory(); clearGalleries(); setShowPersonalGallery(true); }}
+                         onOpenGroup={() => { pushHistory(); clearGalleries(); setShowGroupGallery(true); }}
+                         onOpenShared={() => { pushHistory(); clearGalleries(); setShowSharedGallery(true); }}
                          onBack={goBack} canGoBack={navHistory.length > 0}
                          persona={persona} onChangePersona={onChangePersona}
                          savedWidgets={savedWidgets}
@@ -8598,6 +8664,18 @@ function App() {
           <AgentGallery onClose={() => setShowAgentGallery(false)}
                         allAgents={[...AGENTS, ...userAgents]}
                         onPickAgent={(a) => { setShowAgentGallery(false); onPickAgent(a); }} />
+        ) : showPersonalGallery ? (
+          <TabGallery title="Personal" items={PERSONAL_DASHBOARDS}
+            icon={<svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.4"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>}
+            onPickDashboard={(d) => { setShowPersonalGallery(false); onPickDashboard(d); }} />
+        ) : showGroupGallery ? (
+          <TabGallery title="Group" items={GROUP_DASHBOARDS}
+            icon={<svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M1 14c0-2.761 2.015-4.5 4.5-4.5S10 11.239 10 14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><circle cx="11.5" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.4"/><path d="M10.5 9.6C11.1 9.55 11.3 9.5 11.5 9.5c2.485 0 4.5 1.739 4.5 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>}
+            onPickDashboard={(d) => { setShowGroupGallery(false); onPickDashboard(d); }} />
+        ) : showSharedGallery ? (
+          <TabGallery title="Shared" items={SHARED_DASHBOARDS}
+            icon={<svg className="w-4 h-4 text-slate-500" viewBox="0 0 16 16" fill="none"><circle cx="13" cy="3" r="2" stroke="currentColor" strokeWidth="1.4"/><circle cx="13" cy="13" r="2" stroke="currentColor" strokeWidth="1.4"/><circle cx="3" cy="8" r="2" stroke="currentColor" strokeWidth="1.4"/><path d="M5 8h3.5M11 3.8L8.5 7M11 12.2L8.5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>}
+            onPickDashboard={(d) => { setShowSharedGallery(false); onPickDashboard(d); }} />
         ) : showDashboardGallery ? (
           <DashboardGallery onClose={() => setShowDashboardGallery(false)}
                             onPickDashboard={(d) => { setShowDashboardGallery(false); onPickDashboard(d); }}
