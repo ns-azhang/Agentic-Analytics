@@ -364,17 +364,13 @@ const HISTORY_ITEMS = [
 /* Prompt library content swaps with the active persona — each role gets its
    own starter pack, personal prompts, and team-shared collection. */
 const LIBRARY_ITEMS_BY_ROLE = {
-  tim: [
-    { folder: "Shared · Threat starter pack", items: ["UEBA anomaly clusters", "Multi-stage threat chains", "Top suspicious users", "Source code exfiltration signals"] },
-    { folder: "Team · Threat intel",          items: ["Recent IOC matches", "Threat actor cohort review"] },
+  secengineer: [
+    { folder: "Shared · Security Engineer starter pack", items: ["Sensitive Data Movement", "File types to risky destinations", "Top users by incident count", "Sanctioned vs. unsanctioned trend"] },
+    { folder: "Team · Security engineering",             items: ["PII exposure trends", "Risky user cohort review"] },
   ],
   luke: [
     { folder: "Shared · Executive starter pack", items: ["Weekly executive scorecard", "Compliance posture (PCI / PHI / PII)", "Resolution SLA compliance", "Quarter-over-quarter trend"] },
     { folder: "Team · Security leadership",      items: ["Cross-product risk view", "Incidents by business unit"] },
-  ],
-  david: [
-    { folder: "Shared · Data discovery starter pack", items: ["Sensitive Data Movement", "File types to risky destinations", "Sanctioned vs. unsanctioned trend", "Customer PII drilldown"] },
-    { folder: "Team · Data security",                 items: ["PII exposure trends", "Sensitive-data destinations"] },
   ],
 };
 const getLibraryFor = (id) => LIBRARY_ITEMS_BY_ROLE[id] || LIBRARY_ITEMS_BY_ROLE.luke;
@@ -386,8 +382,7 @@ const DASHBOARD_ITEMS = [
   { folder: "DLP", items: [
     { dashboardId: "dlp-overview",     title: "DLP incidents — overview", desc: "Volume, severity, top policies, top users",         personas: ["Security Leader"] },
     { dashboardId: "dlp-policies",     title: "DLP policies",             desc: "Top policies, 30-day trend, quarter compare",       personas: ["Security Leader"] },
-    { dashboardId: "dlp-destinations", title: "Sensitive Data Movement",  desc: "Destinations, file types, sanctioned trend",        personas: ["Sensitive Data Movement"] },
-    { dashboardId: "dlp-users",        title: "Risky User Behaviors",     desc: "Top users, baseline, month comparison",             personas: ["Risky User Behaviors"] },
+    { dashboardId: "security-engineer", title: "Security Engineer",        desc: "Sensitive data movement, risky users, destinations", personas: ["Security Engineer"] },
   ]},
   { folder: "Severity & SLA", items: [
     { dashboardId: "severity-sla",     title: "Severity & SLA",           desc: "Severity mix, 30d trend, resolution time",          personas: ["Security Leader"] },
@@ -672,6 +667,63 @@ const DASHBOARDS = {
       M("Show k.tanaka's UEBA alert breakdown",    "user-policies-ktanaka"),
       M("Recommend coaching",                      "block-recommendation"),
       M("Send a manager digest",                   "slack-sent"),
+    ],
+  },
+
+  "security-engineer": {
+    title: "Security Engineer",
+    description: "Sensitive data movement and risky user behaviors — destinations, file types, and top contributors.",
+    summary: "Combined view of sensitive data movement and risky user behaviors. Unsanctioned destinations now carry 60% of sensitive-file movement — personal Google Drive alone took 284 files this week. j.morales (87) and k.tanaka (64) together account for 24% of all UEBA alerts, both well above the team baseline of ~12/mo. Sanctioned app share has dropped from 58% to 40% over 30 days.",
+    examplePrompts: [
+      M("Block recommendation for personal GDrive", "block-recommendation"),
+      M("Show j.morales's UEBA alerts in detail",   "user-detail-jmorales"),
+    ],
+    widgets: [
+      { type: "kpi", size: "full", kpis: [
+        { label: "Sanctioned share",   value: "40%",  delta: "−18pp", deltaDir: "down" },
+        { label: "Unsanctioned moves", value: "1,847" },
+        { label: "Top user (30d)",     value: "j.morales", delta: "+67%", deltaDir: "up", invertColor: true },
+        { label: "Repeat offenders",   value: "7" },
+      ]},
+      { type: "hbar", size: "full", title: "Top destination apps — 7 days",
+        bars: [
+          { label: "Google Drive (personal)",    value: 284, color: RISK.unsanc,     drill: { text: "Show top 10 users uploading to Google Drive (personal)", id: "dest-gdrive-personal" } },
+          { label: "Dropbox (personal)",         value: 167, color: RISK.unsanc,     drill: { text: "Show top 10 users uploading to Dropbox (personal)",     id: "dest-dropbox-personal" } },
+          { label: "Slack (external workspace)", value: 142, color: RISK.caution,    drill: { text: "Show top 10 users sharing to Slack external workspaces", id: "dest-slack-external" } },
+          { label: "Box (corporate)",            value: 118, color: RISK.sanctioned },
+          { label: "OneDrive (corporate)",       value:  94, color: RISK.sanctioned },
+          { label: "WeTransfer",                 value:  61, color: RISK.unsanc },
+          { label: "GitHub (public)",            value:  48, color: RISK.caution },
+        ] },
+      { type: "hbar", size: "full", title: "Top users by UEBA alerts — last 30 days",
+        bars: [
+          { label: "j.morales@abc.com",     value: 87, color: RISK.unsanc, drill: { text: "Show j.morales's UEBA alerts in detail",  id: "user-detail-jmorales" } },
+          { label: "k.tanaka@abc.com",      value: 64, color: RISK.unsanc, drill: { text: "Show k.tanaka's UEBA alert breakdown",    id: "user-policies-ktanaka" } },
+          { label: "r.singh@abc.com",       value: 52 },
+          { label: "m.oconnell@abc.com",    value: 41 },
+          { label: "s.aldridge@abc.com",    value: 38 },
+          { label: "Others (124 users)",     value: 311, color: RISK.neutral },
+        ] },
+      { type: "line", size: "half", title: "Sanctioned vs. unsanctioned (30d)",
+        series: [
+          { name: "Sanctioned",   color: RISK.sanctioned, values: [62,60,61,59,58,60,57,55,56,54,52,53,51,50,48,49,46,45,47,44,42,41,43,40,39,38,37,40,38,40] },
+          { name: "Unsanctioned", color: RISK.unsanc,     values: [38,40,39,41,42,40,43,45,44,46,48,47,49,50,52,51,54,55,53,56,58,59,57,60,61,62,63,60,62,60] },
+        ],
+        xLabels: DAYS30, anomalies: [] },
+      { type: "donut", size: "half", title: "File types → personal Google Drive",
+        slices: [
+          { label: ".xlsx",  value: 124, color: "#0ea5e9" },
+          { label: ".pdf",   value:  78, color: "#6366f1" },
+          { label: ".docx",  value:  42 },
+          { label: ".csv",   value:  29 },
+          { label: ".pptx",  value:  11 },
+        ] },
+    ],
+    followUps: [
+      M("Block recommendation for personal GDrive",  "block-recommendation"),
+      M("Top users uploading to risky destinations",  "users-wetransfer"),
+      M("Show j.morales's UEBA alerts in detail",    "user-detail-jmorales"),
+      M("Recommend coaching",                         "block-recommendation"),
     ],
   },
 
@@ -4111,10 +4163,8 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
 const PERSONAS = {
   luke:   { id: "luke",   name: "Luke Hayward",  firstName: "Luke",   role: "Security Leader",    initials: "LH", bg: "#dbeafe", fg: "#1e40af",
             greeting: "Good afternoon, Luke.",   subtitle: "Review cloud exposure, sanctioned vs. unsanctioned usage, and risk posture trends.",              scope: "Cloud risk scope" },
-  tim:    { id: "tim",    name: "Tim Reyes",     firstName: "Tim",    role: "Sensitive Data Movement",  initials: "TR", bg: "#fef3c7", fg: "#b45309",
-            greeting: "Good afternoon, Tim.",    subtitle: "Track where confidential data is moving, which destinations are risky, and what to block.",       scope: "Data movement scope" },
-  david:  { id: "david",  name: "David Chen",    firstName: "David",  role: "Risky User Behaviors",     initials: "DC", bg: "#e0e7ff", fg: "#3730a3",
-            greeting: "Good afternoon, David.",  subtitle: "Identify users generating the most incidents, analyze patterns, and prioritize coaching.",         scope: "Risky User Behaviors scope" },
+  secengineer: { id: "secengineer", name: "Security Engineer", firstName: "Security Engineer", role: "Security Engineer", initials: "SE", bg: "#fef9c3", fg: "#854d0e",
+                 greeting: "Good afternoon.",  subtitle: "Track sensitive data movement, identify risky users, and analyze exfiltration patterns.", scope: "Security engineer scope" },
   ciso:         { id: "ciso",         name: "CISO",            firstName: "CISO",           role: "CISO",             initials: "CS", bg: "#dcfce7", fg: "#166534",
                   greeting: "Good afternoon.",  subtitle: "Executive security overview — alerts, DLP, threats, policy violations, and network traffic.",  scope: "Executive scope" },
   secleader:    { id: "secleader",    name: "Security Leader", firstName: "Security Leader", role: "Security Analyst", initials: "SL", bg: "#f3e8ff", fg: "#6b21a8",
@@ -4127,12 +4177,12 @@ const PERSONAS = {
    first-30-second questions. Production would source these from a tenant-
    level config; this prototype hard-codes them by role. */
 const QUICK_ACTIONS_BY_ROLE = {
-  tim: [
-    { id: "qa1", icon: I.spark, title: "UEBA anomaly clusters — 24h",      desc: "Suspicious behavior patterns detected since yesterday",            responseId: "role-ueba-anomalies" },
-    { id: "qa2", icon: I.alert, title: "Multi-stage threat chains",        desc: "Cross-product correlations involving DLP, web, and access signals", responseId: "rca-saturday" },
-    { id: "qa3", icon: I.users, title: "Users with anomalous activity",    desc: "User cohort showing unusual behavior in the last 7 days",          responseId: "top-users" },
-    { id: "qa4", icon: I.doc,   title: "Source code exfiltration signals", desc: "Where source code is leaving the perimeter",                       responseId: "apps-source-code" },
-    { id: "qa5", icon: I.trend, title: "Critical & High severity trend",   desc: "30-day trend across Critical and High severity incidents",         responseId: "severity-trend-30d" },
+  secengineer: [
+    { id: "qa1", icon: I.cloud, title: "Sensitive Data Movement",          desc: "Destinations receiving confidential data this week",               responseId: "destinations" },
+    { id: "qa2", icon: I.users, title: "Risky user behaviors",             desc: "Top users by UEBA alerts and month-over-month trend",             responseId: "top-users" },
+    { id: "qa3", icon: I.doc,   title: "File types to risky apps",         desc: "What types of files are leaving the perimeter",                    responseId: "filetypes-gdrive" },
+    { id: "qa4", icon: I.trend, title: "Sanctioned vs. unsanctioned",      desc: "How the share of data going to corporate apps is shifting",        responseId: "sanctioned-trend" },
+    { id: "qa5", icon: I.alert, title: "Customer PII drilldown",           desc: "30-day trend of Customer PII violations and top destinations",     responseId: "policy-detail-pii" },
   ],
   luke: [
     { id: "qa1", icon: I.chart, title: "Weekly executive scorecard",       desc: "Top-line security posture for leadership review",                  responseId: "role-exec-scorecard" },
@@ -4141,13 +4191,6 @@ const QUICK_ACTIONS_BY_ROLE = {
     { id: "qa4", icon: I.trend, title: "This quarter vs. last quarter",    desc: "How the security posture has shifted across the last 90 days",     responseId: "policy-compare-quarter" },
     { id: "qa5", icon: I.spark, title: "Forecast for next 7 days",         desc: "Projected incident volume and Critical exposure",                  responseId: "forecast-7d" },
     { id: "qa6", icon: I.shield,title: "Security Leader",            desc: "Policy violations, top policies, apps and DLP rules",              responseId: "soc-dlp-monitoring" },
-  ],
-  david: [
-    { id: "qa1", icon: I.cloud, title: "Sensitive Data Movement",          desc: "Destinations receiving confidential data this week",               responseId: "destinations" },
-    { id: "qa2", icon: I.doc,   title: "File types to risky apps",         desc: "What types of files are leaving the perimeter",                    responseId: "filetypes-gdrive" },
-    { id: "qa3", icon: I.trend, title: "Sanctioned vs. unsanctioned",      desc: "How the share of data going to corporate apps is shifting",        responseId: "sanctioned-trend" },
-    { id: "qa4", icon: I.alert, title: "Customer PII drilldown",           desc: "30-day trend of Customer PII violations and top destinations",     responseId: "policy-detail-pii" },
-    { id: "qa5", icon: I.users, title: "Users moving sensitive data",      desc: "Who is transferring the most confidential data",                   responseId: "top-users" },
   ],
 };
 
@@ -7150,7 +7193,7 @@ function DashboardGallery({ onClose, onPickDashboard, onNewDashboard }) {
   const [roleFilter, setRoleFilter] = React.useState("All");
 
   const allItems = DASHBOARD_ITEMS.flatMap(g => g.items.map(d => ({ ...d, folder: g.folder })));
-  const allTags    = ["All", ...DASHBOARD_ITEMS.map(g => g.folder), "Security Leader", "Sensitive Data Movement", "Risky User Behaviors"];
+  const allTags    = ["All", ...DASHBOARD_ITEMS.map(g => g.folder), "Security Leader", "Security Engineer"];
   const allPersonas = ["All", "CISO", "Security Analyst", "GenAI Admin"];
 
   const filtered = allItems.filter(d => {
@@ -7369,7 +7412,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
           <PromptInput onSend={onSend} busy={busy} hideTokenCount />
         </div>
         <div className="grid grid-cols-3 gap-4 w-full">
-          {["luke","tim","david","ciso","secleader","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
+          {["luke","secengineer","ciso","secleader","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
             const PERSONA_ICONS = {
               luke: (
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
@@ -7379,24 +7422,13 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
                   <path d="M16.5 20l2.5 2.5 5-5" stroke="#1e40af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               ),
-              tim: (
+              secengineer: (
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
-                  <rect width="40" height="40" rx="10" fill="#fef3c7"/>
-                  <circle cx="20" cy="20" r="8" stroke="#b45309" strokeWidth="1.5" opacity="0.3"/>
-                  <circle cx="20" cy="20" r="4.5" stroke="#b45309" strokeWidth="1.5" opacity="0.6"/>
-                  <circle cx="20" cy="20" r="2" fill="#b45309"/>
-                  <path d="M20 11v2M20 27v2M11 20h2M27 20h2" stroke="#b45309" strokeWidth="1.5" strokeLinecap="round"/>
-                  <circle cx="26" cy="14" r="2.5" fill="#b45309"/>
-                </svg>
-              ),
-              david: (
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 flex-shrink-0">
-                  <rect width="40" height="40" rx="10" fill="#e0e7ff"/>
-                  <ellipse cx="20" cy="14" rx="7" ry="2.5" stroke="#3730a3" strokeWidth="1.5"/>
-                  <path d="M13 14v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5" stroke="#3730a3" strokeWidth="1.5"/>
-                  <path d="M13 19v5c0 1.4 3.1 2.5 7 2.5" stroke="#3730a3" strokeWidth="1.5"/>
-                  <rect x="21" y="23" width="7" height="6" rx="1.5" stroke="#3730a3" strokeWidth="1.5"/>
-                  <path d="M23 23v-1.5a1.5 1.5 0 013 0V23" stroke="#3730a3" strokeWidth="1.5" strokeLinecap="round"/>
+                  <rect width="40" height="40" rx="10" fill="#fef9c3"/>
+                  <path d="M14 20h12M20 14v12" stroke="#854d0e" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="20" cy="20" r="8" stroke="#854d0e" strokeWidth="1.5"/>
+                  <circle cx="20" cy="20" r="3" fill="#854d0e" opacity="0.25"/>
+                  <circle cx="26" cy="14" r="3" fill="#854d0e"/>
                 </svg>
               ),
               ciso: (
@@ -7842,7 +7874,7 @@ function DualPane({ activeDashboard, messages, loading, onSend, onPickFollowup, 
   const containerRef = useRef(null);
   const [chatWidth, setChatWidth] = useState(420);
   const [dragging, setDragging] = useState(false);
-  const isSecurityLeader = personaId === "luke" || personaId === "tim" || personaId === "david" || personaId === "ciso" || personaId === "secleader" || personaId === "genaiadmin";
+  const isSecurityLeader = personaId === "luke" || personaId === "secengineer" || personaId === "ciso" || personaId === "secleader" || personaId === "genaiadmin";
   const [chatOpen, setChatOpen] = useState(true);
   if (!dashboard) return null;
   const isEmpty = messages.length === 0 && !loading;
@@ -8128,8 +8160,7 @@ function App() {
     setShowWelcome(false);
     const DEFAULT_DASHBOARD_BY_PERSONA = {
       luke:       { dashboardId: "soc-dlp-monitoring", title: "Security Leader", desc: "Policy violations, top policies, apps and DLP rules" },
-      tim:        { dashboardId: "dlp-destinations",   title: "Sensitive Data Movement",  desc: "Destinations, file types, sanctioned trend" },
-      david:      { dashboardId: "dlp-users",          title: "Risky User Behaviors",     desc: "Top users, baseline, month comparison" },
+      secengineer: { dashboardId: "security-engineer", title: "Security Engineer", desc: "Sensitive data movement, risky users, destinations" },
       ciso:       { dashboardId: "ciso-overview",      title: "CISO",                     desc: "Alerts, DLP, threats, policy violations, network traffic · Jun 2025" },
       secleader:  { dashboardId: "security-analyst",   title: "Security Analyst",         desc: "Cloud app discovery, DLP, threats, UBA · last 90 days" },
       genaiadmin: { dashboardId: "genai-admin",        title: "GenAI Admin",              desc: "AI app usage, policies, web traffic · last 90 days" },
