@@ -7570,6 +7570,11 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
             <PromptInput onSend={onSend} busy={busy} hideTokenCount fullHeight />
           </div>
         </div>
+        {busy && (
+          <div className="w-full flex justify-start">
+            <TypingBubble />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -8377,8 +8382,19 @@ function App() {
       const dashMatch = matchDashboardByKeyword(text);
       if (dashMatch) { onPickDashboard(dashMatch); return; }
     }
-    if (showWelcome) pushHistory();
-    setShowWelcome(false);
+    if (showWelcome) {
+      pushHistory();
+      setMessages(m => [...m, { role: "user", text }]);
+      setLoading(true);
+      setTimeout(() => {
+        const id = knownResponseId || classifyPrompt(text);
+        const response = RESPONSES[id] || RESPONSES.freeform;
+        setMessages(m => [...m, { role: "ai", response }]);
+        setLoading(false);
+        setShowWelcome(false);
+      }, 800);
+      return;
+    }
     setMessages(m => [...m, { role: "user", text }]);
     setLoading(true);
     setTimeout(() => {
