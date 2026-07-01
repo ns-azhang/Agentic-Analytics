@@ -7684,21 +7684,24 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
         </div>
         <div className="w-full">
           <PromptInput onSend={onSend} busy={busy} hideTokenCount fullHeight
-            bottomSlot={
-              <div className="flex items-center gap-2 px-3 py-2.5 overflow-x-auto">
-                <span className="text-[11.5px] text-slate-400 font-medium flex-shrink-0">Choose your persona:</span>
-                {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => {
-                  const p = PERSONAS[id]; if (!p) return null;
-                  const isActive = persona && persona.id === id;
-                  return (
-                    <button key={id} onClick={() => onChangePersona(id)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium flex-shrink-0 transition-all border ${isActive ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}>
-                      {p.role}
-                    </button>
-                  );
-                })}
-              </div>
-            }
+            bottomSlot={(() => {
+              const [pickedId, setPickedId] = React.useState(null);
+              return (
+                <div className="flex items-center gap-2 px-3 py-2.5 overflow-x-auto">
+                  <span className="text-[11.5px] text-slate-400 font-medium flex-shrink-0">Choose your persona:</span>
+                  {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => {
+                    const p = PERSONAS[id]; if (!p) return null;
+                    const isActive = pickedId === id;
+                    return (
+                      <button key={id} onClick={() => { setPickedId(id); onChangePersona(id); }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium flex-shrink-0 transition-all border ${isActive ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}>
+                        {p.role}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           />
         </div>
         {busy && (
