@@ -7105,7 +7105,7 @@ function estimateTokens(s) {
   return Math.max(1, Math.round(s.trim().split(/\s+/).length * 1.3));
 }
 
-function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenCount = false, prefillValue, fullHeight = false, bottomSlot, minHeight }) {
+function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenCount = false, prefillValue, fullHeight = false, bottomSlot, minHeight, hideSearch = false }) {
   const toast = useToast();
   const [val, setVal] = useState("");
   const [libOpen, setLibOpen] = useState(false);
@@ -7171,8 +7171,8 @@ function PromptInput({ onSend, busy, onPickPrompt, libraryItems = [], hideTokenC
                   </div>
                 )}
               </div>
-              <button onClick={() => toast("Data search is read-only in this prototype", { kind: "info" })}
-                className="p-1.5 rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-ring" title="Search data">{I.search}</button>
+              {!hideSearch && <button onClick={() => toast("Data search is read-only in this prototype", { kind: "info" })}
+                className="p-1.5 rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-ring" title="Search data">{I.search}</button>}
 
             </div>
             <button
@@ -7683,7 +7683,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
           <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a persona to get started.</p>
         </div>
         <div className="w-full">
-          <PromptInput onSend={onSend} busy={busy} hideTokenCount fullHeight minHeight="220px"
+          <PromptInput onSend={onSend} busy={busy} hideTokenCount fullHeight minHeight="182px" hideSearch
             bottomSlot={(() => {
               const [pickedId, setPickedId] = React.useState(null);
               return (
