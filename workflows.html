@@ -8380,7 +8380,16 @@ function App() {
     // Welcome page / no active dashboard: keyword routing + normal chat
     if (!knownResponseId) {
       const dashMatch = matchDashboardByKeyword(text);
-      if (dashMatch) { onPickDashboard(dashMatch); return; }
+      if (dashMatch) {
+        if (showWelcome) {
+          setMessages(m => [...m, { role: "user", text }]);
+          setLoading(true);
+          setTimeout(() => { setLoading(false); onPickDashboard(dashMatch); }, 800);
+        } else {
+          onPickDashboard(dashMatch);
+        }
+        return;
+      }
     }
     if (showWelcome) {
       pushHistory();
