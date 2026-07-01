@@ -7337,32 +7337,20 @@ function TabGallery({ title, icon, items, onPickDashboard, onClose }) {
         <h1 className="text-[15px] font-semibold text-slate-900">{title}</h1>
         <span className="text-[12px] text-slate-400">{items.length} dashboards</span>
       </div>
-      <div className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="grid grid-cols-1 gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
-          {items.filter(Boolean).map(d => {
-            const fc = FOLDER_COLORS[d.folder] || { bg: "#f1f5f9", text: "#475569", bar: "#94a3b8" };
-            return (
-              <button key={d.dashboardId} onClick={() => onPickDashboard(d)}
-                className="text-left bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all overflow-hidden group">
-                <div className="h-1 w-full" style={{ backgroundColor: fc.bar }} />
-                <div className="p-4">
-                  <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <span className="text-[14px] font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">{d.title}</span>
-                    <span className="text-[10.5px] font-medium px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5" style={{ backgroundColor: fc.bg, color: fc.text }}>{d.folder}</span>
-                  </div>
-                  <p className="text-[12px] text-slate-500 leading-relaxed mb-3">{d.desc}</p>
-                  {d.personas && d.personas.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {d.personas.map(p => {
-                        const pc = PERSONA_COLORS[p] || { bg: "#f1f5f9", text: "#475569" };
-                        return <span key={p} className="text-[10.5px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: pc.bg, color: pc.text }}>{p}</span>;
-                      })}
-                    </div>
-                  )}
+      <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex flex-col gap-2">
+          {items.filter(Boolean).map(d => (
+            <button key={d.dashboardId} onClick={() => onPickDashboard(d)}
+              className="text-left bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all group px-5 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-[14px] font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors mb-0.5">{d.title}</div>
+                  <div className="text-[12px] text-slate-500 leading-relaxed">{d.desc}</div>
                 </div>
-              </button>
-            );
-          })}
+                <span className="text-slate-300 text-lg flex-shrink-0">›</span>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     </div>
