@@ -7489,7 +7489,33 @@ function AgentGallery({ onClose, onPickAgent, allAgents }) {
 }
 
 /* ----------------------------- Welcome Page ------------------------------- */
-function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
+function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, chatMode, messages, onPickFollowup }) {
+  const scrollRef = React.useRef(null);
+  React.useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, busy]);
+
+  if (chatMode) {
+    return (
+      <div className="flex-1 flex flex-col bg-white overflow-hidden">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto px-6 py-6 space-y-5">
+            {messages.map((m, i) => (
+              <div key={i}>
+                {m.role === "user" ? <UserBubble text={m.text} /> :
+                 m.response ? <ResponseCard response={m.response} onPickFollowup={onPickFollowup} /> :
+                 <AISummaryBubble text={m.text} onPickFollowup={onPickFollowup} />}
+              </div>
+            ))}
+            {busy && <TypingBubble />}
+            <div className="h-4" />
+          </div>
+        </div>
+        <PromptInput onSend={onSend} busy={busy} hideTokenCount />
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 px-6">
       <div className="w-full max-w-5xl flex flex-col items-center gap-6" style={{ marginTop: "-8cm" }}>
@@ -8240,6 +8266,7 @@ function App() {
   const [showPersonalGallery, setShowPersonalGallery] = useState(false);
   const [showGroupGallery, setShowGroupGallery] = useState(false);
   const [showSharedGallery, setShowSharedGallery] = useState(false);
+  const [welcomeChatMode, setWelcomeChatMode] = useState(false);
   const [isAgentView, setIsAgentView] = useState(false);
   const [navHistory, setNavHistory] = useState([]);
   const pushHistory = () => {
@@ -8392,15 +8419,14 @@ function App() {
       }
     }
     if (showWelcome) {
-      pushHistory();
       setMessages(m => [...m, { role: "user", text }]);
       setLoading(true);
+      setWelcomeChatMode(true);
       setTimeout(() => {
         const id = knownResponseId || classifyPrompt(text);
         const response = RESPONSES[id] || RESPONSES.freeform;
         setMessages(m => [...m, { role: "ai", response }]);
         setLoading(false);
-        setShowWelcome(false);
       }, 800);
       return;
     }
@@ -8417,7 +8443,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setShowHistoryPage(false); setShowPersonalGallery(false); setShowGroupGallery(false); setShowSharedGallery(false); setIsAgentView(false); setNavHistory([]); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setShowHistoryPage(false); setShowPersonalGallery(false); setShowGroupGallery(false); setShowSharedGallery(false); setIsAgentView(false); setNavHistory([]); setWelcomeChatMode(false); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
@@ -8719,7 +8745,8 @@ function App() {
                             onNewDashboard={() => { setShowDashboardGallery(false); onPickDashboard({ dashboardId: "new-dashboard", title: "New Dashboard", desc: "" }); }} />
         ) : showWelcome ? (
           <WelcomePage onSend={send} busy={loading} libraryItems={getLibraryFor(personaId)}
-                       persona={persona} onChangePersona={onChangePersona} />
+                       persona={persona} onChangePersona={onChangePersona}
+                       chatMode={welcomeChatMode} messages={messages} onPickFollowup={onFollowup} />
         ) : (
           <>
             {activeDashboard ? (
