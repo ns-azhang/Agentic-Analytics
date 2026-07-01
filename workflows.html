@@ -7686,7 +7686,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
           <PromptInput onSend={onSend} busy={busy} hideTokenCount fullHeight
             bottomSlot={
               <div className="flex items-center gap-2 px-3 py-2.5 overflow-x-auto">
-                <span className="text-[11.5px] text-slate-400 font-medium flex-shrink-0">Switch to:</span>
+                <span className="text-[11.5px] text-slate-400 font-medium flex-shrink-0">Choose your persona:</span>
                 {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => {
                   const p = PERSONAS[id]; if (!p) return null;
                   const isActive = persona && persona.id === id;
