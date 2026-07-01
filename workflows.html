@@ -7227,8 +7227,8 @@ function DashboardGallery({ onClose, onPickDashboard, onNewDashboard }) {
   const [roleFilter, setRoleFilter] = React.useState("All");
 
   const allItems = DASHBOARD_ITEMS.flatMap(g => g.items.map(d => ({ ...d, folder: g.folder })));
-  const allTags    = ["All", ...DASHBOARD_ITEMS.map(g => g.folder), "Security Leader", "Security Engineer"];
-  const allPersonas = ["All", "CISO", "Security Analyst", "GenAI Admin"];
+  const allTags    = ["All", ...DASHBOARD_ITEMS.map(g => g.folder).filter(f => !["CISO","Security Analyst","GenAI Admin"].includes(f))];
+  const allPersonas = ["All", "Security Leader", "Security Engineer", "CISO", "Security Analyst", "GenAI Admin"];
 
   const filtered = allItems.filter(d => {
     const q = query.toLowerCase();
