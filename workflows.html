@@ -7407,6 +7407,42 @@ function SpaceGallery({ onPickDashboard }) {
   const [addRole, setAddRole] = React.useState("Viewer");
   const [filterLevel, setFilterLevel] = React.useState("all");
 
+  // Recurrence state
+  const [recurState, setRecurState] = React.useState(() =>
+    Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { schedules: [] }]))
+  );
+  const [openRecurModal, setOpenRecurModal] = React.useState(null);
+  const [recurEmail, setRecurEmail] = React.useState("");
+  const [recurFreq, setRecurFreq] = React.useState("weekly");
+  const [recurDays, setRecurDays] = React.useState(["Mon"]);
+  const [recurMonthDay, setRecurMonthDay] = React.useState("1st");
+  const [recurTime, setRecurTime] = React.useState("09:00");
+
+  const WEEKDAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const MONTH_DAYS = ["1st","5th","10th","15th","20th","Last day"];
+
+  const addSchedule = (dashboardId) => {
+    const email = recurEmail.trim();
+    if (!email) return;
+    const label = recurFreq === "daily"   ? `Daily at ${recurTime}` :
+                  recurFreq === "weekly"  ? `Weekly · ${recurDays.join(", ")} at ${recurTime}` :
+                                            `Monthly · ${recurMonthDay} at ${recurTime}`;
+    setRecurState(prev => ({
+      ...prev,
+      [dashboardId]: { schedules: [...prev[dashboardId].schedules, { id: Date.now(), email, freq: recurFreq, days: [...recurDays], monthDay: recurMonthDay, time: recurTime, label }] }
+    }));
+    setRecurEmail("");
+  };
+
+  const removeSchedule = (dashboardId, id) => {
+    setRecurState(prev => ({
+      ...prev,
+      [dashboardId]: { schedules: prev[dashboardId].schedules.filter(s => s.id !== id) }
+    }));
+  };
+
+  const recurModal = openRecurModal ? PERSONAL_DASHBOARDS.find(d => d && d.dashboardId === openRecurModal) : null;
+
   const addPerson = (dashboardId) => {
     const email = emailInput.trim();
     if (!email) return;
@@ -7471,6 +7507,16 @@ function SpaceGallery({ onPickDashboard }) {
                     className="flex-shrink-0 inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-all">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><circle cx="13" cy="3" r="2"/><circle cx="13" cy="13" r="2"/><circle cx="3" cy="8" r="2"/><path d="M5 8h3.5M11 3.8L8.5 7M11 12.2L8.5 9" strokeLinecap="round"/></svg>
                     <span>{levelInfo.label}</span>
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); setOpenRecurModal(d.dashboardId); setRecurEmail(""); setRecurFreq("weekly"); setRecurDays(["Mon"]); setRecurTime("09:00"); }}
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-all">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 1v3M11 1v3M2 7h12" strokeLinecap="round"/></svg>
+                    <span>Schedule</span>
+                    {recurState[d.dashboardId]?.schedules.length > 0 && (
+                      <span className="bg-blue-600 text-white text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                        {recurState[d.dashboardId].schedules.length}
+                      </span>
+                    )}
                   </button>
                   <span className="text-slate-300 text-lg flex-shrink-0">›</span>
                 </div>
@@ -7574,6 +7620,113 @@ function SpaceGallery({ onPickDashboard }) {
               className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium py-2 rounded-xl transition-colors">
               Done
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Recurrence Modal */}
+      {openRecurModal && recurModal && (
+        <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" onClick={() => setOpenRecurModal(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-[15px] font-semibold text-slate-900">Schedule delivery</h2>
+                <p className="text-[12px] text-slate-400 mt-0.5">{recurModal.title}</p>
+              </div>
+              <button onClick={() => setOpenRecurModal(null)} className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            {/* Existing schedules */}
+            {recurState[openRecurModal]?.schedules.length > 0 && (
+              <div className="mb-4 flex flex-col gap-1.5">
+                <p className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Active schedules</p>
+                {recurState[openRecurModal].schedules.map(s => (
+                  <div key={s.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold flex items-center justify-center flex-shrink-0">{s.email[0].toUpperCase()}</span>
+                      <div className="min-w-0">
+                        <p className="text-[12.5px] text-slate-700 truncate">{s.email}</p>
+                        <p className="text-[11px] text-slate-400">{s.label}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => removeSchedule(openRecurModal, s.id)} className="text-slate-300 hover:text-red-400 transition-colors flex-shrink-0 ml-2">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* New schedule form */}
+            <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
+              <p className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold">New schedule</p>
+
+              {/* Recipient */}
+              <div>
+                <label className="text-[12px] text-slate-500 font-medium mb-1 block">Send to</label>
+                <input value={recurEmail} onChange={e => setRecurEmail(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addSchedule(openRecurModal)}
+                  placeholder="name@netskope.com"
+                  className="w-full text-[13px] border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400" />
+              </div>
+
+              {/* Frequency */}
+              <div>
+                <label className="text-[12px] text-slate-500 font-medium mb-1.5 block">Recurrence</label>
+                <div className="flex gap-1.5">
+                  {[{id:"daily",label:"Daily"},{id:"weekly",label:"Weekly"},{id:"monthly",label:"Monthly"}].map(f => (
+                    <button key={f.id} onClick={() => setRecurFreq(f.id)}
+                      className={`flex-1 py-1.5 rounded-lg text-[12.5px] font-medium border transition-all ${recurFreq === f.id ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}>
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Weekly — day picker */}
+              {recurFreq === "weekly" && (
+                <div>
+                  <label className="text-[12px] text-slate-500 font-medium mb-1.5 block">On</label>
+                  <div className="flex gap-1">
+                    {WEEKDAYS.map(day => (
+                      <button key={day} onClick={() => setRecurDays(prev => prev.includes(day) ? prev.filter(x => x !== day) : [...prev, day])}
+                        className={`flex-1 py-1 rounded-md text-[11.5px] font-medium border transition-all ${recurDays.includes(day) ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"}`}>
+                        {day}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Monthly — day picker */}
+              {recurFreq === "monthly" && (
+                <div>
+                  <label className="text-[12px] text-slate-500 font-medium mb-1.5 block">On the</label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {MONTH_DAYS.map(day => (
+                      <button key={day} onClick={() => setRecurMonthDay(day)}
+                        className={`px-3 py-1 rounded-lg text-[12px] font-medium border transition-all ${recurMonthDay === day ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-500 border-slate-200 hover:border-slate-300"}`}>
+                        {day}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Time */}
+              <div>
+                <label className="text-[12px] text-slate-500 font-medium mb-1 block">At</label>
+                <input type="time" value={recurTime} onChange={e => setRecurTime(e.target.value)}
+                  className="text-[13px] border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700" />
+              </div>
+
+              <button onClick={() => addSchedule(openRecurModal)} disabled={!recurEmail.trim() || (recurFreq === "weekly" && recurDays.length === 0)}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-[13px] font-medium py-2 rounded-xl transition-colors mt-1">
+                Add schedule
+              </button>
+            </div>
           </div>
         </div>
       )}
