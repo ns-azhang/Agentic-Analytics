@@ -8392,7 +8392,7 @@ function App() {
   const onQuickAction = (action) => send(action.title, action.responseId);
   const onFollowup = (text, id) => send(text, id);
   const onPickPrompt = (text) => send(text);
-  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setIsAgentView(false); setNavHistory([]); };
+  const reset = () => { setMessages([]); setActiveDashboard(null); setShowWelcome(true); setShowDashboardGallery(false); setShowAgentGallery(false); setShowHistoryPage(false); setShowPersonalGallery(false); setShowGroupGallery(false); setShowSharedGallery(false); setIsAgentView(false); setNavHistory([]); };
 
   /* Restore a previous session in place — replaces the current conversation
      with the saved messages so the user picks up where they left off. */
