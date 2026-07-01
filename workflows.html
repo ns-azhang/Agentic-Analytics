@@ -684,7 +684,7 @@ const DASHBOARDS = {
         { label: "Unsanctioned moves", value: "1,847" },
         { label: "Top user (30d)",     value: "j.morales", delta: "+67%", deltaDir: "up", invertColor: true },
         { label: "Repeat offenders",   value: "7" },
-      ]},
+      ], insight: "Sanctioned share has dropped 18 percentage points to 40% over 30 days while unsanctioned moves hit 1,847 this week — the trend is accelerating. j.morales is generating 7.25× the team baseline and grew 67% month-over-month, the largest individual spike this period. With 7 repeat offenders above baseline, this is a systemic pattern requiring both destination blocking and user coaching." },
       { type: "hbar", size: "full", title: "Top destination apps — 7 days",
         bars: [
           { label: "Google Drive (personal)",    value: 284, color: RISK.unsanc,     drill: { text: "Show top 10 users uploading to Google Drive (personal)", id: "dest-gdrive-personal" } },
@@ -694,7 +694,7 @@ const DASHBOARDS = {
           { label: "OneDrive (corporate)",       value:  94, color: RISK.sanctioned },
           { label: "WeTransfer",                 value:  61, color: RISK.unsanc },
           { label: "GitHub (public)",            value:  48, color: RISK.caution },
-        ] },
+        ], insight: "Personal cloud storage (Google Drive + Dropbox personal) accounts for 451 sensitive file moves this week — 24% of total egress. All three unsanctioned apps in the top 5 are personal storage or transfer tools, indicating employees are actively routing data around corporate DLP controls. Blocking personal Google Drive uploads alone would address the single largest leakage vector. Click any bar to drill into the top users for that destination." },
       { type: "hbar", size: "full", title: "Top users by UEBA alerts — last 30 days",
         bars: [
           { label: "j.morales@abc.com",     value: 87, color: RISK.unsanc, drill: { text: "Show j.morales's UEBA alerts in detail",  id: "user-detail-jmorales" } },
@@ -703,13 +703,14 @@ const DASHBOARDS = {
           { label: "m.oconnell@abc.com",    value: 41 },
           { label: "s.aldridge@abc.com",    value: 38 },
           { label: "Others (124 users)",     value: 311, color: RISK.neutral },
-        ] },
+        ], insight: "The top 2 users (j.morales + k.tanaka) account for 24% of all UEBA alerts despite representing less than 2% of the user base. Both are in Customer Success — a department-level workflow review is likely more effective than individual coaching alone. r.singh grew 37% month-over-month and is approaching the high-risk threshold, worth escalating before the next review cycle. Click any bar to drill into that user's alert breakdown." },
       { type: "line", size: "half", title: "Sanctioned vs. unsanctioned (30d)",
         series: [
           { name: "Sanctioned",   color: RISK.sanctioned, values: [62,60,61,59,58,60,57,55,56,54,52,53,51,50,48,49,46,45,47,44,42,41,43,40,39,38,37,40,38,40] },
           { name: "Unsanctioned", color: RISK.unsanc,     values: [38,40,39,41,42,40,43,45,44,46,48,47,49,50,52,51,54,55,53,56,58,59,57,60,61,62,63,60,62,60] },
         ],
-        xLabels: DAYS30, anomalies: [] },
+        xLabels: DAYS30, anomalies: [],
+        insight: "Unsanctioned share crossed 50% for the first time 16 days ago and has continued climbing. The lines crossed roughly on Apr 26 — a clear inflection point. At the current trajectory, unsanctioned destinations will represent ~65% of all file movement within two weeks without policy intervention." },
       { type: "donut", size: "half", title: "File types → personal Google Drive",
         slices: [
           { label: ".xlsx",  value: 124, color: "#0ea5e9" },
@@ -717,7 +718,7 @@ const DASHBOARDS = {
           { label: ".docx",  value:  42 },
           { label: ".csv",   value:  29 },
           { label: ".pptx",  value:  11 },
-        ] },
+        ], insight: ".xlsx and .pdf together make up 71% of files sent to personal Google Drive. Spreadsheets typically contain structured data exports (customer lists, financials) and are the highest-risk file type — a targeted block on .xlsx uploads to personal storage would have the highest impact-to-disruption ratio." },
     ],
     followUps: [
       M("Block recommendation for personal GDrive",  "block-recommendation"),
