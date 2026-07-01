@@ -7820,7 +7820,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
           <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a topic to get started.</p>
         </div>
         <div className="w-full">
-          <PromptInput onSend={onSend} busy={busy} hideTokenCount hideSearch bare
+          <PromptInput onSend={onSend} busy={busy} hideTokenCount hideSearch bare minHeight="220px"
             suggestedPrompts={[
               "Show me top DLP incidents this week",
               "Which users have the most policy violations?",
