@@ -4135,14 +4135,14 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
         )}
         <button onClick={onNewChat}
           className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
-          <span className="text-slate-500">{I.plus}</span>New chat
+          <span className="text-slate-500">{I.plus}</span>New Chat
         </button>
       </div>
       {/* Right side: nav tools */}
       <div className="flex items-center gap-1">
       <button onClick={onOpenHistoryPage}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
-        {I.history}<span>Prompt history</span>
+        {I.history}<span>Prompt History</span>
       </button>
       <button onClick={onOpenDashboardGallery}
         className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
@@ -4225,7 +4225,7 @@ function PromptHistoryPage({ onSend, busy, libraryItems }) {
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-6 py-8">
-          <h2 className="text-xl font-semibold text-slate-900 mb-1">Prompt history</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-1">Prompt History</h2>
           <p className="text-[13px] text-slate-500 mb-6">Click any prompt to load it into the assistant below.</p>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             {allPrompts.map(({ prompt, session }, idx) => (
@@ -4256,7 +4256,7 @@ function Landing({ onPick, persona, onPickHistory }) {
 
   const tabs = [
     { id: "actions", label: "Quick actions" },
-    { id: "history", label: "Prompt history" },
+    { id: "history", label: "Prompt History" },
   ];
 
   return (
