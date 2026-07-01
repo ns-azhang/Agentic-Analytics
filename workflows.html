@@ -8411,6 +8411,7 @@ function App() {
         if (showWelcome) {
           setMessages(m => [...m, { role: "user", text }]);
           setLoading(true);
+          setWelcomeChatMode(true);
           setTimeout(() => { setLoading(false); onPickDashboard(dashMatch); }, 800);
         } else {
           onPickDashboard(dashMatch);
