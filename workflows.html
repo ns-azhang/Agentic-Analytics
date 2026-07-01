@@ -7409,8 +7409,8 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Hello Aaron!</h1>
           <p className="text-slate-500 text-[14px]">Ask anything about your security data, or pick a persona to get started.</p>
         </div>
-        <div className="flex flex-row gap-6 w-full items-start">
-          <div className="flex flex-col gap-2 w-64 flex-shrink-0 overflow-y-auto" style={{maxHeight:"96px"}}>
+        <div className="flex flex-row gap-6 w-full items-stretch">
+          <div className="flex flex-col gap-2 w-64 flex-shrink-0">
           {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
             const PERSONA_ICONS = {
               luke: (
