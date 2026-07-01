@@ -7331,7 +7331,7 @@ const SHARED_DASHBOARDS   = [
 
 function SpaceGallery({ onPickDashboard }) {
   const [accessState, setAccessState] = React.useState(() =>
-    Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { level: "only-me", people: [] }]))
+    Object.fromEntries(PERSONAL_DASHBOARDS.filter(Boolean).map(d => [d.dashboardId, { level: "only-me", role: "View", people: [] }]))
   );
   const [openModal, setOpenModal] = React.useState(null); // dashboardId
   const [emailInput, setEmailInput] = React.useState("");
@@ -7448,12 +7448,23 @@ function SpaceGallery({ onPickDashboard }) {
               <p className="text-[11.5px] text-slate-400 font-medium mb-2 uppercase tracking-wide">General access</p>
               <div className="flex flex-col gap-1">
                 {ACCESS_LEVELS.map(l => (
-                  <button key={l.id} onClick={() => setAccessState(prev => ({ ...prev, [openModal]: { ...prev[openModal], level: l.id } }))}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all ${modalAccess.level === l.id ? "bg-blue-50 border border-blue-200" : "hover:bg-slate-50 border border-transparent"}`}>
-                    <span className={modalAccess.level === l.id ? "text-blue-600" : "text-slate-400"}>{l.icon}</span>
-                    <span className={`text-[13px] font-medium ${modalAccess.level === l.id ? "text-blue-700" : "text-slate-700"}`}>{l.label}</span>
-                    {modalAccess.level === l.id && <svg className="w-4 h-4 text-blue-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>}
-                  </button>
+                  <div key={l.id} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${modalAccess.level === l.id ? "bg-blue-50 border border-blue-200" : "hover:bg-slate-50 border border-transparent"}`}>
+                    <button className="flex items-center gap-3 flex-1 text-left" onClick={() => setAccessState(prev => ({ ...prev, [openModal]: { ...prev[openModal], level: l.id } }))}>
+                      <span className={modalAccess.level === l.id ? "text-blue-600" : "text-slate-400"}>{l.icon}</span>
+                      <span className={`text-[13px] font-medium ${modalAccess.level === l.id ? "text-blue-700" : "text-slate-700"}`}>{l.label}</span>
+                      {modalAccess.level === l.id && <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>}
+                    </button>
+                    {modalAccess.level === l.id && l.id !== "specific" && (
+                      <div className="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden flex-shrink-0">
+                        {["View","Edit"].map(r => (
+                          <button key={r} onClick={() => setAccessState(prev => ({ ...prev, [openModal]: { ...prev[openModal], role: r } }))}
+                            className={`px-3 py-1 text-[12px] font-medium transition-colors ${modalAccess.role === r ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-50"}`}>
+                            {r}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
