@@ -7411,7 +7411,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona }) {
         </div>
         <div className="flex flex-row gap-6 w-full items-stretch">
           <div className="flex flex-col gap-2 w-64 flex-shrink-0">
-          {["luke","secengineer","ciso","secleader","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
+          {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => { const p = PERSONAS[id]; if (!p) return null;
             const PERSONA_ICONS = {
               luke: (
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-9 h-9 flex-shrink-0">
