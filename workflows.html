@@ -7650,7 +7650,7 @@ function SpaceGallery({ onPickDashboard }) {
                       <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold flex items-center justify-center flex-shrink-0">{s.email[0].toUpperCase()}</span>
                       <div className="min-w-0">
                         <p className="text-[12.5px] text-slate-700 truncate">{s.email}</p>
-                        <p className="text-[11px] text-slate-400">{s.label} · {s.role} · {s.format}</p>
+                        <p className="text-[11px] text-slate-400">{s.label} · {s.format}</p>
                       </div>
                     </div>
                     <button onClick={() => removeSchedule(openRecurModal, s.id)} className="text-slate-300 hover:text-red-400 transition-colors flex-shrink-0 ml-2">
@@ -7668,20 +7668,10 @@ function SpaceGallery({ onPickDashboard }) {
               {/* Recipient */}
               <div>
                 <label className="text-[12px] text-slate-500 font-medium mb-1 block">Send to</label>
-                <div className="flex gap-2">
-                  <input value={recurEmail} onChange={e => setRecurEmail(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && addSchedule(openRecurModal)}
-                    placeholder="name@netskope.com"
-                    className="flex-1 text-[13px] border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400" />
-                  <div className="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden flex-shrink-0">
-                    {["View","Edit"].map(r => (
-                      <button key={r} onClick={() => setRecurRole(r)}
-                        className={`px-3 py-2 text-[12px] font-medium transition-colors ${recurRole === r ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-50"}`}>
-                        {r}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <input value={recurEmail} onChange={e => setRecurEmail(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addSchedule(openRecurModal)}
+                  placeholder="name@netskope.com"
+                  className="w-full text-[13px] border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400" />
               </div>
 
               {/* Frequency */}
