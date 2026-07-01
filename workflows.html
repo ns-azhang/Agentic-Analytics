@@ -7327,7 +7327,13 @@ const ALL_DASHBOARD_ITEMS = [
 ];
 const PERSONAL_DASHBOARDS = ["dlp-overview","security-engineer","severity-sla","forecast","ciso-overview"].map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === id));
 const GROUP_DASHBOARDS    = ["dlp-policies","soc-dlp-monitoring","security-analyst","genai-admin","forecast"].map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === id));
-const SHARED_DASHBOARDS   = ["security-engineer","ciso-overview","dlp-overview","security-analyst","severity-sla"].map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === id));
+const SHARED_DASHBOARDS   = [
+  { ...ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === "security-engineer"), recipients: ["Sarah Kim", "James Liu", "Priya Nair"] },
+  { ...ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === "ciso-overview"),     recipients: ["Michael Torres", "Dana Osei"] },
+  { ...ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === "dlp-overview"),      recipients: ["Rachel Chen", "Omar Hassan", "Lena Müller", "Tom Briggs"] },
+  { ...ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === "security-analyst"),  recipients: ["Ava Patel", "Noah Williams"] },
+  { ...ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === "severity-sla"),      recipients: ["Carlos Rivera", "Sophie Andersen", "Jin Park"] },
+];
 
 function TabGallery({ title, icon, items, onPickDashboard, onClose }) {
   return (
@@ -7343,9 +7349,21 @@ function TabGallery({ title, icon, items, onPickDashboard, onClose }) {
             <button key={d.dashboardId} onClick={() => onPickDashboard(d)}
               className="text-left bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all group px-5 py-4">
               <div className="flex items-center justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <div className="text-[14px] font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors mb-0.5">{d.title}</div>
-                  <div className="text-[12px] text-slate-500 leading-relaxed">{d.desc}</div>
+                  <div className="text-[12px] text-slate-500 leading-relaxed mb-1.5">{d.desc}</div>
+                  {d.recipients && d.recipients.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {d.recipients.map(r => (
+                        <span key={r} className="inline-flex items-center gap-1.5 text-[11.5px] text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-0.5 rounded-full">
+                          <span className="w-4 h-4 rounded-full bg-slate-400 text-white text-[9px] font-semibold flex items-center justify-center flex-shrink-0">
+                            {r.split(" ").map(w => w[0]).join("").slice(0,2)}
+                          </span>
+                          {r}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <span className="text-slate-300 text-lg flex-shrink-0">›</span>
               </div>
