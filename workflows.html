@@ -8041,7 +8041,7 @@ function ShareDashboardMenu({ dashboard }) {
 
   const [people, setPeople] = useState([
     { email: "olivia.park@abc.com",   role: "Owner",      initials: "OL", bg: "#dcfce7", fg: "#15803d" },
-    { email: "luke.hayward@abc.com",  role: "View + AI",  initials: "LH", bg: "#dbeafe", fg: "#1e40af" },
+    { email: "luke.hayward@abc.com",  role: "View",       initials: "LH", bg: "#dbeafe", fg: "#1e40af" },
   ]);
   const [draft, setDraft] = useState("");
   const [linkOn, setLinkOn] = useState(true);
@@ -8052,7 +8052,7 @@ function ShareDashboardMenu({ dashboard }) {
     if (!v) return;
     const email = /@/.test(v) ? v : `${v.toLowerCase().replace(/\s+/g, ".")}@abc.com`;
     const initials = email.split("@")[0].split(/[._-]/).map(p => p[0]?.toUpperCase()).slice(0, 2).join("");
-    setPeople(p => [...p, { email, role: "View only", initials: initials || "?", bg: "#e0e7ff", fg: "#3730a3" }]);
+    setPeople(p => [...p, { email, role: "View", initials: initials || "?", bg: "#e0e7ff", fg: "#3730a3" }]);
     setDraft("");
     toast(`Invited ${email}`);
   };
@@ -8061,8 +8061,8 @@ function ShareDashboardMenu({ dashboard }) {
     toast(`Removed ${email}`, { kind: "info" });
   };
   const cyclePermission = (email) => {
-    const next = { "View only": "View + AI", "View + AI": "Edit", "Edit": "View only", "Owner": "Owner" };
-    setPeople(p => p.map(x => x.email === email ? { ...x, role: next[x.role] || "View only" } : x));
+    const next = { "View": "Edit", "Edit": "View", "Owner": "Owner" };
+    setPeople(p => p.map(x => x.email === email ? { ...x, role: next[x.role] || "View" } : x));
   };
   const copyInternalLink = () => {
     const slug = dashboard.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -8115,8 +8115,7 @@ function ShareDashboardMenu({ dashboard }) {
                         ? <span className="text-[11px] px-1.5 py-0.5 rounded border border-slate-200 text-slate-500">Owner</span>
                         : <select value={p.role} onChange={e => setPeople(ps => ps.map(x => x.email === p.email ? { ...x, role: e.target.value } : x))}
                             className="text-[11px] px-1.5 py-0.5 rounded border border-slate-200 text-slate-600 bg-white hover:border-slate-300 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 cursor-pointer">
-                            <option>View only</option>
-                            <option>View + AI</option>
+                            <option>View</option>
                             <option>Edit</option>
                           </select>
                       }
