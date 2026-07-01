@@ -4166,17 +4166,20 @@ function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHis
         </svg>
         <span>Space</span>
       </button>
-      <span className="w-px h-4 bg-slate-200 mx-0.5" />
-      <button onClick={onOpenShared}
-        className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
-        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="13" cy="3" r="2" stroke="currentColor" strokeWidth="1.4"/>
-          <circle cx="13" cy="13" r="2" stroke="currentColor" strokeWidth="1.4"/>
-          <circle cx="3" cy="8" r="2" stroke="currentColor" strokeWidth="1.4"/>
-          <path d="M5 8h3.5M11 3.8L8.5 7M11 12.2L8.5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-        </svg>
-        <span>Shared</span>
-      </button>
+      {/* Shared tab — hidden for now, re-enable by removing the "hidden" class */}
+      <span className="hidden">
+        <span className="w-px h-4 bg-slate-200 mx-0.5" />
+        <button onClick={onOpenShared}
+          className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="13" cy="3" r="2" stroke="currentColor" strokeWidth="1.4"/>
+            <circle cx="13" cy="13" r="2" stroke="currentColor" strokeWidth="1.4"/>
+            <circle cx="3" cy="8" r="2" stroke="currentColor" strokeWidth="1.4"/>
+            <path d="M5 8h3.5M11 3.8L8.5 7M11 12.2L8.5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+          </svg>
+          <span>Shared</span>
+        </button>
+      </span>
       </div>
     </div>
   );
