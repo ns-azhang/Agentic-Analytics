@@ -7993,6 +7993,7 @@ function PersonaDropdown({ persona, onChangePersona }) {
 
 function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, chatMode, messages, onPickFollowup }) {
   const scrollRef = useRef(null);
+  const [personaPickerSeen, setPersonaPickerSeen] = useState(false);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, busy]);
@@ -8023,6 +8024,47 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
       <div className="absolute top-4 left-4">
         <PersonaDropdown persona={persona} onChangePersona={onChangePersona} />
       </div>
+
+      {/* Persona picker popup — shown once on first visit */}
+      {!personaPickerSeen && (
+        <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 menu-pop">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-[15px] font-semibold text-slate-900">Choose your persona</h2>
+              <button onClick={() => setPersonaPickerSeen(true)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <p className="text-[12.5px] text-slate-400 mb-4">Pick the role that best matches you to personalise your experience.</p>
+            <div className="flex flex-col gap-1.5">
+              {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => {
+                const q = PERSONAS[id]; if (!q) return null;
+                const isActive = persona.id === id;
+                return (
+                  <button key={id}
+                    onClick={() => { onChangePersona(id); setPersonaPickerSeen(true); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all border ${isActive ? "bg-blue-50 border-blue-200" : "border-transparent hover:bg-slate-50 hover:border-slate-200"}`}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ background: q.bg, color: q.fg }}>
+                      {PERSONA_ICONS[id]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-[13px] font-semibold ${isActive ? "text-blue-700" : "text-slate-800"}`}>{q.role}</div>
+                      <div className="text-[11.5px] text-slate-400 mt-0.5 truncate">{q.subtitle || "Netskope"}</div>
+                    </div>
+                    {isActive && (
+                      <svg className="w-4 h-4 text-blue-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="w-full max-w-5xl flex flex-col items-center gap-6" style={{ marginTop: "-8cm" }}>
         <div className="flex flex-col items-center gap-2">
           <svg viewBox="16 10 42 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-16 h-10 mb-1">
