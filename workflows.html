@@ -7904,6 +7904,14 @@ function AgentGallery({ onClose, onPickAgent, allAgents }) {
 }
 
 /* ----------------------------- Welcome Page ------------------------------- */
+const PERSONA_TOPICS = {
+  luke:        "Monitoring alerts and tuning policies",
+  secengineer: "Monitoring data movement and identifying risky user behaviors",
+  secleader:   "Assessing overall cloud risk and investigating security concerns",
+  ciso:        "Reporting to leadership",
+  genaiadmin:  "Managing AI adoption and addressing risky AI usage",
+};
+
 const PERSONA_ICONS = {
   luke: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -7972,7 +7980,7 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [] }) {
             {PERSONA_ICONS[p.id]}
           </div>
         )}
-        <span>{multiSelected ? `${selectedIds.length} roles` : p.role}</span>
+        <span>{multiSelected ? `${selectedIds.length} topics` : (PERSONA_TOPICS[p.id] || p.role)}</span>
         <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="6 9 12 15 18 9"/>
         </svg>
@@ -7991,7 +7999,7 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [] }) {
                   {PERSONA_ICONS[id]}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`text-[12.5px] font-medium truncate ${isActive ? "text-blue-700" : "text-slate-700"}`}>{q.role}</div>
+                  <div className={`text-[12.5px] font-medium truncate ${isActive ? "text-blue-700" : "text-slate-700"}`}>{PERSONA_TOPICS[id] || q.role}</div>
                 </div>
                 {isSelected && (
                   <svg className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -8062,8 +8070,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
                       {PERSONA_ICONS[id]}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className={`text-[13px] font-semibold ${isSelected ? "text-blue-700" : "text-slate-800"}`}>{q.role}</div>
-                      <div className="text-[11.5px] text-slate-400 mt-0.5 truncate">{q.subtitle || "Netskope"}</div>
+                      <div className={`text-[13px] font-semibold ${isSelected ? "text-blue-700" : "text-slate-800"}`}>{PERSONA_TOPICS[id] || q.role}</div>
                     </div>
                     <div className={`w-4 h-4 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all ${isSelected ? "bg-blue-600 border-blue-600" : "border-slate-300"}`}>
                       {isSelected && <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
