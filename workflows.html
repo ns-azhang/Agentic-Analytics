@@ -8056,10 +8056,16 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, cha
                 );
               })}
             </div>
-            <button onClick={confirmPersonas} disabled={selectedPersonaIds.length === 0}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-[13px] font-medium py-2.5 rounded-xl transition-colors">
-              Get started
-            </button>
+            <div className="flex items-center gap-3">
+              <button onClick={confirmPersonas} disabled={selectedPersonaIds.length === 0}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-[13px] font-medium py-2.5 rounded-xl transition-colors">
+                Get started
+              </button>
+              <button onClick={() => setPersonaPickerSeen(true)}
+                className="text-[13px] text-slate-400 hover:text-slate-600 font-medium px-4 py-2.5 rounded-xl hover:bg-slate-100 transition-colors">
+                Skip for now
+              </button>
+            </div>
           </div>
         </div>
       )}
