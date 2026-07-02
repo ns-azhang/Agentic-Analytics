@@ -8037,9 +8037,14 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [], onToggleT
   );
 }
 
+/* Module-level (not component state) so re-mounting WelcomePage — e.g. via the
+   "Back" button — doesn't show the popup again after the user has dismissed it once. */
+let welcomePersonaPickerSeen = false;
+
 function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onSetPersonaOnly, onPickDashboard, chatMode, messages, onPickFollowup }) {
   const scrollRef = useRef(null);
-  const [personaPickerSeen, setPersonaPickerSeen] = useState(false);
+  const [personaPickerSeen, setPersonaPickerSeenState] = useState(welcomePersonaPickerSeen);
+  const setPersonaPickerSeen = (v) => { welcomePersonaPickerSeen = v; setPersonaPickerSeenState(v); };
   const [selectedPersonaIds, setSelectedPersonaIds] = useState([persona.id]);
   const [toolbarSlot, setToolbarSlot] = useState(null);
   useEffect(() => { setToolbarSlot(document.getElementById("toolbar-left-slot")); }, []);
