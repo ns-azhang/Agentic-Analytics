@@ -4124,8 +4124,8 @@ function PromptLibraryMenu({ persona, onPickPrompt }) {
 function ContentControls({ onNewChat, onBack, canGoBack, onPickPrompt, onPickHistory, onPickDashboard, onPickAgent, onOpenDashboardGallery, onOpenAgentGallery, onOpenHistoryPage, onOpenPersonal, onOpenGroup, onOpenShared, userAgents, persona, onChangePersona, savedWidgets, onAddWidgetToDashboard, onRemoveSavedWidget, onRenameSavedWidget, hidePersonaSwitcher, hideRightExtras }) {
   return (
     <div className="h-9 flex items-center justify-between px-4 bg-white flex-shrink-0">
-      {/* Left side: Back */}
-      <div className="flex items-center gap-1">
+      {/* Left side: Back, or a portaled control (e.g. welcome page's topic picker) */}
+      <div id="toolbar-left-slot" className="flex items-center gap-1">
         {canGoBack && (
           <button onClick={onBack}
             className="inline-flex items-center gap-1 text-[12.5px] text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-2 py-1 rounded focus-ring">
@@ -8041,6 +8041,8 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
   const scrollRef = useRef(null);
   const [personaPickerSeen, setPersonaPickerSeen] = useState(false);
   const [selectedPersonaIds, setSelectedPersonaIds] = useState([persona.id]);
+  const [toolbarSlot, setToolbarSlot] = useState(null);
+  useEffect(() => { setToolbarSlot(document.getElementById("toolbar-left-slot")); }, []);
   const togglePersona = (id) => setSelectedPersonaIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const confirmPersonas = () => { if (selectedPersonaIds.length > 0 && onSetPersonaOnly) onSetPersonaOnly(selectedPersonaIds[0]); setPersonaPickerSeen(true); };
 
@@ -8092,7 +8094,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
 
   return (
     <div className="flex-1 flex flex-col items-center justify-start overflow-y-auto bg-slate-50 px-6 pt-10 pb-10 relative">
-      <div className="absolute top-4 left-4">
+      {toolbarSlot && ReactDOM.createPortal(
         <PersonaDropdown persona={persona} onChangePersona={onChangePersona} selectedIds={selectedPersonaIds}
           onToggleTopic={id => {
             setSelectedPersonaIds(prev => {
@@ -8100,8 +8102,9 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
               if (next.length > 0 && onSetPersonaOnly) onSetPersonaOnly(next[0]);
               return next.length > 0 ? next : prev;
             });
-          }} />
-      </div>
+          }} />,
+        toolbarSlot
+      )}
 
       {/* Persona picker popup — shown once on first visit */}
       {!personaPickerSeen && (
