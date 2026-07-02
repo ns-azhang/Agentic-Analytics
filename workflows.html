@@ -7991,12 +7991,12 @@ function PersonaDropdown({ persona, onChangePersona }) {
   );
 }
 
-function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, chatMode, messages, onPickFollowup }) {
+function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onSetPersonaOnly, chatMode, messages, onPickFollowup }) {
   const scrollRef = useRef(null);
   const [personaPickerSeen, setPersonaPickerSeen] = useState(false);
   const [selectedPersonaIds, setSelectedPersonaIds] = useState([persona.id]);
   const togglePersona = (id) => setSelectedPersonaIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  const confirmPersonas = () => { if (selectedPersonaIds.length > 0) onChangePersona(selectedPersonaIds[0]); setPersonaPickerSeen(true); };
+  const confirmPersonas = () => { if (selectedPersonaIds.length > 0 && onSetPersonaOnly) onSetPersonaOnly(selectedPersonaIds[0]); setPersonaPickerSeen(true); };
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, busy]);
@@ -9258,7 +9258,7 @@ const [isAgentView, setIsAgentView] = useState(false);
                             onNewDashboard={() => { setShowDashboardGallery(false); onPickDashboard({ dashboardId: "new-dashboard", title: "New Dashboard", desc: "" }); }} />
         ) : showWelcome ? (
           <WelcomePage onSend={send} busy={loading} libraryItems={getLibraryFor(personaId)}
-                       persona={persona} onChangePersona={onChangePersona}
+                       persona={persona} onChangePersona={onChangePersona} onSetPersonaOnly={id => setPersonaId(id)}
                        chatMode={welcomeChatMode} messages={messages} onPickFollowup={onFollowup}
                        />
         ) : (
