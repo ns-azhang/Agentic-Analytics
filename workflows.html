@@ -7973,7 +7973,7 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [], onToggleT
   return (
     <div ref={ref} className="relative">
       <button onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2.5 pl-2.5 pr-3 py-2 bg-white rounded-xl text-[13px] font-medium text-slate-700 hover:bg-slate-50 transition-all card-shadow focus-ring max-w-xs">
+        className="flex items-center gap-2.5 pl-2 pr-3 py-1 rounded text-[12.5px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all focus-ring max-w-xs">
         {multiSelected ? (
           <div className="flex items-center" style={{ width: `${Math.min(selectedIds.length, 4) * 18 + 10}px`, height: "28px", position: "relative" }}>
             {selectedIds.slice(0, 4).map((id, i) => {
