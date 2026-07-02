@@ -8091,7 +8091,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 px-6 relative">
+    <div className="flex-1 flex flex-col items-center justify-start overflow-y-auto bg-slate-50 px-6 pt-10 pb-10 relative">
       <div className="absolute top-4 left-4">
         <PersonaDropdown persona={persona} onChangePersona={onChangePersona} selectedIds={selectedPersonaIds}
           onToggleTopic={id => {
@@ -8143,7 +8143,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
           </div>
         </div>
       )}
-      <div className="w-full max-w-5xl flex flex-col items-center gap-6" style={{ marginTop: "-8cm" }}>
+      <div className="w-full max-w-5xl flex flex-col items-center gap-6">
         <div className="flex flex-col items-center gap-2">
           <svg viewBox="16 10 42 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-16 h-10 mb-1">
             <path d="M27.0273 18.6367C26.8077 19.151 26.4905 19.6653 26.027 20.1061C25.051 21.0857 23.8311 21.4776 22.5624 21.5265L27.3201 26.3021C27.3933 25.0286 27.7592 23.8041 28.7352 22.8245C29.1743 22.3837 29.6867 22.0653 30.199 21.8204C28.7352 21.2816 27.564 20.1061 27.0273 18.6367Z" fill="#FF8300"/>
@@ -8186,7 +8186,7 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
           />
         </div>
         {onPickDashboard && (
-          <div className="w-full grid grid-cols-2 gap-4" style={{ marginTop: "calc(0.5rem + 4cm)" }}>
+          <div className="w-full grid grid-cols-2 gap-4" style={{ marginTop: "1.5rem" }}>
             <div>
               <p className="text-[11.5px] text-slate-400 font-medium uppercase tracking-wide mb-2 flex items-center gap-1.5">{React.cloneElement(I.spark, { className: "w-3.5 h-3.5" })}Suggested dashboards</p>
               <div className="flex flex-col gap-1.5">
