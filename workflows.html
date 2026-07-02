@@ -8025,12 +8025,30 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [], onToggleT
   );
 }
 
-function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onSetPersonaOnly, chatMode, messages, onPickFollowup }) {
+function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onSetPersonaOnly, onPickDashboard, chatMode, messages, onPickFollowup }) {
   const scrollRef = useRef(null);
   const [personaPickerSeen, setPersonaPickerSeen] = useState(false);
   const [selectedPersonaIds, setSelectedPersonaIds] = useState([persona.id]);
   const togglePersona = (id) => setSelectedPersonaIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const confirmPersonas = () => { if (selectedPersonaIds.length > 0 && onSetPersonaOnly) onSetPersonaOnly(selectedPersonaIds[0]); setPersonaPickerSeen(true); };
+
+  const TOPIC_DASHBOARD_MAP = {
+    luke:        "soc-dlp-monitoring",
+    secengineer: "security-engineer",
+    secleader:   "security-analyst",
+    ciso:        "ciso-overview",
+    genaiadmin:  "genai-admin",
+  };
+
+  const suggestedDashboards = React.useMemo(() => {
+    const pinned = selectedPersonaIds
+      .map(id => ALL_DASHBOARD_ITEMS.find(d => d.dashboardId === TOPIC_DASHBOARD_MAP[id]))
+      .filter(Boolean);
+    const pinnedIds = new Set(pinned.map(d => d.dashboardId));
+    const rest = ALL_DASHBOARD_ITEMS.filter(d => !pinnedIds.has(d.dashboardId));
+    const shuffled = [...rest].sort(() => Math.random() - 0.5);
+    return [...pinned, ...shuffled].slice(0, 5);
+  }, [selectedPersonaIds]);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, busy]);
@@ -8151,6 +8169,20 @@ function WelcomePage({ onSend, busy, libraryItems, persona, onChangePersona, onS
             ]}
           />
         </div>
+        {suggestedDashboards.length > 0 && onPickDashboard && (
+          <div className="w-full mt-2">
+            <p className="text-[11.5px] text-slate-400 font-medium uppercase tracking-wide mb-2">Suggested dashboards</p>
+            <div className="grid grid-cols-5 gap-2">
+              {suggestedDashboards.map(d => (
+                <button key={d.dashboardId} onClick={() => onPickDashboard(d)}
+                  className="text-left bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm rounded-xl px-3 py-3 transition-all group">
+                  <div className="text-[12.5px] font-semibold text-slate-800 group-hover:text-blue-700 leading-snug mb-1">{d.title}</div>
+                  <div className="text-[11px] text-slate-400 leading-snug line-clamp-2">{d.desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {busy && (
           <div className="w-full flex justify-start">
             <TypingBubble />
@@ -9299,6 +9331,7 @@ const [isAgentView, setIsAgentView] = useState(false);
         ) : showWelcome ? (
           <WelcomePage onSend={send} busy={loading} libraryItems={getLibraryFor(personaId)}
                        persona={persona} onChangePersona={onChangePersona} onSetPersonaOnly={id => setPersonaId(id)}
+                       onPickDashboard={onPickDashboard}
                        chatMode={welcomeChatMode} messages={messages} onPickFollowup={onFollowup}
                        />
         ) : (
