@@ -7961,7 +7961,7 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [] }) {
   return (
     <div ref={ref} className="relative">
       <button onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2.5 pl-2.5 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-[13px] font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all card-shadow focus-ring">
+        className="flex items-center gap-2.5 pl-2.5 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-[13px] font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all card-shadow focus-ring max-w-xs">
         {multiSelected ? (
           <div className="flex items-center" style={{ width: `${Math.min(selectedIds.length, 4) * 18 + 10}px`, height: "28px", position: "relative" }}>
             {selectedIds.slice(0, 4).map((id, i) => {
@@ -7986,7 +7986,7 @@ function PersonaDropdown({ persona, onChangePersona, selectedIds = [] }) {
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 w-52 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden py-1 menu-pop">
+        <div className="absolute top-full left-0 mt-1.5 w-80 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden py-1 menu-pop">
           {["luke","secengineer","secleader","ciso","genaiadmin"].map(id => {
             const q = PERSONAS[id]; if (!q) return null;
             const isActive = p.id === id;
